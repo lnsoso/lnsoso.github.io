@@ -7,12 +7,19 @@ date: !binary |-
 date_gmt: !binary |-
   MjAwNi0wOC0yMiAxMDo1MzozMyArMDgwMA==
 ---
-这个程序可以用 <script src="clickout.js"></script> 加到任意页面的 </body> 前面。
+这个程序可以加到任意页面的 body 结束标签前。
+
+```html
+<script src="clickout.js"></script>
+``` 
+
 当用户点击 a 标签时触发事件
+
+```javascript
 /*
  * 说明：点出统计器
  * 作者：Alvin
- * 日期：2006-07-25
+ * 日期：2005-07-25
  * 版本：v1.2
  */
 document.write('
@@ -96,4 +103,4 @@ function objClickOut_doSave() {
 }
 // bind event
 document.onclick = objClickOut_click_tmp;
- 
+```

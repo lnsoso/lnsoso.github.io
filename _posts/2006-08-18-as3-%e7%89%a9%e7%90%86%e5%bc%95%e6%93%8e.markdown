@@ -9,4 +9,3 @@ date_gmt: !binary |-
 ---
 http://blog.andre-michelle.com/2006/announcing-new-physics-engine-in-as3/
 自己做个记录 AS3 做的，并且提供源代码。
-:)

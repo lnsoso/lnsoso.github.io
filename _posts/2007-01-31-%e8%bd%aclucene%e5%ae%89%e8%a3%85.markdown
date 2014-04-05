@@ -30,7 +30,7 @@ date_gmt: !binary |-
 
 5、输入命令：java org.apache.lucene.demo.SearchFiles
 如：c:\>java org.apache.lucene.demo.SearchFiles 回车
-Query:在这里输入检索内容，如：“建议最好自己先做一下语法检查”，这么长：）
+Query:在这里输入检索内容，如：“建议最好自己先做一下语法检查”，这么长
 成功了，结果出来了：
 Searching for: “建 议 最 好 自 己 先 做 一 下 语 法 检 查”
 1 total matching documents

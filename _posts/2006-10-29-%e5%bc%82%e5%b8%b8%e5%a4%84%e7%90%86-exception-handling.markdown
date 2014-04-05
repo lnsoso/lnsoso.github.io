@@ -21,7 +21,7 @@ Content List:
 Figure 1: the "sequential" model.</center>
 <center><img alt="" src="http://www.flipcode.com/articles/article_em_sequential.jpg" />
 Figure 2: the "exceptional" model. </center>
-在Figure 1中我们看到如果不用Exception机制，那么下层的函数在发现错误时会一层一层的上报，典型的就是LoadArt-> LoadResource->Init，如果一个分层应用的层数比较多的话，那么用于这样错误检测的代码将会很多。而采用Exception机制， 底层的错误可以一步上传到Init,避免了中间环节，代码更简练啦：），同时Exception机制还可以在构造函数中抛出，避免了出现Invalid objects的情况（因为构造函数没有返回值，遇到错误也只有忍气吞声啦）。使用Exception可以省去用于检验函数调用成功与否的函数返回值，因 而函数可以更加简练了。但使用Exception机制会增加在程序调试时的难度，增加程序的大小和程序性能上一定的损失！
+在Figure 1中我们看到如果不用Exception机制，那么下层的函数在发现错误时会一层一层的上报，典型的就是LoadArt-> LoadResource->Init，如果一个分层应用的层数比较多的话，那么用于这样错误检测的代码将会很多。而采用Exception机制， 底层的错误可以一步上传到Init,避免了中间环节，代码更简练啦，同时Exception机制还可以在构造函数中抛出，避免了出现Invalid objects的情况（因为构造函数没有返回值，遇到错误也只有忍气吞声啦）。使用Exception可以省去用于检验函数调用成功与否的函数返回值，因 而函数可以更加简练了。但使用Exception机制会增加在程序调试时的难度，增加程序的大小和程序性能上一定的损失！
 <font color="#0000ff"><a name="1.2"></a>2.SEH Vs C++ Exception </font>
     SEH （结构化异常处理，C异常处理，Win32异常处理）是Windows提供的一套结构化异常处理机制，提供基于process的异常处理，进程可以通过 SetUnhandledExceptionFilter来添加自己的异常处理函数，这种机制是Final型的或称top型的：最后安装的seh处理例程 总是优先得到控制权。这有时并不是最好的解决方案，为此在WinXP中微软提供了向量化异常处理机制，Vectored Exception Handling比SEH有加强但Final型的缺点仍然没有得到实质解决！在VC中__try/__except/__finally/__leave 都是用于SEH的。SEH的异常对象一般都是unsigned int型的，结构异常可以捕获到系统除零错误，内存越界访问错误等错误，当然也可以用RaiseException来抛发结构异常。 
     C ++异常支持抛发一个C++对象而不仅仅是像结构型异常那样的unsigned int型，但C++异常却无法捕获到诸如系统除零错误，内存越界访问错误等系统重大错误。在VC中try/catch来实行C++异常捕获，而使用 throw来抛发C++异常。有关SEH和C++ EH的区别请参考MSDN的"Exception Handling Differences"。MFC里的CException机制就是利用的C++ 异常处理机制来实现的。 

@@ -8,7 +8,6 @@ date_gmt: !binary |-
   MjAwNi0wOC0yMSAxNTo1MTozOSArMDgwMA==
 ---
 歹势啊～！又病了，嗓子发炎，有种有痰却咳不出来的感觉，听介绍说是“慢性咽炎”的症状……
-T_T
+
 还好今天下班后终于把二级页里的查看 BLOG 页的 BUG 改好了，原来是 HTML 标签没闭合。
 明天开始弄标签页，争取这周把 blog 搞定吧，然后下个月自己再弄套 SKIN 。
-：）

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Video and Audio Streaming with Flash&#8230;&#8230;
+title: Video and Audio Streaming with Flash
 author: Alvin
 date: !binary |-
   MjAwNi0wOC0zMCAxMToxOTowOSArMDgwMA==
@@ -9,4 +9,4 @@ date_gmt: !binary |-
 ---
 Video and Audio Streaming with Flash and Open Source Tools
 自己做个记录
-<a href="http://klaus.geekserver.net/flash/streaming.html">http://klaus.geekserver.net/flash/streaming.html</a>
+<http://klaus.geekserver.net/flash/streaming.html>

@@ -7,7 +7,7 @@ date: !binary |-
 date_gmt: !binary |-
   MjAwNi0wOC0yMiAwODozMTo1NyArMDgwMA==
 ---
-原文 www.mplayerhq.hu/DOCS/HTML/zh/codecs.html
-自己留个记录，唉，配置 FFMPEG 真是费事。
-:(
-faad2 faac 配置不过去了～＃！＃￥！￥
+原文 <www.mplayerhq.hu/DOCS/HTML/zh/codecs.html>
+自己留个记录，唉，编译 FFMPEG 真是费事。
+
+faad2 faac 过不去了

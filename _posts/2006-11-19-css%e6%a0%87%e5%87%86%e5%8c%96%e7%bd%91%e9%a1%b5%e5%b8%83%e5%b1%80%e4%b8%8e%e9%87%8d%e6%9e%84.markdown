@@ -7,7 +7,7 @@ date: !binary |-
 date_gmt: !binary |-
   MjAwNi0xMS0xOSAwMzoyMjo1OSArMDgwMA==
 ---
-<strong>刚刚在BLUEIDEA上看到的,到时有空就去了,哈,学习学习嘛.         :)</strong>
+<strong>刚刚在BLUEIDEA上看到的,到时有空就去了,哈,学习学习嘛.         </strong>
 <strong>活动时间:11月25日(星期六) 下午 14:00-15:30
 活动主题:CSS标准化网页布局与重构
 </strong><strong>活动地点:中关村图书大厦(左岸公社) 五层多功能厅

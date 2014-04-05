@@ -71,7 +71,7 @@ date_gmt: !binary |-
     所以，这个<code>for</code>循环的初始化表达式调用<code>list::begin()</code>来获取一个遍历器“指向”列表中的第一个字符串，然后调用<code>list::end()</code>来获取一个遍历器“指向”列表的“末尾”，最后一个字符串的位置。 (我把这些词语放在引号里是为了强调指向，开始，和末尾的概念都是被<code>const_iterator</code>类型抽象了的，而且必须通过<code>const_iterator</code>的方法[像<code>begin()</code>]或者操作符[像<code>++</code>]。)这些遍历器被分别地赋给<code>it</code>和<code>itEnd</code>。 这个循环一直进行着，直到<code>it</code>等于<code>itEnd</code>；意思是，当<code>it</code>还没有到达列表的“末尾”时。这个遍历器<code>it</code>将会在循环过程每次自增加，这样它可以每次到达一个列表中的字符串。
     在遍历其中，表达式<code>it->c_str()</code> 使用<code>-></code>操作符。因为<code>it</code>像一个指向<code>string</code>的指针(记住，<code>m_pFileList</code>是一个STL <code>string</code>的列表)，<code>it->c_str()</code>在<code>it</code>当前所指向的<code>string</code>中调用<code>c_str()</code>函数。<code>c_str()</code>返回一个C类型的字符串指针，既然这样，就是一个<code>LPCTSTR</code>。
     <code>DoWork()</code>的余下部分是释放内存和错误检查。你可以从例子项目的<code>ProgressDlg.cpp</code>文件中获取所有代码。
-    (我刚刚意识到叫一个变量为"it"，是多么的奇怪。很抱歉！) :)
+    (我刚刚意识到叫一个变量为"it"，是多么的奇怪。很抱歉！) 
 <h2>注册外壳扩展</h2>
     这个<code>DllReg</code>扩展对可执行文件进行操作，所以我们注册它被EXE,DLL和OCX文件调用。和第一部分中一样，我们可以在RGS脚本中做这些事，<code>DllRegShlExt.rgs</code>。下面是注册我们的扩展为一个对于上述扩展名文件的上下文菜单扩展必需的脚本。
 <pre>HKCR{    NoRemove dllfile    {        NoRemove shellex        {            NoRemove ContextMenuHandlers            {                ForceRemove DLLRegSvr = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'            }        }    }    NoRemove exefile    {        NoRemove shellex        {            NoRemove ContextMenuHandlers            {                ForceRemove DLLRegSvr = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'            }        }    }    NoRemove ocxfile    {        NoRemove shellex        {            NoRemove ContextMenuHandlers            {                ForceRemove DLLRegSvr = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'            }        }    }}</pre>
@@ -86,7 +86,7 @@ date_gmt: !binary |-
     <code>HKCR\*</code>键被所有文件调用的外壳扩展。注意文档中所说的该扩展也被其他外壳对象所调用（文件，目录，虚拟文件夹，控制面板项等等），但是我在测试中所见到的并不是这样。这些扩展仅仅被文件系统中的文件所调用。
     在外壳版本4.71以上，还有一个叫做<code>HKCR\AllFileSystemObjects</code>的键。如果我们在这个键下注册，我们的扩展将被文件系统中所有的文件和目录调用，根目录除外。（根目录调用的扩展在<code>HKCR\Drive</code>下注册。)然而，当我在这个键下注册的时候我看到一些奇怪的现象。“发送到”菜单也使用这个键，而它混在了<code>DllReg</code>菜单中间：
     你同样可以编写一个操作目录的上下文菜单扩展。要这样的例子的话，请看我的文章：
-   <a href="http://www.codeproject.com/tips/DirClean.asp" target="_blank">A Utility to Clean Up Compiler Temp Files(一个清除编译临时文件的实用工具)</a>。（译者：确实是个好玩艺 :)）
+   <a href="http://www.codeproject.com/tips/DirClean.asp" target="_blank">A Utility to Clean Up Compiler Temp Files(一个清除编译临时文件的实用工具)</a>。（译者：确实是个好玩艺 ）
     最后，在外壳版本4.71以上，你可以使你的上下文菜单在用户右键单击一个正在查看目录（包括桌面）的资源管理器窗口背景时被调用。为了使你的扩展被这么调用，你必须在<code>HKCR\Directory\Background\shellex\ContextMenuHandlers</code>键下注册。使用这个方法，你可以向你的桌面上下文菜单中添加菜单项目或者其他任何目录。传递给<code>IShellExtInit::Initialize()</code>的参数有点儿不同，我会在我以后的文章中加以说明。
 <h2>待续……</h2>
     接着的第三部分我们将实践一种新的扩展，查询。它将显示一些外壳对象的弹出式描述。我还将向你展示如何在外壳扩展中使用MFC。

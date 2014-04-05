@@ -8,4 +8,4 @@ date_gmt: !binary |-
   MjAwNy0wMi0xNCAwNTo1Njo1MiArMDgwMA==
 ---
 重构、蓝海战略
-：）
+

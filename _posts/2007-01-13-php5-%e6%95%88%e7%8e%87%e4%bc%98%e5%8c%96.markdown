@@ -55,7 +55,7 @@ $is_win </font><font color="#0000ff">= </font><font color="#008080">DIRECTORY_SE
 不过总归会调用函数，慢。
 现在好了，用 $_SERVER['REQUEST_TIME']，不用调用函数，又省了。
 <strong><font color="#0000ff">加速 PCRE</font></strong>
- 对于不用保存的结果，不用 ()，一律用 (?:)
+ 对于不用保存的结果，不用 ()，一律用 (?
 这样 PHP 不用为符合的内容分配内存，省。效率提升 15% 左右。
 - 能不用正则，就不用正则，在分析的时候仔细阅读手册「字符串函数」部分。有没有你漏掉的好用的函数？
 <strong><font color="#0000ff">加速 strtr</font></strong>

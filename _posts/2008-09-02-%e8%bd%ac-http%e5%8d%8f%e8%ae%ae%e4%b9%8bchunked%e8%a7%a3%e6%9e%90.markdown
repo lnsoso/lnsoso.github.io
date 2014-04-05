@@ -14,7 +14,7 @@ date_gmt: !binary |-
 例如，要在后台处理一个小时的运算，但又不希望用户等一个小时才能看到结果。这时就可采用Chunked编码将内容分块输出，用户随时都可以接收到最新的处理结果。
 ASP关闭了缓存的输出模式，就是Chunked编码的。(Response.Buffer = false)
 而每一次的Response.Write，都是一个Chunked，所以不要使用的太频繁哦，否则Chunk数量太多，额外的数据太浪费空间了。
-若想了解Chunked的具体编码结构，用ASP关闭缓存调试蛮方便的。:)
+若想了解Chunked的具体编码结构，用ASP关闭缓存调试蛮方便的。
 我们先来看看RFC2616中对Chunked的定义：
 Chunked-Body = *chunk
 last-chunk

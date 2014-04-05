@@ -7,7 +7,7 @@ date: !binary |-
 date_gmt: !binary |-
   MjAwNy0wMS0wNSAwMToxNDozMiArMDgwMA==
 ---
-好友在Ｑ里发给我的，哈，大家看看笑一笑吧。  :)
+好友在Ｑ里发给我的，哈，大家看看笑一笑吧。  
 1.乌龟的屁股 谜底：规定 ； 　　
 2.乌龟倒立 谜底：上面有规定； 　　 
 3.乌龟翻筋斗 谜底：一个又一个规定； 　　 

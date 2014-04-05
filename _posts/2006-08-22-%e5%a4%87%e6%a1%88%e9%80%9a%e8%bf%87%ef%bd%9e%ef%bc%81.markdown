@@ -7,7 +7,6 @@ date: !binary |-
 date_gmt: !binary |-
   MjAwNi0wOC0yMiAwMjo1NTowOSArMDgwMA==
 ---
-Oh Yeah~!
 还好时间不是很长……
 可惜邮件里没有备案号，还要去网站上去查，不太方便，要是发邮件通知时能把备案号一起发过来就好了。
  

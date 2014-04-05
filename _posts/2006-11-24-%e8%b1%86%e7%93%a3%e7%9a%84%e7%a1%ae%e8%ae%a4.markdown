@@ -7,4 +7,4 @@ date: !binary |-
 date_gmt: !binary |-
   MjAwNi0xMS0yNCAwNTozMTo0OSArMDgwMA==
 ---
-doubanclaimb330c02db09171e7 这回豆瓣应该确认我了吧。 :)
+doubanclaimb330c02db09171e7 这回豆瓣应该确认我了吧。 

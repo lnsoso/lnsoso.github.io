@@ -7,7 +7,7 @@ date: !binary |-
 date_gmt: !binary |-
   MjAwNi0xMS0yNyAwNToxNDoxMyArMDgwMA==
 ---
-自是没想到, PHP 还能再写出 HTTP Server 来......看来我们的思维被局限住了......只有想不到,没有做不到.....     :)
+自是没想到, PHP 还能再写出 HTTP Server 来......看来我们的思维被局限住了......只有想不到,没有做不到.....     
 <img height="17" alt="" width="67" src="http://nanoweb.si.kz/txt_what.gif" />
 <font face="Verdana" size="2">Nanoweb is an HTTP server written in PHP, designed to be small, secure, and extensible. 
 It is distributed under the terms of the </font><a href="http://www.gnu.org/copyleft/gpl.html"><font face="Verdana" size="2">GNU General Public License</font></a><font face="Verdana" size="2">.

@@ -7,7 +7,7 @@ date: !binary |-
 date_gmt: !binary |-
   MjAwOC0wOS0yNSAxMjozNzozNyArMDgwMA==
 ---
-一直都感觉像是神六刚上天不久，不经意间神七上天的日子越来越近了。今天在网上搜索神七的相关新闻时无意中看到谷哥的热门关键词排行中我的老东家上升到第二位，看来推广做得不错。 :)
+一直都感觉像是神六刚上天不久，不经意间神七上天的日子越来越近了。今天在网上搜索神七的相关新闻时无意中看到谷哥的热门关键词排行中我的老东家上升到第二位，看来推广做得不错。 
 <a href="http://www.google.cn/search?q=%E5%A4%A7%E7%99%BD%E5%85%94+%E4%B8%89%E8%81%9A%E6%B0%B0%E8%83%BA&hl=zh-CN&source=billboard_site&cd=12000001&cad=1&ie=utf8">大白兔 三聚氰胺</a>     
 <a href="http://www.google.cn/search?q=uusee&hl=zh-CN&source=billboard_site&cd=12000001&cad=2&ie=utf8">uusee</a>     
 <a href="http://www.google.cn/search?q=%E5%8A%A0%E6%8B%BF%E5%A4%A7+%E7%A7%BB%E6%B0%91&hl=zh-CN&source=billboard_site&cd=12000001&cad=3&ie=utf8">加拿大 移民</a>     
