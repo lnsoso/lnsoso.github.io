@@ -1,5 +1,6 @@
 ---
 layout: post
+permalink: analyze-mtk-system-halted
 title: MTK死机问题分析实例
 author: gavinkwoe
 date: !binary |-

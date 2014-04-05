@@ -1,5 +1,6 @@
 ---
 layout: post
+permalink: install-vld-xhprof-php-extensions-on-mac
 title: Mac 下安装 PHP 扩展 vld & xhprof
 author: Alvin
 date: !binary |-

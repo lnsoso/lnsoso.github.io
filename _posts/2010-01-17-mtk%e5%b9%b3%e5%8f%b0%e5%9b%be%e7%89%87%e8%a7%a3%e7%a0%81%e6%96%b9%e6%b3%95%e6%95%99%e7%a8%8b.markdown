@@ -1,5 +1,6 @@
 ---
 layout: post
+permalink: mtk-image-decode-tutorial
 title: MTK平台图片解码方法教程
 author: gavinkwoe
 date: !binary |-
