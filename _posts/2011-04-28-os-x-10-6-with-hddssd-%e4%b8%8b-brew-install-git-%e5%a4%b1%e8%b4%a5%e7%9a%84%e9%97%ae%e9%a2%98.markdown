@@ -1,5 +1,6 @@
 ---
 layout: post
+permalink: how-to-fixed-brew-install-git-bug-on-osx-10-6-with-ssd
 title: OS X 10.6 with SSD 下 brew install git 失败的问题
 author: Alvin
 date: !binary |-
