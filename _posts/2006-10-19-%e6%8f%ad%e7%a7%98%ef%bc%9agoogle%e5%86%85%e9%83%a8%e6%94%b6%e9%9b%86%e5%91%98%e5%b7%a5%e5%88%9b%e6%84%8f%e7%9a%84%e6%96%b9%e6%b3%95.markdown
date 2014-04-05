@@ -1,0 +1,13 @@
+---
+layout: post
+title: 揭秘：Google内部收集员工创意的方法
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0xOSAxMDoyODo1NSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0xOSAwMjoyODo1NSArMDgwMA==
+---
+　　Google是一间极具创新精神的企业。它一直以来都鼓励员工积极创新，最为人知的就是它的70%/20%/10%法则，则除了把70%的时间用在核心的搜索及广告上，还允许员工把20%的工作时间用于相关的项目时，剩下的10%则由员工自由发挥。很多Google的创意就是来自这20%+10%的时间里。
+　　Om Malik最近在参加Web2.0大会时，刚好碰上Google的企业产品经理Rajen Sheth。Rajen Sheth公开了Google内部的一个小秘密，即Google是如何具体地鼓励及收集员工创意的。具体的做法如下：
+　　Google鼓励其所有员工把各自所学到的或想分享的东西写下来，规定要写5行，不能多也不能少，把它们和同事分享。由于只能写5行，Google员工必须写得非常集中和精炼。内容可以是任何方面的东西。完成后把它以电子邮件的方式寄到指定的地方，然后Google会利用自己的搜索引擎把这些邮件内容全部索引起来，让所有员工都可以随时搜索它们。
+　　这是典型的"集思广益"例子。不知国内有没有其它企业也采用类似的方法？

@@ -1,0 +1,10 @@
+---
+layout: post
+title: 一些 Python 的电子书下载
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0xNiAxNTo0NDowMyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0xNiAwNzo0NDowMyArMDgwMA==
+---
+http://www.miex.org/python/

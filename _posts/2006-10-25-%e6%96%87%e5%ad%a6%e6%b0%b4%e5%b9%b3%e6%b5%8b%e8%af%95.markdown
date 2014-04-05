@@ -1,0 +1,36 @@
+---
+layout: post
+title: 文学水平测试
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNSAxMToxNzozOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNSAwMzoxNzozOCArMDgwMA==
+---
+今天在一个朋友的 BLOG 上看到的 Sogou 的小东西，比较好玩。我把我的《所谓“WEB2.0 ”下的创意》这篇BLOG贴在里面测试了一下，竟然得出以下结果。 
+<h2 class="title1">Alvin，您的总体评价：</h2>
+<p class="evaluate">文字的平民化韵味浓郁，具有很强的生活气息；相对正统的创作路线，可读性较强。架构清晰，逻辑性强，情节缜密，可读性强；文章内容丰富，观点翔实可圈可点；在成语使用方面可以着重下功夫改进。情节缜密题材的小说值得尝试，将推理、悬念、历史的因素掺杂其中；同时也可以尝试杂文、评论等文体。行文时留心描写与情节结构的紧密配合，必然会诞生令人耳目一新的作品。
+<style type="text/css">.articletest {width: 305px;background: url(http://www.sogou.com/images/statsword/logo.gif) no-repeat 8px top;padding: 37px 8px 8px;font-size: 12px;}.resultbox{border: 1px solid #bbb;padding: 5px 13px;margin-bottom: 5px;}.resultbox dl, .resultbox dd {	margin: 0;padding: 0;}.authorname {width: 70px;float: left;font-weight: bold;}.bar{width: 80px;float: left;}.similarity{color: #DF5900;float: left;font-weight: bold;}.comment {clear: both;}.bg1 {background:url(http://www.sogou.com/images/statsword/star1.gif) no-repeat right top;}.bg2 {background: url(http://www.sogou.com/images/statsword/star2.gif) no-repeat right top; }.bg3 {	background: url(http://www.sogou.com/images/statsword/star3.gif) no-repeat right top; }.wanttest {	float: left;	clear:both;	font-weight: bold;	color: red;	padding: 4px 6px;	line-height: normal;	border: 1px solid #D6D3B7;}.wanttest {	float: left;	clear:both;	font-weight: bold;	color: red;	padding: 4px 6px 4px 13px;	line-height: normal;	border: 1px solid #D6D3B7;	background: url(http://www.sogou.com/images/statsword/ss.gif) no-repeat 7px 8px;}.wanttest a {	color: red;	text-decoration: none;}.title1, .title2, .title3 {	font-size: 14px;	color: #f60;}.title1 {	background: url(http://www.sogou.com/images/statsword/icon1.gif) no-repeat 4px center;	padding: 0 12px;        height:1%;}</style>
+<div class="articletest">
+<div class="resultbox bg1">
+<dl>
+<dt class="authorname"><a target="_blank" href="http://www.sogou.com/web?query= 王朔">王朔</a> </dt>
+<dd class="bar"><img height="13" width="84" alt="" src="http://www.sogou.com/images/statsword/bar1.gif" /> </dd>
+<dd class="similarity">44% </dd>
+<dd class="comment">虽然不明显，但是文章跟这位作家的风格有些形似呢。</dd></dl></div>
+<div class="resultbox bg2">
+<dl>
+<dt class="authorname"><a target="_blank" href="http://www.sogou.com/web?query= 高行健">高行健</a> </dt>
+<dd class="bar"><img height="13" width="32" alt="" src="http://www.sogou.com/images/statsword/bar2.gif" /> </dd>
+<dd class="similarity">17% </dd>
+<dd class="comment">这个区间是比较正常的，看来你已经有了掌握神韵的感觉喔。</dd></dl></div>
+<div class="resultbox bg3">
+<dl>
+<dt class="authorname"><a target="_blank" href="http://www.sogou.com/web?query= 说不得大师">说不得大师</a> </dt>
+<dd class="bar"><img height="13" width="12" alt="" src="http://www.sogou.com/images/statsword/bar3.gif" /> </dd>
+<dd class="similarity">7% </dd>
+<dd class="comment">基本可以忽略不计了......实话说吧，这就是凑数的，呵呵......</dd></dl></div>
+<p class="wanttest">有意思，我也要去试试！</div>
+ 
+感兴趣的话您也可以去试一试
+http://www.sogou.com/websearch/test/statsword.jsp

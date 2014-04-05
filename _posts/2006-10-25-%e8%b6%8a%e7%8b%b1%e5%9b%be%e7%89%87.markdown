@@ -1,0 +1,10 @@
+---
+layout: post
+title: 越狱图片
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNSAxNjo0MTozNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNSAwODo0MTozNiArMDgwMA==
+---
+很不错的一张图，T-bag 帅透了～！

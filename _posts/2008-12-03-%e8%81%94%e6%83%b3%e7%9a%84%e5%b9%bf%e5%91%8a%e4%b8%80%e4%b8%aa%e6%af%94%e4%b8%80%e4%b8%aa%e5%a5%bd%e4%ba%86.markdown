@@ -1,0 +1,13 @@
+---
+layout: post
+title: 联想的广告一个比一个好了
+author: Alvin
+date: !binary |-
+  MjAwOC0xMi0wMyAyMzo1NToyMiArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMi0wMyAxNTo1NToyMiArMDgwMA==
+---
+<div class="youtube-video"><a href="http://js.pp.sohu.com/ppp/mv/swf200811281417/Main.swf?id=2000985&type=Singleton&domain=out&skin=4&hostname=http%3A%2F%2Fwww.gohs.net%2Fbbs%2Fviewthread.php%3Ftid%3D162915"></a>
+<div class="youtube-video"><object width="425" height="355"><param name="movie" value="http://js.pp.sohu.com/ppp/mv/swf200811281417/Main.swf?id=2000985&type=Singleton&domain=out&skin=4&hostname=http%3A%2F%2Fwww.gohs.net%2Fbbs%2Fviewthread.php%3Ftid%3D162915"></param><param name="wmode" value="transparent"></param><embed src="http://js.pp.sohu.com/ppp/mv/swf200811281417/Main.swf?id=2000985&type=Singleton&domain=out&skin=4&hostname=http%3A%2F%2Fwww.gohs.net%2Fbbs%2Fviewthread.php%3Ftid%3D162915" type="application/x-shockwave-flash" wmode="transparent" width="425" height="355"> </embed>
+很搞笑的广告视频，速度决定结果，jons, 你结果一定很好～～
+  </object></div></div>

@@ -1,0 +1,10 @@
+---
+layout: post
+title: 自娱自乐!50元打造双网卡负载均衡服务器
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNiAxODowOTo1OSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNiAxMDowOTo1OSArMDgwMA==
+---
+自己做个记录，有空时改造一下家里的破机器……貌似不错。 http://www.chinahtml.com/systems/6/2006/11616716987559.shtml

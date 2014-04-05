@@ -1,0 +1,13 @@
+---
+layout: post
+title: Firefox 3.0 Alpha 1 已经出炉!
+author: Alvin
+date: !binary |-
+  MjAwNi0xMi0xMCAwOTo1MjowMSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMi0xMCAwMTo1MjowMSArMDgwMA==
+---
+<img src="http://static.flickr.com/124/318215955_f47c8d2440.jpg?v=0" alt="" />
+<a href="javascript:void(0);/*1165758089109*/">点击此处开始下载 (官方连接)
+</a>
+ 

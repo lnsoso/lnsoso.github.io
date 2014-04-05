@@ -1,0 +1,12 @@
+---
+layout: post
+title: MyTshirt 用户贡献内容，分享内容
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNCAxNzozODoxNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNCAwOTozODoxNiArMDgwMA==
+---
+MyTshirt http://www.mytshirt.cn
+刚从Keso 那里看到的网站，还不错，用户贡献、分享内容。
+至少现在为止我已经看到了好几个我喜欢的 Style ，：）

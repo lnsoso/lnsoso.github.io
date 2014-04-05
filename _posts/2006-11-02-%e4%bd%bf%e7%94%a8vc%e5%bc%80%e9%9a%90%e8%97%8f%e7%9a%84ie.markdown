@@ -1,0 +1,23 @@
+---
+layout: post
+title: 使用VC开隐藏的IE
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0wMiAxNToxODo1OSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0wMiAwNzoxODo1OSArMDgwMA==
+---
+VARIANT vDummy = {0};
+// Instantiate a browser
+if (FAILED(hr = CoCreateInstance(CLSID_InternetExplorer,
+NULL, CLSCTX_SERVER, IID_IWebBrowser2,
+(LPVOID*)&pWebBrowser)))
+{
+goto Error;
+}
+// Show the browser, and navigate to the special location
+// represented by the pidl
+hr = pWebBrowser->put_Visible(VARIANT_FALSE);
+hr = pWebBrowser->Navigate2(&vPIDL, &vDummy, &vDummy,
+&vDummy, &vDummy);
+

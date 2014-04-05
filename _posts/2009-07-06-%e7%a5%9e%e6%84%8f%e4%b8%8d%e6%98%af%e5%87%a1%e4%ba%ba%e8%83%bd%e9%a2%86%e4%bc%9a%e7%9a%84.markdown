@@ -1,0 +1,113 @@
+---
+layout: post
+title: 神意不是凡人能领会的
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wNy0wNiAwMDowNjoyOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNy0wNSAxNjowNjoyOCArMDgwMA==
+---
+转载自神的blog
+http://blog.csdn.net/vbvan/archive/2007/10/30/1856481.aspx
+搞挂你的C++编译器
+Play  with the compiler是一件很有趣的事情，编译死循环的程序便是其中之一。让我们和编译器一起做游戏吧~
+1、Preprocess
+a、Self Include（GCC only）
+一般的编译器都有include嵌套层数的限制，所以你需要在适当的时候停止嵌套。利用GCC提供的__INCLUDE_LEVEL__可以很轻松的实现这一点。时间复杂度是n<sup>a</sup>，n是每层的Self Include次数，a是嵌套层数。
+在其它编译器中可以写出类似的代码，只是没这么简洁
+#if __INCLUDE_LEVEL__<199
+#include __FILE__
+#include __FILE__
+#endif
+b、Macro Expansion Explosion
+顾名思义，就是让Preprocess之后的代码量达到O(2<sup>n</sup>)，比如下例：
+#define F1(x) x,x
+#define F2(x) F1(x),F1(x)
+#define F3(x) F2(x),F2(x)
+#define F4(x) F3(x),F3(x)
+#define F5(x) F4(x),F4(x)
+#define F6(x) F5(x),F5(x)
+#define F7(x) F6(x),F6(x)
+#define F8(x) F7(x),F7(x)
+#define F9(x) F8(x),F8(x)
+#define G1(x) F9(x),F9(x)
+#define G2(x) G1(x),G1(x)
+#define G3(x) G2(x),G2(x)
+#define G4(x) G3(x),G3(x)
+#define G5(x) G4(x),G4(x)
+#define G6(x) G5(x),G5(x)
+#define G7(x) G6(x),G6(x)
+#define G8(x) G7(x),G7(x)
+#define G9(x) G8(x),G8(x)
+int main()
+{
+G9(1);
+}
+当然，不同的编译器对预处理结果溢出的处理也不尽相同，一般上面的代码不会达到预期的目的。GCC会直接出错，而VC会出ICE（Internal Compiler Error）
+2、Template
+a、嵌套
+类似的，模版也有嵌套层数限制，但是也很容易绕过。
+GCC的某些版本就会被下面的代码搞挂（VC不会）：
+#include <cstddef>
+template <class T>
+struct Test {
+static const size_t Value=Test<Test<T> >::Value;
+};
+不过利用VC的某个bug（或者说特性），可以很容易的写出O(n<sup>a</sup>)编译时间的模版：
+#include <cstddef>
+<p align="left">#define INNER(A3,N3,A2,N2) \
+template<size_t N3>\
+struct A3\
+{\
+enum {N=A3<N3-1>::N+1};\
+};\
+template<>\
+struct A3<0>\
+{\
+enum {N=A2<N2-1>::N};\
+};
+<p align="left">#define OUTER(A2,N2,A1,N1,A3,CONTENT) \
+template<size_t N2>\
+struct A2\
+{\
+CONTENT\
+\
+enum {N=A3<N2>::N};\
+};\
+template<>\
+struct A2<0>\
+{\
+enum {N=A1<N1-1>::N};\
+};
+<p align="left">#define LEVEL2(a,b,c) INNER(A##b,N##b,A##a,N##a)
+#define LEVEL3(a,b,c) OUTER(A##b,N##b,A##a,N##a,A##c,LEVEL2(a##1,b##1,c##1))
+#define LEVEL4(a,b,c) OUTER(A##b,N##b,A##a,N##a,A##c,LEVEL3(a##1,b##1,c##1))
+#define LEVEL5(a,b,c) OUTER(A##b,N##b,A##a,N##a,A##c,LEVEL4(a##1,b##1,c##1))
+template<size_t N1>
+struct A1
+{
+LEVEL5(1,11,111)
+enum {N=A11<N1>::N};
+};
+template<>
+struct A1<0>
+{
+enum {N=0};
+};
+这里比较有趣的一点是，标准并不允许这样在模版类里的特化。不知道这个算VC的bug呢还是扩展呢
+A member or a member template may be nested within many enclosing class templates. In an explicit specialization for such a member, the member declaration shall be preceded by a template<> for each enclosing class template that is explicitly specialized
+基于类似的思想，GCC&VC通用的版本也不难写出。
+b、OLE
+虽然通常模版的编译时间都是O(n)的，不过很多编译器的错误信息输出却是O(n<sup>2</sup>)的，利用这一点+很长的类名，很容易造成错误信息的Output Limit Exceed。比如：
+<p align="left">#define ClassName A
+template <int N>
+class ClassName
+{
+enum {Value=ClassName<N-1>::Value};
+};
+int main()
+{
+int n=ClassName<0>::Value;
+}
+如果我把ClassName改成某个很长的名称（现代的编译器都支持很长的变量名），那么错误输出就很容易OLE
+PS：上面的代码在VC8里会直接出ICE，不过这是VC8的bug。VC2008没有这样的问题

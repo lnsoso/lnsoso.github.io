@@ -1,0 +1,14 @@
+---
+layout: post
+title: ScribeFire 试用
+author: Alvin
+date: !binary |-
+  MjAwOC0xMC0wMSAwMDoyMjozNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wOS0zMCAxNjoyMjozNSArMDgwMA==
+---
+这是在 ScribeFire 下的第一篇 BLOG，还是比较 easy 的，并且因为是集成在 FF 里，所以“感觉”比 Windows Live Writer 快不少。
+自动检测使用的 BLOG 这个功能不错，不过不知道能不能同时 publish 到多个地方。
+特别是左侧的 Ad, Promote 等这些功能，很有爱~！
+<a href="http://www.flickr.com/photos/20881331@N00/2440640737"><img src="http://farm3.static.flickr.com/2376/2440640737_20c15c6268.jpg" /></a>
+ScribeFire 使用界面

@@ -1,0 +1,45 @@
+---
+layout: post
+title: 以图换字的几个方法及思路
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNCAxNDoyNzoyMSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNCAwNjoyNzoyMSArMDgwMA==
+---
+今天有个朋友做网页的时候遇到个问题：想保留链接的背景，但又要链接里的文字消失！可是弄了半天一直没办法把这个文字去掉。我想很多学标准的朋友都遇到过这个问题，这里我把常用的几个方法写出来，把思路也讲一下，希望能帮助刚开始学习的朋友。
+“以图换字”就是用图片替换文字表现。我们都知道，文字在浏览器里的表现形式是很差的，会有锯齿，没办法圆润还有没办法做很多效果。一般情况下网页的内容部分是不需要做效果的，但是在WEB标准中对于LOGO、标题，常常需要用到这些。用表格来做的话我们只是在某个地方帖上一张图，这样的方式比较简单，但是不利于搜索。所以我们需要采用标准方式来做，保证网页处于一种良好的状态而有利于搜索。通常以图
+显示消失：(display:none;) 这不只是让容器内的内容消失而是包括容器本身都消失。所以我们必需在容器内再做一个容器来保证内消失部分之后，容器内的背景可以正常显示。例 ：
+<pre>
+<div id="logo">标题内容</div>
+#logo {display:none; background:URL; width:300px; height:100px;}</pre>
+如果是这样写那么你根本什么也看不到。那正确的方式是什么写呢？看示例：
+<pre>
+<div id="logo"><span>标题内容</span></div>
+#logo {background:URL; width:300px; height:100px;}
+#logo span {display:none;}</pre>
+大家注意上面的代码，背景是在#logo下定义，而#logo span下除了display:none;没有任何样式。因为被定义了display:none;属性的容器会一无所见，如果定义其它样式也是浪费。光是这样还是有问题，这是个没有链接的例子，那有链接的时候怎么办呢？我们再来看个例子：
+<pre>
+<div id="logo"><a href="URL" title="标题">标题内容</a></div>
+#logo {background:URL; width:300px; height:100px;}
+#logo a {display:none;}</pre>
+大家猜一下这个代码能显示出东西吗？事实是背景显示了，可是链接没了。我们上面说过：被赋于了display:none;属性的容器自身也会消失。那我们就清楚了，必需要在这个A标签里加个容器。我们再看示例：
+<pre>
+<div id="logo"><a href="URL" title="标题"><span>标题内容</span></a></div>
+#logo {background:URL; width:300px; height:100px;}
+#logo a span {display:none;}</pre>
+这样的是不是就正确了呢？还是不行，为什么呢，我们都知道A不是块级标签，也就是说A的高宽都是内容来决定的，现在内容消失了，也就没有了这个高宽的属性了，那么这个链接也就成了一个没有热区的链接了。可能是点不着的。我们必需要把上面的代码再做修改。
+<pre>
+<div id="logo"><a href="URL" title="标题"><span>标题内容</span></a></div>
+#logo a {background:URL; width:300px; height:100px; display:block;}
+#logo a span {display:none;}</pre>
+注意这里的A标签的属性一定要加上display:block;把他强制为块级元素。这样A标签就成了一个宽为300高为100，有一个背景没有文字内容的链接形式。大家看到了上面在A标签里还加了一个span标签，好像有点多余。能不能不用span也可以实现效果呢。可以，不过思路就不一样了，而是下面的这种位置移动法。
+位置移动：也就是让内容啊分进行位置移动，移出显示区之外。我们还是看代码来了解这个方法。
+<pre>
+<div id="logo"><a href="URL" title="标题">标题内容</a></div>
+#logo, #logo a {width:300px; height:100px; overflow:hidden;}
+#logo a {background:URL; padding:100px 0 0; display:block;}</pre>
+在CSS中设置了#logo与A有一个溢出隐藏(overflow:hidden;)也就是说有超出300*100大小的就会被隐藏。我们看A被定义了一个padding:100px 0 0; 这个顶部的内距正好把内容压到了显示区以外。那为什么#logo也要用overflow:hidden;呢？因为在IE下会出现一个小BUG，A的内容没办法溢出隐藏所以必需要在父级标签上还要加一个overflow:hidden;
+以上内容只是我比较常用的两种方法，当然还会有一些别的方式方法，这些方法都有各自的有缺点，不过各种方法之间也都有互补的。在应用时可以依据情况选择使用即可。
+进入经典论坛参加讨论：<a href="http://bbs.blueidea.com/thread-2686591-1-1.html">http://bbs.blueidea.com/thread-2686591-1-1.html</a>
+原文转自：<a href="http://andymao.com/andy/post/61.html">http://andymao.com/andy/post/61.html</a>

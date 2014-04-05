@@ -1,0 +1,13 @@
+---
+layout: post
+title: LinkedIn 的工作环境
+author: Alvin
+date: !binary |-
+  MjAwOC0wNy0wOSAxMjo1Mzo0MyArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wNy0wOSAwNDo1Mzo0MyArMDgwMA==
+---
+http://blog.linkedin.com/blog/2008/06/linkedin-is-99.html     
+<strong>"A new engineer that comes in gets a new MacPro with dual quad-core CPUs and 12GB of ram and a MacBook Pro."</strong>     
+<img src="http://farm4.static.flickr.com/3145/2607339241_04ce51625c.jpg" border="0" />     
+<img src="http://farm4.static.flickr.com/3290/2608168608_735e276110.jpg" border="0" />

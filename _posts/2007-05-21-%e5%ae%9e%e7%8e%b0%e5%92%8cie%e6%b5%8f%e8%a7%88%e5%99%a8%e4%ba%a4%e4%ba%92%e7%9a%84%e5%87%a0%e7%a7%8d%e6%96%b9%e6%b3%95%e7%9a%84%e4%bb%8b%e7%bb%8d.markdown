@@ -1,0 +1,87 @@
+---
+layout: post
+title: 实现和IE浏览器交互的几种方法的介绍
+author: Alvin
+date: !binary |-
+  MjAwNy0wNS0yMSAxMDo1MzoyMiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wNS0yMSAwMjo1MzoyMiArMDgwMA==
+---
+内容 
+实现和IE浏览器交互的几种方法的介绍 
+---- 1．引言 
+---- 如何实现对IE浏览器中对象的操作是一个很有实际意义问题，通过和IE绑定的DLL我们可以记录IE浏览过的网页的顺序，分析用户的使用行为和模式。我们可以对网页的内容进行过滤和翻译，可以自动填写网页中经常需要用户填写的Form内容等等,我们所有的例子代码都是通过VC来表示的，采用的原理是通过和IE对象的接口的交互来实现对IE的访问。实际上是采用COM的技术，我们知道COM是和语言无关的一种二进制对象交互的模式，所以实际上我们下面所描述的内容都可以用其他的语言来实现，比如VB，DELPHI，C++ Builder等等。 
+---- 2．IE实例遍历实现 
+---- 首先我们来看系统是如何知道当前有多少个IE的实例在运行。 
+---- 我们知道在Windows体系结构下，一个应用程序可以通过操作系统的运行对象表来和这些应用的实例进行交互。但是IE当前的实现机制是不在运行对象表中进行注册，所以需要采用其他的方法。我们知道可以通过ShellWindows集合来代表属于shell的当前打开的窗口的集合，而IE就是属于shell的一个应用程序。 
+---- 下面我们描述一下用VC实现对当前 IE实例的进行遍历的方法。IShellWindows是关于系统shell的一个接口，我们可以定义一个如下的接口变量： 
+SHDocVw::IShellWindowsPtr m_spSHWinds;
+然后创建变量的实例：
+   m_spSHWinds.CreateInstance
+   (__uuidof(SHDocVw::ShellWindows));
+通过IShellWindows接口的方法GetCount
+可以得到当前实例的数目：
+      long nCount = m_spSHWinds- >GetCount();
+通过IShellWindows接口的方法Item
+可以得到每一个实例对象
+    IDispatchPtr spDisp;
+    _variant_t va(i, VT_I4);
+    spDisp = m_spSHWinds->Item(va);
+然后我们可以判断实例对象是不是
+属于IE浏览器对象，通过下面的语句实现：
+    SHDocVw::IWebBrowser2Ptr spBrowser(spDisp);
+    assert(spBrowser != NULL)
+----在得到了IE浏览器对象以后，我们可以调用IWebBrowser2Ptr接口的方法来得到当前的文档对象的指针： MSHTML::IHTMLDocument2Ptr spDoc(spBrowser->GetDocument()); 
+---- 然后我们就可以通过这个接口对这个文档对象进行操作，比如通过Gettitle得到文档的标题。 
+---- 我们在浏览网络的时候，一般总会同时开很多IE的实例，如果这些页面都是很好的话，我们可能想保存在硬盘上，这样，我们需要对每一个实例进行保存，而如果我们采用上面的原理，我们可以得到每一个IE的实例及其网页对象的接口，这样就可以通过一个简单的程序来批量的保存当前的所有打开的网页。采用上面介绍的方法实现了对当前IE实例的遍历，但是我们希望得到每一个IE实例所产生的事件，这就需要通过DLL的机制来实现。 
+---- 3．和IE相绑定的DLL的实现 
+---- 我们介绍一下如何建立和IE进行绑定的DLL的实现的过程。为了和IE的运行实例进行绑定，我们需要建立一个能够和每一个IE实例进行绑定的DLL。IE的启动过程是这样的，当每一个IE的实例启动的时候，它都会在注册表中去寻找这个的一个CLSID，具体的注册表的键位置为： 
+HKEY_LOCALL_MACHINESOFTWAREMicrosoftWindows
+CurrentVersionExplorerBrowser Helper Objects
+---- 当在这个键位置下存在CLSIDs的时候，IE会通过使用CoCreateInstance()方法来创建列在该键位置下的每一个对象的实例。注意对象的CLSIDs必须用子键而非启动过程是这样的，当每一个IE的实例启动的时候名字值的形式表现，比如{DD41D66E-CE4F-11D2-8DA9-00A0249EABF4} 就是一个有效的子键。我们使用DLL的形式而非EXE的形式的原因是因为DLL和IE实例运行在同一个进程空间里面。每一个这种形式的DLL必须实现接口IObjectWithSite，其中方法SetSite必须被实现。通过这个方法，我们自己的DLL就可以得到一个指向IE COM对象的IUnknown的指针，实际上通过这个指针我们就可以通过COM对象中的方法QueryInterface来遍历所有可以得到的接口，这是COM的基本的机制。当然我们需要的只是IWebBrowser2这个接口。 
+---- 实际上我们建立的是一个COM对象，DLL只不过是COM对象的一种表现形式。我们建立的COM对象需要建立和实现的方法有： 
+----1． IOleObjectWithSite接口的方法SetSite必须实现。实际上IE实例通过这个方法向我们的COM对象传递一个接口的指针。假设我们有一个接口指针的变量，不妨设为： 
+----CComQIPtr< IWebBrowser2, &IID_IWebBrowser2 > m_myWebBrowser2; 
+---- 我们就可以在方法SetSite中把这个传进来的接口指针赋给m_myWebBrowser2。 2． 在我们得到了指向IE COM对象的接口后，我们需要把自己的DLL和IE实例所发生的事件相关连,为了实现这个目的，需要介绍两个接口： 
+----（1） IConnectionPointContainer。： 
+----CComQIPtr< IWebBrowser2, &这里使用这个接口的目的是用来根据它得到的IID来建立和DLL的一个特定的连接。比如我们可以进行如下的定义： 
+CComQIPtr< IConnectionPointContainer,
+&IID_IConnectionPointContainer >          
+spCPContainer(m_myWebBrowser2);
+----然后，我们需要把所有IE中发生的事件和我们的DLL进行通讯，可以使用 IConnectPoint。 
+----（2） IConnectPoint。通过这个接口，客户可以对连接的对象开始或者是终止一个advisory循环。IConnectPoint有两个主要的方法，一个为Advice，另一个为Unadvise。对于我们的应用来说，Advise是用来在每一个IE发生的事件和DLL之间建立一个通道。而Unadvise就是用来终止以前用Advise建立的通知关系。比如我们可以定义IConnectPoint接口如下： CComPtr< IConnectionPoint > spConnectionPoint; 
+---- 然后，我们要使所有在IE实例中发生的事件和我们的DLL相关，可以使用 如下的方法： 
+hr = spCPContainer->FindConnectionPoint(
+DIID_DWebBrowserEvents2, &spConnectionPoint);
+----然后我们通过IConnectPoint接口的方法Advice使每当IE有一个新的事件发生的时候，都能够让我们的DLL知道。可以用如下的语句实现： 
+hr = spConnectionPoint- >Advise(
+(IDispatch*)this, &m_dwIDCode);
+----在把IE实例中的事件和我们的DLL之间建立联系以后，我们可以通过IDispatch接口的Invoke()方法来处理所有的IE的事件。 
+----3． IDispatch接口的Invoke()方法。IDispatch是从IUnknown中继承的一个接口的类型，通过COM接口提供的任何服务都可以通过IDispatch接口来实现。IDispatch::Invoke的工作方式同vtbl幕后的工作方式是类似的，Invoke将实现一组按索引来访问的函数，我们可以对Invoke方法进行动态的定制以提供不同的服务。Invoke方法的表示如下： 
+STDMETHOD(Invoke)(DISPID dispidMember,REFIID
+riid, LCID lcid, WORD wFlags,
+DISPPARAMS * pdispparams, VARIANT * pvarResult,
+EXCEPINFO * pexcepinfo, UINT * puArgErr);
+----其中，DISPID是一个长整数，它标识的是一个函数。对于IDispatch的某一个特定的实现，DISPID都是唯一的。IDispatch的每一个实现都有其自己的IID,这里dispidMemeber实际上是可以认为是和IE实例所发生的每一个事件相关的方法，比如：DISPID_BEFORENAVIGATE2，DISPID_NAVIGATECOMPLETE2等等。 这个方法中另外一个比较重要的参数是DISPPARAMS，它的结构如下： 
+typedef struct tagDISPPARAMS
+   {
+       VARIANTARG* rgvarg;
+//VARIANTARG是同VARAIANT相同的，可以在
+    //OAIDL.IDL中找到。所以实际上rgvarg是一个参数数
+     //组
+       DISPID*  rgdispidNameArgs;  //命名参数的DISPID
+       unsigned int cArgs;    //表示数组中元素的个数
+       unsigned int CnameArgs;  //命名元素的个数
+   }DISPPARAMS
+----要注意的是每一个参数的类型都是VARIANTARG，所以在IE和我们DLL之间可以传递的参数类型的数目是有限的。只有那些能够被放到VARIANTARG结构中的类型才可以通过调度接口进行传递。 比如对于事件DISPID_NAVIGATECOMPLETE2来说：第一个参数表示IE在访问的URL的值，类型是VT_BYREF|VT_VARIANT。注意DISPID_NAVIGATECOMPLETE2等DISPID已经在VC中被定义，我们可以直接进行使用。 如上说述，我们在方法Invoke中可以得到所有IE实例所发生的事件，我们可以把这些数据放到文件中进行事后的分析，也可以放到一个列表框中实时的显示。 
+---- 4．微软的HTML文档对象模型和应用分析 
+---- 下面我们来看如何得到网页文档的接口：网页文档的接口为IHTMLDocument2，可以通过调用IE COM对象的get_Document方法来得到网页的接口。使用如下的语句： 
+hr = m_spWebBrowser2- >get_Document(&spDisp);
+CComQIPtr< IHTMLDocument2, 
+&IID_IHTMLDocument2 > spHTML;
+spHTML = spDisp;
+---- 这样我们就得到了网页对象的接口，然后我们就可以对网页进行分析，比如通过IHTMLDocument2提供的方法get_URL我们可以得到和该网页相关的URL的地址值，通过get_forms方法可以该网页中所有的Form对象的集合。实际上W3C组织已经制定了一个DOM（Document Objec Model）标准，当然这个标准不仅仅是针对HTML，同时还是针对XML制定的。W3C组织只是定义了网页对象的接口，不同的公司可以采用不同的语言和方法进行具体的实现。按照W3C组织定义的网页对象被认为是动态的，即用户可以动态的对网页对象里面所包含的每一个对象进行操作。这里的对象可以是指一个输入框，也可以是图象和声音等对象。同时按照W3C的正式文档的说明，网页对象是可以动态增加和删除的。事实上，很少有厂商实现了DOM定义的所有功能。微软对网页对象的定义也基本上是按照这个标准实现的。但是当前的接口还不支持动态的增加和删除元素，但是可以对网页中的基本元素进行属性的修改。比如IHTMLElementCollection表示网页中一些基本的元素的集合，IHTMLElement表示网页中的一个基本的元素。而象IHTMLOptionElement接口就表示一个特定的元素Option。基本的元素都有setAttribute和geAttribute方法来动态的设置和得到元素的名称和值。 
+---- 较为常见的一个应用是我们能够分析网页中是否有需要填写的Forms，如果这个网址的Forms以前已经填写过而且数据我们已经保存下来的话，我们就可以把数据自动放到和该URL下的Forms的相关的位置中去。另外，我们可以总结网页上需要填写的Form的数据项，先对这些数据项进行赋值，以后碰到有相同的数据项的时候就自动把我们赋值的内容填写进去。实际上Form是对象，Form中包含的元素，比如INPUT，OPTION，SELECT等类型的输入元素都是对象。 
+---- 另外一个可以想到的应用是自动对网页中的文本进行翻译，因为我们可以修改网页中任何对象的属性，所以我们可以把里面不属于本国语言的部分自动翻译成本国语言，当然真正的实现还要靠自然语言理解方面技术的突破，但是IE浏览器的接口和对象的形式使我们能够灵活的控制整个IE，无论是从事件对象还是到网页对象。 
+---- 5．小结 
+---- 上面我们分析了如何得到所有IE的实例，同时介绍了和IE实例相捆绑的DLL的详细的实现机制，同时对网页的对象化进行了分析。并且介绍了几个相关的应用和实现的方法及存在的技术问题。IE是一个组件化的以COM为基础的浏览器，它具有强大的功能，同时为应用开发者留下了广阔的空间，当然它也存在体积比较大，速度相对比较慢的缺点。但是它的体系结构代表了微软先进的创新的技术，因此具有强大的生命力。

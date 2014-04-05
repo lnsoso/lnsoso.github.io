@@ -1,0 +1,15 @@
+---
+layout: post
+title: 常见设计模式的解析和实现(C++) - 超强!!!!
+author: Alvin
+date: !binary |-
+  MjAwNi0xMS0xOSAxMTo1Njo1NCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0xOSAwMzo1Njo1NCArMDgwMA==
+---
+最常用的设计模式, 及完全的代码, 及整洁的PDF文档. (全中文)
+并在附件中带有全套的VC7.1 工程代码, 无Error可编译过.
+经典啊!!!!!!!!~~~~~~~~~ 快下啊~~~
+下载地址:
+     http://www.cppblog.com/Files/converse/常见设计模式的解析和实现(C++).rar  
+转至<a href="http://www.cppblog.com">www.cppblog.com</a>

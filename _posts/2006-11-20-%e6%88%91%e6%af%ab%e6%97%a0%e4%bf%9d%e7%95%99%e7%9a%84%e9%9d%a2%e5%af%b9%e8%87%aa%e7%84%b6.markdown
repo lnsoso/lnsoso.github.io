@@ -1,0 +1,12 @@
+---
+layout: post
+title: 我毫无保留的面对自然
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0yMCAxNDo1MjozOSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0yMCAwNjo1MjozOSArMDgwMA==
+---
+想起了小时候,在大姨家过夏天的时候......
+亲近大自然的感觉很好......经常会有一些奇思妙想,我想,如果在那种环境里进行开发的话,产品会做得更好一些吧.
+:)

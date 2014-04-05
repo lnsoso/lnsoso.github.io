@@ -1,0 +1,16 @@
+---
+layout: post
+title: ! '[转] 关于OTL的解释'
+author: gavinkwoe
+date: !binary |-
+  MjAwOC0wNS0wMSAxMjozMTowNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wNS0wMSAwNDozMTowNyArMDgwMA==
+---
+- -p  某天很闲上了某人的部落格，发现了一些象形文字……
+OTL------- 这个人跪倒了
+DTL------- 这个人头撞墙了
+PTL------- 这个人撞墙以后头流血了
+QTL------- 这个人跪倒哭了
+OLV------- 这个人仰面倒地上了
+FAINT！，转至http://blog.xdnice.com/user1/3620/index.shtml

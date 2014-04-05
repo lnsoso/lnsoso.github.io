@@ -1,0 +1,11 @@
+---
+layout: post
+title: Sun 的 3D DESKTOP
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMi0yNCAxNTowODo0MSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMi0yNCAwNzowODo0MSArMDgwMA==
+---
+<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/EjQ4Nza34ak"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/EjQ4Nza34ak" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>
+相比之下,好像只有 Vista 的效果最差了......

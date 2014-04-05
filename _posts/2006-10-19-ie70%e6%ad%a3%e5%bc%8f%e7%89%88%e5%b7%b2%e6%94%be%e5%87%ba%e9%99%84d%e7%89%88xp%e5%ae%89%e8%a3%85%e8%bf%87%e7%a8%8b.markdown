@@ -1,0 +1,15 @@
+---
+layout: post
+title: IE7.0正式版已放出(附D版XP安装过程)
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMC0xOSAyMDo1Nzo1MyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0xOSAxMjo1Nzo1MyArMDgwMA==
+---
+IE 7.0可以从新浪获取, <a href="http://tech.sina.com.cn/down/">http://tech.sina.com.cn/down/</a>.
+安装过程:
+1) 查看C:\Documents and Settings\All Users\Application Data\Windows Genuine Advantage\data目录，删除data.dat文件。
+2) 打开"网络连接"，将网卡禁用。
+3) 安装IE7.0
+4) OK

@@ -1,0 +1,20 @@
+---
+layout: post
+title: 【越狱】20款 Prison Break 风格 WinXP登陆界面
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0xNiAxMTowMjozMiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0xNiAwMzowMjozMiArMDgwMA==
+---
+<img style="WIDTH: 510px; CURSOR: pointer" onclick="javascript:window.open(this.src);" src="http://photo4.yupoo.com/20061115/204228_1350662016_uapxrwqf.jpg" onload="javascript:if(this.width>510){this.resized=true;this.style.width=510;}" border="0" resized="resized" alt="" />
+ 
+<strong><img style="CURSOR: pointer" onclick="javascript:window.open(this.src);" src="http://www.live-share.com/misc/icons/rar.gif" onload="javascript:if(this.width>510){this.resized=true;this.style.width=510;}" alt="" /> </strong><a href="http://www.live-share.com/files/92100/windows_Xp__Prison_Break____.rar.html" target="_blank"><strong><font color="#1a6be6">windows Xp Prison Break登陆界面.rar</font></strong></a>  <strong><font color="#1a6be6">（<font size="2">1027X768格式）</font></font></strong>
+<strong><font color="#ff0066">安装方法：</font></strong>
+<font color="#ff0066" size="2">将logonui.exe文件解压到 X:\windows\system32下替换原文件
+（X 指系统盘）
+如显示windows保护提示 
+取消windows保护-点击-是！（取消windows保护.JPG）
+替换前请先自行备份原logonui.exe文件！
+替换后按注销系统或按WINKEY+L键 即可查看效果~！
+也可以使用压缩包内工具替换</font>

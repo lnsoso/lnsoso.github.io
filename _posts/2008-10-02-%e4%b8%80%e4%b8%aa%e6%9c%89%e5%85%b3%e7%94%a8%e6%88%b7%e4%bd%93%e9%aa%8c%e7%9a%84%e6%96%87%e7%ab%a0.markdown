@@ -1,0 +1,79 @@
+---
+layout: post
+title: 一个有关用户体验的文章
+author: Alvin
+date: !binary |-
+  MjAwOC0xMC0wMiAxNzo0NzozOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMC0wMiAwOTo0NzozOCArMDgwMA==
+---
+一直坚信细节决定成败，在 BLUEIDEA 碰巧看到这篇有关用户体验的文章，讲述的内容都是很简单的，但是实际在工作中，有些东西我也总遗忘，转载过来和大家共享吧。
+<!--more-->
+<blockquote>
+以下是我做美工的两年生活中一条条总结出来的经验，每一点都是我常用的，虽然不是什么大学问，但我觉得要互相学习才能提高，所以现在拿出来和大家一起分享，如果你觉得实用就拿去试试，然后留个评论，我就很高兴了，不喜欢的可以路过。费话少说，下面正式开始。
+1.加载大图片时，显示loading小图片。
+这招是我最常用的。当我们要加载一张比较大的图片时，如果能加载图片的同时，显示loading的小图片，那样看起来就人性化很多。当加载完成时，图片会盖住loading小图片，这是一个很有用的小技巧，我的每个网站都加上了这个功能，不信你可以到这个页面看，http：//www.82xuexi.cn/html/2008-09/245.htm这个页面是我专门做来演示这个示例的，上面我放了一张很大的图片，应该可以看清加载过程。要实现这个小功能，只要在网站的公共样式表上添加下面这个样式 ，就可以实现了。
+img {
+background-image：url（loading.gif）;
+background-position：center;
+background-repeat：no-repeat;
+}
+解释一下上面的代码，懂CSS的站长可以略去这段。第一行“img”指向页面的全体图片元素（看到样式表的优势了吧，只要一句，就能作用于网站的全体同类元素，不是DIV+CSS的网站站长是不是有想法了？呵呵）。第二行“background-image：url（loading.gif）;”是指为图片添加一个以图片为背景的背景（读起来有点拗口）。这个loading.gif是你要你自己上传的加载小图片。不过有些网站的images文件夹里已经有这个图片了，直接用就行，如果你确实不想到处找的话，我这里有一堆，选一个你喜欢的玩玩吧：http：//www.82xuexi.cn/html /2008-09/333.htm。第三行：background-position：center;把背景图片居中，这样看起来比较顺眼。第四行：background-repeat：no-repeat;就是让loading.gif小图片只显示一个，如果没有这句，就用出现很多排列起来的 loading.gif小图片，这要注意一下。
+2.选填表单右边显示“可不填”。
+这是我最初在QQ网站的留言本上看到的，当时看到个人信息的一些表单旁边写着“可不埴”的时候，真的是感觉非常舒服，你想想，人家好不容易有空给你留言，你还想人家慢慢看你的留言说明吗？给你留言，当然想简要完事啦。你却动不动跳出个“表单内容不能有空”这不把人家吓跑才怪。这个小技巧可以应用于各大论坛的用户注册，留言本等地方，不要只在必填框旁边加个红*就算了，这样对于熟悉网站的人来说当然没问题，但你要考虑到各种各样的网民。“可不填”三个字，就能大大提高用户体验，为什么不试试呢。
+3.保证每个页面都有回首页的连接。
+为什么要主这个呢？因为我看到很多网站都没注意到这个小细节，有一次我在一个论坛上登陆，成功后，他跳转到另一个页面提示登陆成功，等了十几秒它都不自动返回，但我又已经顺手把多的页面关掉了，所以，只剩下一个页面了，我又不能返回，他又没有返回首页的链接，一气之下，我就关掉浏览器走人了。所以，建议站长朋友们有空多检查一下自己的网站，看是不是有些页面是孤独的。
+4.在执行AJAX操作时，如果响应时间过长，应提示用户加载超时。
+这个在AJAX中，可以使你的程序更人性化的小技巧，不多说了，你看下面的代码就明白。如果你看不明白的话，就不要乱改网站，会出错的。这是一个用户验证的程序片段，注意红色部分。
+var timeLast;
+//发送信息
+function submitSelectItem（）
+{
+var postStr=“uid=”+document.getElementById（“userName”）.value+“&pwd=”+hex_md5
+（document.getElementById（“passWord”）.value）;
+timeLast=window.setTimeout（“show_timeout（）”，15000 ）;//超过15000毫秒后显示超时
+show_waitting（）;
+createXMLHTTP（）;//创建XMLHttpRequest对象
+var url=“ajax/chcekUser.aspx？time=”+TimeDemo（）;
+xmlHttp.open（“POST”，url，true）;
+xmlHttp.setRequestHeader（“Content-Type”，“application/x-www-form-urlencoded：charset=UTF-8”）;
+xmlHttp.onreadystatechange=getResponseRusult;
+xmlHttp.send（postStr）;
+}
+//回调函数
+function getResponseRusult（）
+{
+if（xmlHttp.readyState==4）//判断对象状态
+{
+if（xmlHttp.status==200）//信息成功返回，开始处理信息
+{
+clearTimeout（window.timeLast）;
+var reint=xmlHttp.responseText;
+switch （reint） {
+case “1”：
+show_success（）;break ;
+case “2” ：
+show_tryCountOut（）;break ;
+default ：
+show_error（）;break ;
+}
+}
+}
+}
+5.可能的不良后果提前提醒用户。
+如果你的页面很大，特别是要用到很多表格时，加载时间可能会很长，这时候要提前告诉用户。“页面可能加载时间比较长，请耐心等待。..。”之类的。
+6.拿到美工做给你的页面，一定要测试不同的浏览器。
+这主要是有些美工不太负责，你不要求他就不测试。所以要自己测试一下，发现在其它浏览器显示不正常时，要求美工修改。我做的页面都经过火孤，IE6，IE7，OPERA等测试才交给客户的。我觉得交给客户不成熟的东西会对自己形像不好。
+7.文章标题采用缩略时，要在“title“有完整描述。
+这点在很多SEO教程中都说过的，我就不分析了。
+8.用户人性关怀。
+如果网站使用了注册制度，主页应该为新用户和老用户登录提供链接。并且要有某种方式让我知道自己已经登录了，友好方法（“欢迎回到不爱学习网，lanmeng”）。
+9.让我看到自己正在寻找东西。
+主页应该让我想要任何东西显而易见&mdash;&mdash;如果它在站内某个地方话。。.. 。.. 还有我没有寻找。同时，主页也应该让我看到一些很精彩，我也许感兴趣内容&mdash;&mdash;就算我并没有寻找它们。
+10.告诉我从哪里开始。
+在一个新网站里，无从下手感觉糟糕透了。这点对新用户比较有效。可以这样判断下：
+if（session.isNewSession）{
+//新用户向导。
+}
+</blockquote>
+<a href="http://bbs.blueidea.com/viewthread.php?tid=2888813" target="_blank">原文链接</a>

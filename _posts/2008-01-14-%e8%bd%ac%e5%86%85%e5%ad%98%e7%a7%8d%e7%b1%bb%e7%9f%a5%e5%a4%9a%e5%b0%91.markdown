@@ -1,0 +1,265 @@
+---
+layout: post
+title: ! '[转]内存种类知多少'
+author: gavinkwoe
+date: !binary |-
+  MjAwOC0wMS0xNCAxNjozOToxMiArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wMS0xNCAwODozOToxMiArMDgwMA==
+---
+<pre>    <em>终于知道为什么SDRAM都被CPU当做Internal RAM来用。</em></pre>
+<pre>    凡是对电脑有所了解的朋友都知道内存这玩意，可是，可能有不少朋友对内存的认识仅仅局限在SDRAM和DDR SDRAM这两种类型，事实上，内存的种类是非常多的，从能否写入的角度来分，就可以分为RAM(随机存取存储器)和ROM(只读存储器)这两大类。每一类别里面有分别有许多种类的内存。以下就让我们看看内存到底有些什么种类吧！</pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_01.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　一、RAM(Random Access Memory，随机存取存储器)</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_02.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　RAM的特点是：电脑开机时，操作系统和应用程序的所有正在运行的数据和程序都会放置其中，并且随时可以对存放在里面的数据进行修改和存取。它的工作需要由持续的电力提供，一旦系统断电，存放在里面的所有数据和程序都会自动清空掉，并且再也无法恢复。</pre>
+<pre>
+ </pre>
+<pre>　　根据组成元件的不同，RAM内存又分为以下十八种：</pre>
+<pre>
+ </pre>
+<pre>　　01.DRAM（Dynamic RAM，动态随机存取存储器）：</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_03.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　这是最普通的RAM，一个电子管与一个电容器组成一个位存储单元，DRAM将每个内存位作为一个电荷保存在位存储单元中，用电容的充放电来做储存动作，但因电容本身有漏电问题，因此必须每几微秒就要刷新一次，否则数据会丢失。存取时间和放电时间一致，约为2~4ms。因为成本比较便宜，通常都用作计算机内的主存储器。</pre>
+<pre>
+ </pre>
+<pre>　　02.SRAM（Static RAM，静态随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_04.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　静态，指的是内存里面的数据可以长驻其中而不需要随时进行存取。每6颗电子管组成一个位存储单元，因为没有电容器，因此无须不断充电即可正常运作，因此它可以比一般的动态随机处理内存处理速度更快更稳定，往往用来做高速缓存。</pre>
+<pre>
+ </pre>
+<pre>　　03.VRAM（Video RAM，视频内存）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_05.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　它的主要功能是将显卡的视频数据输出到数模转换器中，有效降低绘图显示芯片的工作负担。它采用双数据口设计，其中一个数据口是并行式的数据输出入口，另一个是串行式的数据输出口。多用于高级显卡中的高档内存。</pre>
+<pre>
+ </pre>
+<pre>　　04.FPM DRAM（Fast Page Mode DRAM，快速页切换模式动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_06.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　改良版的DRAM，大多数为72Pin或30Pin的模块。传统的DRAM在存取一个BIT的数据时，必须送出行地址和列地址各一次才能读写数据。而FRM DRAM在触发了行地址后，如果CPU需要的地址在同一行内，则可以连续输出列地址而不必再输出行地址了。由于一般的程序和数据在内存中排列的地址是连续的，这种情况下输出行地址后连续输出列地址就可以得到所需要的数据。FPM将记忆体内部隔成许多页数Pages，从512B到数KB不等，在读取一连续区域内的数据时，就可以通过快速页切换模式来直接读取各page内的资料，从而大大提高读取速度。在96年以前，在486时代和PENTIUM时代的初期，FPM DRAM被大量使用。</pre>
+<pre>
+ </pre>
+<pre>　　05.EDO DRAM（Extended Data Out DRAM，延伸数据输出动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_07.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　这是继FPM之后出现的一种存储器，一般为72Pin、168Pin的模块。它不需要像FPM DRAM那样在存取每一BIT 数据时必须输出行地址和列地址并使其稳定一段时间，然后才能读写有效的数据，而下一个BIT的地址必须等待这次读写操作完成才能输出。因此它可以大大缩短等待输出地址的时间，其存取速度一般比FPM模式快15%左右。它一般应用于中档以下的Pentium主板标准内存，后期的486系统开始支持EDO DRAM，到96年后期，EDO DRAM开始执行。。</pre>
+<pre>
+ </pre>
+<pre>　　06.BEDO DRAM（Burst Extended Data Out DRAM，爆发式延伸数据输出动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<pre>　　这是改良型的EDO DRAM，是由美光公司提出的，它在芯片上增加了一个地址计数器来追踪下一个地址。它是突发式的读取方式，也就是当一个数据地址被送出后，剩下的三个数据每一个都只需要一个周期就能读取，因此一次可以存取多组数据，速度比EDO DRAM快。但支持BEDO DRAM内存的主板可谓少之又少，只有极少几款提供支持（如VIA APOLLO VP2），因此很快就被DRAM取代了。</pre>
+<pre>
+ </pre>
+<pre>　　07.MDRAM（Multi-Bank DRAM，多插槽动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_09.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　MoSys公司提出的一种内存规格，其内部分成数个类别不同的小储存库 (BANK)，也即由数个属立的小单位矩阵所构成，每个储存库之间以高于外部的资料速度相互连接，一般应用于高速显示卡或加速卡中，也有少数主机板用于L2高速缓存中。</pre>
+<pre>
+ </pre>
+<pre>　　08.WRAM（Window RAM，窗口随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_10.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　韩国Samsung公司开发的内存模式，是VRAM内存的改良版，不同之处是它的控制线路有一、二十组的输入/输出控制器，并采用EDO的资料存取模式,因此速度相对较快，另外还提供了区块搬移功能（BitBlt），可应用于专业绘图工作上。</pre>
+<pre>
+ </pre>
+<pre>　　09.RDRAM（Rambus DRAM，高频动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_11.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　Rambus公司独立设计完成的一种内存模式，速度一般可以达到500~530MB/s，是DRAM的10倍以上。但使用该内存后内存控制器需要作相当大的改变，因此它们一般应用于专业的图形加速适配卡或者电视游戏机的视频内存中。</pre>
+<pre>
+ </pre>
+<pre>　　10.SDRAM（Synchronous DRAM，同步动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_12.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　这是一种与CPU实现外频Clock同步的内存模式，一般都采用168Pin的内存模组，工作电压为3.3V。 所谓clock同步是指内存能够与CPU同步存取资料，这样可以取消等待周期，减少数据传输的延迟，因此可提升计算机的性能和效率。</pre>
+<pre>
+ </pre>
+<pre>　　11.SGRAM（Synchronous Graphics RAM，同步绘图随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_13.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　SDRAM的改良版，它以区块Block，即每32bit为基本存取单位，个别地取回或修改存取的资料，减少内存整体读写的次数，另外还针对绘图需要而增加了绘图控制器，并提供区块搬移功能（BitBlt），效率明显高于SDRAM。</pre>
+<pre>
+ </pre>
+<pre>　　12.SB SRAM（Synchronous Burst SRAM，同步爆发式静态随机存取存储器）</pre>
+<pre>
+ </pre>
+<pre>　　一般的SRAM是非同步的，为了适应CPU越来越快的速度，需要使它的工作时脉变得与系统同步，这就是SB SRAM产生的原因。</pre>
+<pre>
+ </pre>
+<pre>　　13.PB SRAM（Pipeline Burst SRAM，管线爆发式静态随机存取存储器）</pre>
+<pre>
+ </pre>
+<pre>　　CPU外频速度的迅猛提升对与其相搭配的内存提出了更高的要求，管线爆发式SRAM取代同步爆发式SRAM成为必然的选择，因为它可以有效地延长存取时脉，从而有效提高访问速度。</pre>
+<pre>
+ </pre>
+<pre>　　14.DDR SDRAM（Double Data Rate二倍速率同步动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_16.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　作为SDRAM的换代产品，它具有两大特点：其一，速度比SDRAM有一倍的提高；其二，采用了DLL（Delay Locked Loop：延时锁定回路）提供一个数据滤波信号。这是目前内存市场上的主流模式。</pre>
+<pre>
+ </pre>
+<pre>　　15.SLDRAM （Synchronize Link，同步链环动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_17.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre> </pre>
+<pre>
+ </pre>
+<pre>　　这是一种扩展型SDRAM结构内存，在增加了更先进同步电路的同时，还改进了逻辑控制电路，不过由于技术显示，投入实用的难度不小。</pre>
+<pre>
+ </pre>
+<pre>　　16.CDRAM（CACHED DRAM，同步缓存动态随机存取存储器）</pre>
+<pre>
+ </pre>
+<pre>　　这是三菱电气公司首先研制的专利技术，它是在DRAM芯片的外部插针和内部DRAM之间插入一个SRAM作为二级CACHE使用。当前，几乎所有的CPU都装有一级CACHE来提高效率，随着CPU时钟频率的成倍提高，CACHE不被选中对系统性能产生的影响将会越来越大，而CACHE DRAM所提供的二级CACHE正好用以补充CPU一级CACHE之不足，因此能极大地提高CPU效率。</pre>
+<pre>
+ </pre>
+<pre>　　17.DDRII (Double Data Rate Synchronous DRAM，第二代同步双倍速率动态随机存取存储器)</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_19.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　DDRII 是DDR原有的SLDRAM联盟于1999年解散后将既有的研发成果与DDR整合之后的未来新标准。DDRII的详细规格目前尚未确定。</pre>
+<pre>
+ </pre>
+<pre>　　18.DRDRAM (Direct Rambus DRAM)</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_20.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　是下一代的主流内存标准之一，由Rambus 公司所设计发展出来，是将所有的接脚都连结到一个共同的Bus，这样不但可以减少控制器的体积，已可以增加资料传送的效率。</pre>
+<pre>
+ </pre>
+<pre>　　二、ROM(READ Only Memory，只读存储器)</pre>
+<pre>
+ </pre>
+<pre>　　ROM是线路最简单半导体电路，通过掩模工艺，一次性制造，在元件正常工作的情况下，其中的代码与数据将永久保存，并且不能够进行修改。一般应用于PC系统的程序码、主机板上的 BIOS (基本输入/输出系统Basic Input/Output System)等。它的读取速度比RAM慢很多。</pre>
+<pre>
+ </pre>
+<pre>　　根据组成元件的不同，ROM内存又分为以下五种：</pre>
+<pre>
+ </pre>
+<pre>　　1.MASK ROM（掩模型只读存储器）</pre>
+<pre>
+ </pre>
+<pre>　　制造商为了大量生产ROM内存，需要先制作一颗有原始数据的ROM或EPROM作为样本，然后再大量复制，这一样本就是MASK ROM，而烧录在MASK ROM中的资料永远无法做修改。它的成本比较低。</pre>
+<pre>
+ </pre>
+<pre>　　2.PROM（Programmable ROM，可编程只读存储器）</pre>
+<pre>
+ </pre>
+<pre>　　这是一种可以用刻录机将资料写入的ROM内存，但只能写入一次，所以也被称为“一次可编程只读存储器”(One Time Progarmming ROM，OTP-ROM)。PROM在出厂时，存储的内容全为1，用户可以根据需要将其中的某些单元写入数据0(部分的PROM在出厂时数据全为0，则用户可以将其中的部分单元写入1)， 以实现对其“编程”的目的。</pre>
+<pre>
+ </pre>
+<pre>　　3.EPROM（Erasable Programmable，可擦可编程只读存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_24.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　这是一种具有可擦除功能，擦除后即可进行再编程的ROM内存，写入前必须先把里面的内容用紫外线照射它的IC卡上的透明视窗的方式来清除掉。这一类芯片比较容易识别，其封装中包含有“石英玻璃窗”，一个编程后的EPROM芯片的“石英玻璃窗”一般使用黑色不干胶纸盖住， 以防止遭到阳光直射。</pre>
+<pre>
+ </pre>
+<pre>　　4.EEPROM（Electrically Erasable Programmable，电可擦可编程只读存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_25.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　功能与使用方式与EPROM一样，不同之处是清除数据的方式，它是以约20V的电压来进行清除的。另外它还可以用电信号进行数据写入。这类ROM内存多应用于即插即用（PnP）接口中。</pre>
+<pre>
+ </pre>
+<pre>　　5.Flash Memory（快闪存储器）</pre>
+<pre>
+ </pre>
+<center>
+<pre><img src="http://www.ithard.com/pics/newspic/2004/07/21/040719_hd_kr_memory_26.jpg" /></pre>
+</center>
+<pre>
+ </pre>
+<pre>　　这是一种可以直接在主机板上修改内容而不需要将IC拔下的内存，当电源关掉后储存在里面的资料并不会流失掉，在写入资料时必须先将原本的资料清除掉，然后才能再写入新的资料，缺点为写入资料的速度太慢。</pre>

@@ -1,0 +1,22 @@
+---
+layout: post
+title: C中结构体内存对齐
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMC0yNiAxMTowMDowNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNiAwMzowMDowNSArMDgwMA==
+---
+缺省值是8字节主要是为了速度快，因为如果内存地址是8的倍数，CPU存取的速度最快（这同CPU取数操作有关，详细的介绍可以参考一些计算机原理方面的书）。这样做可能会浪费一些内存。当然这样的设置会在读写一些别的应用程序生成的数据文件或交换数据时带来不便。 
+要修改整个工程中的对齐设置，可以在Settings对话框中选择C/C++标签，然后选择Code Generation分类，在其中修改。 
+也可以使用#pragma pack在程序中改变某部分的对齐设置。你可以参考帮助中的有关说明。
+```c
+#pragma pack(1) //改变结构体的成员对齐设置 
+typedef struct _DATA{ 
+int iM1; 
+int iM2; 
+} 
+    #pragma pack(8) //恢复以前的设置
+```
+
+

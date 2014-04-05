@@ -1,0 +1,12 @@
+---
+layout: post
+title: 很HAPPY
+author: Alvin
+date: !binary |-
+  MjAwOC0xMS0wNyAwOToyMzoxNCArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMS0wNyAwMToyMzoxNCArMDgwMA==
+---
+新机用起来很舒服,老的HP 6910P还在继续发光发热.
+<img src="http://farm4.static.flickr.com/3296/2499989022_b8abc78e38.jpg" />
+

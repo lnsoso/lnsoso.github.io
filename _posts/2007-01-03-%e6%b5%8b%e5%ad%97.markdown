@@ -1,0 +1,15 @@
+---
+layout: post
+title: 测字
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wMS0wMyAxNToxNzowNCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0wMyAwNzoxNzowNCArMDgwMA==
+---
+<a href="http://www.zeyi.net/cezi.asp">点击打开测字网址</a>
+<font face="Tahoma" size="3">您输入的三个汉字为：<font color="#0000ff">命 志 书</font>
+<font color="#cc6600">卦语：</font>
+民乐业 官吏清 雍熙之世 复见如今 告诸人 千秋鸿业 仗此望明君
+<font color="#cc6600">释义：</font>
+         百姓们安居乐业，无忧无患，官吏们清公正，秉公执法，这样一类似雍正，康熙朝代般的太平盛世，如今又出现了(关于雍熙之说，疑为后人撰改补充。) 朋友，让我告诉你们：不管你从事的是哪一类伟大的事业，不管你开创了多么惊人的业绩，这事业的发达和兴旺，都是与国家的命运和前途分不开的，国富民强，国强民才壮。我们千秋鸿业的命运与祖国连在一起。 我们需要加强廉政建设，也要为祖国，为民族作贡献，担忧患。 先有国，而后有家，有了家才有了我。 朋友，你为国，为家，为这个时代做了些什么?</font>

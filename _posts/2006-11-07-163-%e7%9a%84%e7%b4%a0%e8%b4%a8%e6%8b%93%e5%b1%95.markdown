@@ -1,0 +1,11 @@
+---
+layout: post
+title: 163 的素质拓展
+author: Alvin
+date: !binary |-
+  MjAwNi0xMS0wNyAxNDozMjo1MSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0wNyAwNjozMjo1MSArMDgwMA==
+---
+比较整齐嘛,俺们当时怎么没有想到?不过要是想组成我们的LOGO貌似需要很多人的说,哈.
+<img alt="" src="http://www.iamting.com/wp-content/iamtinguploads/2006/11/163_webdp_extii_4063.jpg" />

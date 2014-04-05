@@ -1,0 +1,30 @@
+---
+layout: post
+title: (- -||) 像SB一样入手ATH AD300
+author: gavinkwoe
+date: !binary |-
+  MjAwOC0wOS0xNCAxNzoxODo0MiArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wOS0xNCAwOToxODo0MiArMDgwMA==
+---
+    以400RMB从中关村某JS那入手一部铁三角AD300, 属于Hifi耳机中入门级别的。
+    缺点很多，第一是太重，第二是声音有点混人声不太好（不过比之前PHILIPS的好多了），看下官方介绍吧。
+    ATH-AD300 空气动圈耳机
+    &middot;三维翼支撑提供更大的舒适性并更加贴服
+    &middot;强大的钕磁体确保声音具有强劲效果
+    &middot;耳垫使用柔软顺滑的布织物
+    &middot;舒适、完全适耳的设计可减轻紧固感
+    &middot;40mm直径驱动器专为开放式耳机设计，提供强劲的声音
+    &middot;高纯度OFC输入耳线 (3.0m)
+    &middot;玻璃钢强化外壳
+    型号类别 开放空气动圈型  
+    单元直径 &Oslash;40 mm 
+    驱动单元 钕磁铁 
+    频率响应 20 ~ 25,000Hz 
+    最大功率 300 mW 
+    灵敏度 96 dB/mW 
+    阻抗 32 ohms 
+    重量 250 g 
+    连接端 &Oslash;6.3 / &Oslash;3.5 mm 镀金立体声插头 
+    导线  OFC/ 3.0 m (单侧导线)
+    再来张图，外型还凑合，能虎虎不识货的（包括我在内）～

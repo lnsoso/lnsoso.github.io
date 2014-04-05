@@ -1,0 +1,14 @@
+---
+layout: post
+title: shell log
+author: Alvin
+date: !binary |-
+  MjAxMy0wMi0yMiAxNTo1Mzo0MCArMDgwMA==
+date_gmt: !binary |-
+  MjAxMy0wMi0yMiAwNzo1Mzo0MCArMDgwMA==
+---
+以前写 shell 做 log 时都比较傻大黑粗，今天看到 Yii 的 Pull Request [#2124](https://github.com/yiisoft/yii/pull/2124) 时发现他的写法不错
+
+```bash
+install_memcache > ~/memcache.log || ( echo "=== MEMCACHE BUILD FAILED ==="; cat ~/memcache.log )
+```

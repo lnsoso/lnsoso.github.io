@@ -1,0 +1,187 @@
+---
+layout: post
+title: elf文件格式解析
+author: gavinkwoe
+date: !binary |-
+  MjAxMC0wMS0xMSAyMzo1MjozMSArMDgwMA==
+date_gmt: !binary |-
+  MjAxMC0wMS0xMSAxNTo1MjozMSArMDgwMA==
+---
+<strong>在MTK平台上实现 支持全部变量的动态加载必读。</strong>
+1 Executable and Linkable Format(ELF)初稿，图请参考ELF_Format手册
+1.1 Preface
+ELF-可执行链接格式最初是由UNIX系统实验室(USL)作为应用程序二进制接口(ABI)开发和发行。工具接口标准委员会TIS已经将ELF作为运 行在Intel32位架构之上的各类型操作系统的可导出对象文件格式标准。ELF标准为开发者提供了一组横跨多运行环境的二进制接口定义来组织软件开发。
+1.2 对象文件 $leads................
+1.2.1 介绍
+本部分描述了iABI对象文件格式，也称之为ELF。有三种主要类型的对象文件：
+1. 可重组(relocatable)文件包含了适合用来链接其他对象文件的代码和数据，从而创建出可执行或可共享的对象文件；
+2. 可执行(executable)文件包含了用于执行的程序，该文件规定了exec如何创建一个程序的进程映像；
+3. 可共享对象(shared object)文件包含了用来在两个上下文之间链接的代码和数据。首先，链接器ld将该文件和其他的可重组文件或可共享对象文件进行处理后，创建出新对象 文件，其次，动态链接器将该新对象文件与可执行文件或共享对象组合，来共同创建一个进程映像；
+经过汇编器以及链接器创建成的对象文件，其是在处理器上可直接执行的程序的二进制代表。本部分主要描述文件格式以及其如何用来构建程序。后一部分也描述了对象文件，集中在程序执行所必须的信息上。
+1.2.1.1 文件格式
+在程序链接和程序执行过程都涉及到对象文件。出于方便和效率，对象文件格式图从链接和运行两个视角来展示文件的内容。
+ELF header位于文件的开始处，其用来描述文件的组织结构。Section包含了大量的对象文件信息，从链接的视角来看就是指令、数据、符号表、重组信息等等。Segment和Program是从程序执行视角来观看的，这将在下部分讲解。
+如果存在Program Header table的话，其将告诉操作系统如何创建进程映像。用来创建进程映像（执行程序）的文件必须包含program header table。可重组(relocatable)文件可以没有该信息。Section header table包含了用来描述文件section的信息。每个section在该表中都有一个对应的表项，每个表项给出了诸如section名称、尺寸等等信 息。用于链接的文件必须有section header table，其他的对象文件可有可无。
+这里需要注意的是，虽然图中Program header table紧接着ELF header，section header table紧接着sections，实际的文件中并不一定是这样。而且，sections和segments也可以不按次序排放，只有ELF header是固定在文件的首部。
+1.2.1.2 数据的表示
+对象文件格式支持8位、32位等架构的大量处理器。然而，为了保证其容易扩展到更多的体系架构，因此对象文件提供了一些机器独立的控制数据，用来按照统一 的方式标明和解释对象文件的内容。对象文件中其余的数据都是按照目标处理器硬编码的，当然不用考虑该文件是在哪个文件上创建的。
+对象文件格式中定义的所有数据结构定义都沿守自然尺寸以及对齐原则。必要时，数据结构可以包含填补内容来保证4字节对象的4字节对齐。数据也可以相对于文 件起始位置对齐，例如，包含Elf32_Addr成员的数据结构在文件中将会按照4字节对齐。为了保证可移植性，EFL中不使用bit域。
+1.2.2 ELF Header
+1.2.2.1 ELF Header结构
+一些对象文件控制结构可能会增长，因为ELF header包含了这些结构的实际尺寸。如果对象文件格式发生改变，那么程序有可能会碰到控制结构比原来大或者比原来小的情况，这样，程序有可能就会忽略一些额外的信息。至于这些丢失的信息如何处理，则依赖于上下文环境。
+e_ident 这段最先开始的字节标识该文件为对象文件，并且提供了机器独立的数据，其用来解释文件内容。完整的描述见下面的ELF Identification。
+e_type 该成员指定了对象文件的类型。虽然核心文件内容没有明确的规定，但是ET_CORE类型则专门为该文件保留。
+从0xFF00到0xFFFF，为特定处理器保留。剩余所有其他的值也是保留的，用于新类型的对象文件。 ET_NONE 0 No
+ET_REL 1 Relocatable
+ET_EXEC 2 Executable
+ET_DYN 3 Shared
+ET_CORE 4 Core
+ET_LOPROC 0xff00 Processor-specific
+ET_HIPROC 0xffff Processor-specific
+e_machine 该成员指定了文件适用的计算机架构。除了定义的值之外，其他的值保留，在必要时用于新的计算机架构。
+EM_NONE 0 No
+EM_M32 1 AT&T
+EM_SPARC 2 SPARC
+EM_386 3 Intel
+EM_68K 4 Motorola
+EM_88K 5 Motorola
+EM_860 7 Intel
+EM_MIPS 8 MIPS
+e_version 该成员指定了对象文件版本，1表示该文件为最初文件格式。如果扩展了，则使用更高的编号。 EV_NONE 0 Invalid
+EV_CURRENT 1 Current
+e_entry
+该成员标明了系统接管该进程控制的第一条指令的逻辑地址，从而开始了该进程。如果没有关联切入点，则默认为0。
+e_phoff 该成员包含了program header table的文件偏移地址（按字节），如果该文件没有program header table，则该成员为0。
+e_shoff 该成员包含了section header table的文件偏移地址（按字节），如果该文件没有section header tables，则该成员为0。
+e_flags 该成员包含了文件与处理器相关的标识。
+e_ehsize 该成员包含了ELF header的尺寸（按字节）。
+e_phentsize 包含了program header table中一条表项的字节数，所有表项大小相等。
+e_phnum 包含了program header table中表项的数目。如果该文件没有program header table，则该值为0。
+e_shentsize 包含了section header table中一条表项的字节数，所有表项大小相等。
+e_shnum 包含了section header table中表项的数目。如果该文件不含section header table，则该值为0。
+e_shstrndx section name string table（段名称字符串表）独立构成一个section。
+e_shstrndx成员包含了该section在section header table中表项的索引号。如果该文件不含section name string table，该成员中填充的值为SHN_UNDEF，见&lsquo;&lsquo;Sections&rsquo;&rsquo;和 &lsquo;&lsquo;String Table&rsquo;&rsquo;。
+1.2.2.2 ELF HeaderELF Identification
+像上面提及到的一样，ELF提供了对象文件框架来支持多处理器、多数据编码、多类型的机器。为了支持这些对象文件家族，文件的初始字节必须指明如何解析本文件，而且该指明过程必须和处理器（查询解析信息就是通过该处理器进行的）无关以及和该文件剩余的内容无关。
+EFL Header的初始字节也就是e_ident成员。
+每个字节的具体值及其含义如下：
+EI_MAG0 到EI_MAG3
+文件的头4个字节包含了特征码，其用来表明该文件是一个ELF对象文件
+ELFMAG0 0x7f e_ident[EI_MAG0]
+ELFMAG1 &rsquo;E&rsquo; e_ident[EI_MAG1]
+ELFMAG2 &rsquo;L&rsquo; e_ident[EI_MAG2]
+ELFMAG3 &rsquo;F&rsquo; e_ident[EI_MAG3]
+EI_CLASS
+e_ident[EI_CLASS]指明了文件的种类或容量。
+ELF文件格式在设计时就考虑到了在不同总线宽度的机器中通用，而不用考虑到诸如把最大总线宽度的机器码强加到最小机器上去。
+类别ELFCLASS 32支持高达4GB的虚拟地址空间和文件尺寸，其使用上面定义的基本类型。
+类别ELFCLASS64为64位架构保留，其也表明了对象文件可能的改变，不过64位格式还没有定义。
+其他的类别也会在需要时定义，相应的基本类型和尺寸也会发生变化。 ELFCLASSNONE 0 Invalid
+ELFCLASS32 1 32-bit
+ELFCLASS64 2 64-bit
+EI_DATA
+e_ident[EI_DATA]规定了对象文件中和处理器相关的数据的如何编码。更多的下面会详解。
+ELFDATANONE 0 Invalid
+ELFDATA2LSB 1 See below
+ELFDATA2MSB 2 See below
+EI_VERSION
+e_ident[EI_DATA]指定了EFL header版本号。当前情况下，必须是EV_CURRENT，后面会详细解释。
+EI_PAD
+该值标明了在e_ident中无用字节的开始，这些字节被设置为0，为保留；读取对象文件的进程应该忽略这些字节。如果未来某些未用字节派上用场了，该值在也许会改变。
+文件的数据解码规定了如何翻译文件中的基本对象。如上所述，类别ELFCLASS32文件使用占用1、2、4字节的对象。在编码的前提下，对象的排布如下图所示，序号在每个单元的左上角。
+ELFDATA2LSB编码规范规定了最末端字节占用最低地址：
+ELFDATA2MSB编码规范规定了最末端字节占用最高地址：
+1.2.2.3 ELF Header机器信息
+对于32位Intel体系架构而言，文件标识e_ident中相关成员的值应该如下：
+e_ident[EI_CLASS]= ELFCLASS32
+e_ident[EI_DATA]= ELFDATA2LSB
+同时在ELF header中的e_machine成员必须为EM_286。ELF header中的e_flags成员包含了和文件相关的比特标志位。32位Intel体系架构不需要任何标志位，因此该值为0。
+1.2.3 Section header table及section特征
+1.2.3.1 section header table概述
+对象文件的section header tables使得可以轻而易举的定位所有的section，section header table 是一个Elf32_Shdr结构的数组。section header table index是数组中某个元素的下标。ELF header中的e_shoff成员给出了section header table到文件头的偏移（按字节），e_shnum给出了section header table中包含多少个表项，e_shentsize给出了每个表项的字节数。
+1.2.3.2 section header table特殊的section index
+某些section header table index是保留的，对象文件中的section不应该占用这些特殊index。
+SHN_UNDEF 该值标明了一个没有定义的、丢失的、或者没有意义的section引用，例如，一个“已经定义了”的符号引用了SHN_UNDEF section序号的，则该符号实际被当作为未定义符号。
+注意：虽然索引0被保留为一个未定义的值，但是section header table仍然包含了用于0索引的表项，也就是说，如果e_shnum=6，则索引为0-5 。
+SHN_LORESERVE 该值指定了保留索引的低端。
+SHN_LOPROC 至SHN_HIPROC 此范围内的索引用于特定的处理器，也是保留的。
+SHN_ABS 该值指定了相应引用的绝对值。例如，引用了SHN_ABS section序号的已定义符号，其地址将是绝对的，不会被重组所影响。
+SHN_COMMON 引用该section的符号都是常用的符号，例如FORTRAN COMMON或没有分配的C外部变量。
+SHN_HIRESERVE 该值指定了保留索引高端，系统保留索引在SHN_LORESERVE和SHN_HIRESERVE范围之间（包含SHN_LORESERVE和 SHN_HIRESERVE）。Section head table中不会包含这些保留索引的表项。
+1.2.3.3 section的特征
+除了ELF header、program header table、section header table之外，Section包含了对象文件中的所有信息。另外，对象文件的section还必须满足以下几个要求：
+1. 对象文件中的每个section在section header table中都必须有一个表项来描述它。即使一个section都没有，section header table也可以存在；
+2. 每个section在文件中都占用一段连续字节的空间（当然也可以为空）；
+3. 一个文件中的sections不能重叠，文件中的一个字节不能同时位于一个以上的section中；
+4. 对象文件中可以有不活动的空间，大量的Headers以及sections不一定会覆盖对象文件的每个字节，不活动数据的内容是不确定的。
+1.2.4 section header tablesection header
+1.2.4.1 section header结构
+section header的结构如下：
+1. sh_name: 该成员指定了section的名称，其值为section “section header string table”（注意section header string table本身构成了一个Section）中某一表项的索引，该索引中为一个以nul终止的字符串；
+2. sh_type: 该成员一句section的内容和语义将section分类。section类型及其描述下面将会有详细描述；
+3. sh_flags: Section支持使用1bit标志来描述大量的属性，下面将会详细描述；
+4. sh_addr: 如果某个section将会出现在进程的内存映射中，该成员给出的就是该section第一个字节驻留在内存中的地址。否则，该成员将会为0；
+5. sh_offsect: 该成员给出了从文件开始处到section中第一个字节的偏移（按字节）。这里需要提到的SHT_NOBITS类型的section，其在文件中不占用任何空间，其sh_offsect则为其在文件中的虚位置；
+6. sh_size: 该成员给出了section的大小尺寸（按字节），如果该section类型不是SHT_NOBITS，则该size即为该section在文件中所占的字节数。如果是，则即使该值不为0，但是其也不会在文件中占用任何空间；
+7. sh_link: 该成员包含了一个section header table的索引链接，其如何解释依赖于该section的类型，下面将会详细描述；
+8. sh_info: 该成员包含了些额外的信息，其如何解释也依赖于section的类型；
+9. sh_addralign: 一些section可能会有地址对齐约束，例如我们要求，如果section包含了一个双字，则系统必须确保整个section按照双字对齐。也就是 说，sh_addr取模sh_addralign的值必须为0。目前只有0和2的整数次幂值可以在此处使用，0和1意味着无需对齐；
+10. sh_entsize: 有些section包含的是一组固定大小表项的表，例如符号表，对于这样的section，该成员给出了每个表项的尺寸大小。如果section不包括这样的内容，则该值为0 。
+1.2.4.2 section headersection type
+section header的sh_type成员包含了如下的语义：
+1. SHT_NULL: 该值表示该section header是不活动的，其没有对应的section，此时section header中其他的成员都没有意义；
+2. SHT_PROGBITS: 该section包含了程序自定义信息，其格式和含义由程序自行决定；
+3. SHT_SYMTAB和SHT_DYNSYM: 该section包含了符号表。当前每种类型的section在对象文件中只能有一个，该限制在未来有望被放开。SHT_SYMTAB为连接器提供了符 号，当然其也包含了用于动态链接的符号。但是由于一个完整的符号表可能会包含了大量的对于动态链接没有用的符号，所以，对象文件或许也应该包含一个 SHT_DYNSYM section，其中包含了一组最小化的动态链接符号，用来节省空间；
+4. SHT_STRTAB: 该section包含了一个string table。一个对象文件可以有多个string table sections；
+5. SHT_RELA: 该section包含了重组表项（with explicit addends）；
+6. SHT_HASH: 该section包含了符号hash表，所有参与动态链接的对象都必须包含一个符号hash表；
+7. SHT_DYNAMIC: 该section包含了动态链接信息；
+8. SHT_NOTE: 该section包含了特定的信息，详见Note Section；
+9. SHT_NOBITS: 该section在文件中不占用空间，但是其类似与SHT_PROGBITS，虽然该section不包含任何字节，但是其sh_offset成员仍然包含了概念上的相对文件起始的偏移地址；
+10. SHT_REL: 该section包含了重组表项（without explicit addends）；
+11. SHT_SHLIB: 该section类型是保留的，还没有被指定语义，和ABI一致的程序不应该包含该section；
+12. SHT_LOPROC到SHT_HIPROC: 该范围内的值是为特定处理器语义保留的；
+13. SHT_LOUSER: 该值指定了为应用程序编程者保留的索引范围的低端；
+14. SHT_HIUSER: 该值指定了为应用程序编程者保留的索引范围的高端，在SHT_LOUSER到SHT_HIUSER之间的类型的section可以被应用程序使用，而不会同当前的或者未来的为系统定义的类型起冲突；
+除上述类型之以外，剩余所有的类型值统统保留，
+1.2.4.3 section headersection flag属性
+section header的sh_flags成员包含了1比特标志，用来描述该section的属性，定义的值如下：
+如果sh_flags中其中一个标志bit位被设置，则该属性就为section打开了。
+1. SHF_WRITE: 该section包含了在进程执行期间可写的数据；
+2. SHF_ALLOC: 该section在进程执行期间会占用内存。一些控制section不会驻留在对象文件的内存映像里，对于这些section，该属性就为OFF；
+3. SHF_EXECINSTR: 该section包含了可执行的机器指令；
+4. SHF_MASKPROC: 所有包含在该mask中的属性都用于特定处理器的语义；
+1.2.4.4 section header sh_link和sh_info属性
+section header中的sh_link和sh_info成员根据section type的不同，包含了不同的特殊信息。
+Figure1-13: sh_link和sh_info说明
+sh_type sh_link sh_info
+SHT_DYNAMIC 对于当前的sh_type，该属性的值即为该section所使用的string table section在section header table中的索引 0
+SHT_HASH 对于当前的sh_type，该属性的值即为该hash表 section所使用的符号表section在section header table中的索引 0
+SHT_REL
+SHT_RELA 对于当前的sh_type，该属性的值即为该section所相关的符号表section在section header table中的索引 对于当前的sh_type，该属性的值即为该section将要应用重组的section在section header table中的索引
+SHT_SYMTAB
+SHT_DYNSYM 对于当前的sh_type，该属性的值即为该section所相关的符号表string在section header table中的索引 比符号表中最后一个Local符号（STB_LOCAL）索引还要大的数值
+other SHN_UNDEF 0
+1.2.4.5 section header特殊的section
+几个特殊的sections说明：
+1. .bss，该section包含了在内存中的程序的未初始化的数据，当程序开始运行时，系统将用0来初始化该区域。该section不占用文件空间，该section type = SHT_NOBITS；
+2. .comment，该section包含了版本控制信息；
+3. .data和.data1，该section包含了在内存中的程序的初始化数据；
+4. .debug，该section包含了符号调试信息，其中内容没有硬性规定；
+5. .dynamic，该section包含了动态链接信息，该section属性将包含SHF_ALLOC比特位，而SHF_WRITE比特位是否为1取决于处理器；
+6. .dynstr，该section包含了用于动态链接的字符串，通常是符号表项名称字符串；
+7. .dynsym，该section包含了动态链接符号表；
+8. .fini，该section包含了用于终止进程可执行指令代码；
+9. .got，该section包含了全局偏移表；
+10. .hash，该section包含了符号hash表；
+11. .init，该section包含了用于初始化进程的可执行代码，也就是说，当一个程序开始运行的时候，系统将会执行在该section中的代码，然后才会调用程序的入口点（对于C程序而言就是main）；
+12. .interp，该section包含了程序解释其的路径；
+13. .line，该section包含了符号调试信息的行号，其用于描述程序源代码和机器码之间的相应关系；
+14. .note，该section包含了供应商及程序兼容信息等；
+15. .plt，该section包含了程序链接表；
+16. .relname和.relaname，该section包含了relocation信息，该section的属性包括了SHF_ALLOC比特位，通 常，name为将要被重组的section的名称，例如如果要重组.text，那么名称就为.rel.text或者.rela.text；
+17. .rodata和.rodata1，该section包含了只读数据，通常进程中的不可写段，例如Program Header；
+18. .shstrtab，该section包含了section名称；
+19. .strtab，该section包含了符号表项名称字符串，如果文件包含了一个可加载的并且包含了符号字符串表的segment，则section的SHF_ALLOC比特位属性将被设置；
+20. .symtab，该section包含了符号表，如果文件包含了一个可加载的并且包含了符号表的segment，则section的SHF_ALLOC比特位属性将被设置；
+21. .text，该section包含了程序的可执行指令。

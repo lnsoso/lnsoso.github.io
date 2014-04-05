@@ -1,0 +1,924 @@
+---
+layout: post
+title: 什么是虚拟机？
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wMy0zMCAxOToxNDo1NSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wMy0zMCAxMToxNDo1NSArMDgwMA==
+---
+原名：虚拟机源码分析
+转至：<a href="http://www.vmware.cn/article/586.html">http://www.vmware.cn/article/586.html</a>
+<strong><strong></strong></strong>
+<strong><strong>1）虚拟机是什么？
+    “虚拟机”的概念其实很广，最常见的有以下两种虚拟机，第一种是模拟“裸机”运行的虚拟机，这样的虚拟机有VMWAREVirturePC,Bochs等，另一种是模拟操作系统运行情况的虚拟机，这样的虚拟机有Wine，JVM（java虚拟机）。其实，虚拟机就是一个中间层，可以理解为是两种环境的桥梁，如果把虚拟机的概念抽象一点描述，可以认为虚拟机是在某一个环境上模拟另一种环境运行情况的软件，这样的环境可以是不同的cpu，不同的os....等等。
+    这里选择的是两个非常简单的虚拟机，一个是<<编译原理与实践>;>;一书中自带的TM虚拟机，另一个是<<程序员>;>;杂志2003年第六期里的一篇文章<<一个小型虚拟机的实现>;>;中实现的虚拟机，两者都有一个共同点，就是两者都是在汇编语言级别虚拟cpu运行情况的虚拟机，正因为这两个虚拟机的如此定位，所以在实现或者阅读这两个虚拟机的时候，你不得不从cpu的角度去思考问题，你必须对cpu的运行情况有了解，反过来说，阅读这两个虚拟机的源码也可以加深对cpu工作原理以及汇编语言的理解。这两个虚拟机的源码都可以在网上找到，前者在<a href="http://www.mathcs.sjsu.edu/faculty/louden/cmptext/">http://www.mathcs.sjsu.edu/faculty/louden/cmptext/</a>，而后者可以在CSDN的网站上查找2003年第六期的源码。值得一提的是，CS:APP（<<深入理解计算机系统>;>;）一书中也有一章专门讲述CPU的运行原理，而且作者也自己实现了一个CPU，而且还是流水线型，所以这个虚拟机功能更酷也更加强大，因为作者自己定义了一种硬件语言来描述cpu，最后还有在这种cpu支持的汇编指令，在有Tcl/Tk的环境下还带有图形界面，非常直观，可以在<a href="http://csapp.cs.cmu.edu/public/students.html">http://csapp.cs.cmu.edu/public/students.html</a>里的Chapter 4:Processor Architecture中找到源代码。 </strong></strong>
+<strong><strong>2)设计一个汇编语言级别的虚拟机的要求
+    学习过计算机原理的人都知道，一个cpu至少需要有以下几个部件：a)内存，装载所要执行的指令之用;b)寄存器;3)指令集，没有指令集执行指令就无从谈起。前两者非常简单，无非就是在内存中分配一个空间来模拟就可以了，而后者这里要专门说明一下。我们知道任何高级语言，经过这个高级语言的编译器编译之后都是翻译成汇编语言的，然后由汇编器汇编成二进制文件最后再进行库的链接等等才形成了可执行文件，而可执行文件最终也是二进制格式的，在执行可执行文件的时候由加载器加载到内存中去，那么这里就有一个问题了：cpu是如何识别已经加载到内存中二进制文件并且正确执行的？这需要下面的一个概念：OpCode。
+    OpCode是什么？简而言之，OpCode就是与汇编指令相对应的二进制格式的代码，OpCode的英文名是OperationCode（中文可以翻译成“操作码”），每一个汇编指令都有一个相对应的OpCode格式，反之不然，不过这个问题这里不再深究，只需要知道汇编器把汇编指令翻译成相应的由opcode组成的二进制文件，这样在可执行文件加载到内存的时候，cpu就可以根据在可执行文件中的opcode来执行程序了。理论上来说，不同厂家的cpu所支持的opcode是不同的，那么这里就有一个问题了，比如说在Intel机子上编译成功的可执行文件到了AMD的机子上如何正确执行呢？如果没有猜错的是，每个cpu在实现的时候需要在cpu的上层加一个翻译指令的东东....具体的我不清楚，只是猜测而已，也许不对。扯了这么多，回到这里要实现的cpu上，因为只是简易的cpu，所以在opcode上也尽量的精简，在这两个虚拟机的实现中，都是采用了汇编指令和opcode一一对应的关系进行实现（记住我前面说过汇编指令和opcode在真正的cpu中并不是一一对应的！），这样简化了cpu的实现。关于opcode，网上 有一份不错的教程<<学习opcode>;>;：<a href="http://www.luocong.com/learningopcode.htm">http://www.luocong.com/learningopcode.htm</a>，遗憾的是作者从开始写这份教程一直到现在差不多两年时间过去了还没有完成，不过前面的文章对于理解opcode的基本概念已经足够了。opcode看起来好像很高深，其实它就在我们身边，在linux上有一个objdump的反汇编软件可以反汇编二进制文件，比如这样的一段反汇编的代码：
+116: 89 e5 mov %esp,%ebp
+其中的116是指令地址，而89 e5就是指令mov %esp,%ebp 所对应的opcode。</strong></strong>
+<strong><strong>    总结一下，设计一个汇编语言级别的虚拟机至少需要以下的部件：1)内存空间，用于存放机器指令之用。2)寄存器：用于保存程序运行的状态，暂存数据等等之用。3)汇编器，汇编器的功能就是把汇编指令翻译成cpu指定的机器指令，然后将指令装入虚拟机的内存之中。4)指令集，指令集包括了指令的助记符，也就是汇编语言中的指令，还需要有每个指令所对 应的机器指令也就是OpCode，助记符由汇编器处理翻译成为机器指令，最后在cpu执行的时候根据不同的机器指令来执行相关的操作。
+    虽然这两个虚拟机的设计略有不同，但是由于都是模拟的汇编语言级别的cpu，所以工作过程大体都是一致的，把握这个运行的过程是正确掌握这两个源代码的关键所在！虚拟机运行的大体过程如下：首先由汇编起扫描汇编源文件，将汇编指令也就是机器指令的助记符翻译为机器指令，如果没有错误就把机器指令加载到内存之中，这时汇编器的任务就结束了；然后由虚拟机读取已经装载到内存中的机器指令，根据机器指令对应的操作来执行指令。</strong></strong>
+<strong><strong>    OK，这里基本上把一些基本的概念解释完了，后面紧跟着就可以开始我们的虚拟机之旅了....</strong></strong>
+<strong><strong>    第一个剖析对象是<<编译原理与实践>>中自带的TM虚拟机 </strong></strong>
+<strong><strong>    TM虚拟机中由一个只读指令存储区，数据区和8个寄存器组成，其中最后一个寄存器是PC寄存器，也就是程序计数器，用来保存下一个指令的地址，在跳转中以及读取指令的时候要用到，如下：
+/* 只读指令存储区的大小 */
+#define   IADDR_SIZE  1024 /* increase for large programs */
+/* 数据区的大小 */
+#define   DADDR_SIZE  1024 /* increase for large programs */
+/* 寄存器的数目 */
+#define   NO_REGS 8
+/* PC寄存器（程序计数器）的下标 */
+#define   PC_REG  7
+在内存中分配了三个数组来实现模拟这三个数据区：
+/* 只读指令存储区 */
+INSTRUCTION iMem [IADDR_SIZE];
+/* 数据存储区 */
+int dMem [DADDR_SIZE];
+/* 寄存器 */
+int reg [NO_REGS];
+所支持的指令集，为了简化cpu的实现，采用的是一个enum类型来存储指令的opcode，在这里opcode和汇编指令是一一对应的，而指令分为三种类型，分别是RR,RM,RA，其中的RM类型的指令需要对数据区进行读取，而另外两种只需要对寄存器进行读取就可以了，opcode的类型用一个enum OPCLASS来分别：
+typedef enum {
+  opclRR,     /* reg operands r,s,t */
+  opclRM,     /* reg r, mem d+s */
+  opclRA      /* reg r, int d+s */
+} OPCLASS;
+三种不同的opcode类型的opcode的格式是有区别的：
+指令类型                指令的格式
+RR                      r,s,t
+RM                      r,d(s)
+RA                      r,d(s)
+    说明一下，对于不同类型的汇编指令，必须与这种汇编指令的opcode格式严格对应，如RR指令的类型必须是r,s,t等等。RM和RA的指令格式稍微有一点区别，这里要根据输入的"d(s)"得到另外一个值a = d + reg[s]，就是说d是偏移值，而s在这里是寄存器数组的下标，对于RM来说，得到的a是对应于数据内存区数组的下标，这个a不能小于0或者大于这个内存区的大小，否则就会报错，而对RA而言，这个a值就是存储到相应的寄存器中的值，寄存器的选择根据不同的指令而定。</strong></strong>
+<strong><strong>    下面是这个虚拟机的汇编指令对应的opcode的列表，右边的注释是每个不同的指令对应的动作，也就是要根据opcode中的数据所要进行的不同的处理：
+/* 虚拟机的汇编指令对应的OPCODE */
+typedef enum {
+  /* RR instructions */
+  opHALT,    /* RR     halt, operands are ignored */
+  opIN,      /* RR     read into reg(r); s and t are ignored */
+  opOUT,     /* RR     write from reg(r), s and t are ignored */
+  opADD,     /* RR     reg(r) = reg(s)+reg(t) */
+  opSUB,     /* RR     reg(r) = reg(s)-reg(t) */
+  opMUL,     /* RR     reg(r) = reg(s)*reg(t) */
+  opDIV,     /* RR     reg(r) = reg(s)/reg(t) */
+  opRRLim,   /* limit of RR opcodes */</strong></strong>
+<strong><strong>  /* RM instructions */
+  opLD,      /* RM     reg(r) = mem(d+reg(s)) */
+  opST,      /* RM     mem(d+reg(s)) = reg(r) */
+  opRMLim,   /* Limit of RM opcodes */</strong></strong>
+<strong><strong>  /* RA instructions */
+  opLDA,     /* RA     reg(r) = d+reg(s) */
+  opLDC,     /* RA     reg(r) = d ; reg(s) is ignored */
+  opJLT,     /* RA     if reg(r)<0 then reg(7) = d+reg(s) */
+  opJLE,     /* RA     if reg(r)<=0 then reg(7) = d+reg(s) */
+  opJGT,     /* RA     if reg(r)>;0 then reg(7) = d+reg(s) */
+  opJGE,     /* RA     if reg(r)>;=0 then reg(7) = d+reg(s) */
+  opJEQ,     /* RA     if reg(r)==0 then reg(7) = d+reg(s) */
+  opJNE,     /* RA     if reg(r)!=0 then reg(7) = d+reg(s) */
+  opRALim    /* Limit of RA opcodes */
+} OPCODE;
+不论是哪一种类型的指令，都必须在指令内存区中保存相应的信息，比如说访问的寄存器的位置，内存的位置等等，这些信息保存在下面的一个结构体变量中的：
+/* 存储指令的值，iop是OPCODE，剩下三个是r,s,t */
+typedef struct {
+  int iop;
+  int iarg1;
+  int iarg2;
+  int iarg3;
+} INSTRUCTION;
+其中的iop就是指令对应的opcode，与前面的enum OPCODE中的成员一一对应，剩下的三个变量就是opcode中的r,s,t变量。指令内存区都INSTRUCTION类型的。
+    另外，执行指令的时候还要有不同的结果，这里同样的使用一个enum STEPRESULT类型来识别不同的结果，需要说明的是在读取内存的时候如果指针大小小于0或者大于内存的大小就会报错，另外在执行除法指令的时候还有可能出现零除错误：
+/* 枚举执行结果 */
+typedef enum {
+  srOKAY,     /* 正确执行 */
+  srHALT,     /* 停止执行 */
+  srIMEM_ERR,    /* IMEM错误 */
+  srDMEM_ERR,    /* DMEM错误 */
+  srZERODIVIDE    /* 零除错误 */
+} STEPRESULT;</strong></strong>
+<strong><strong>2)cpu的工作原理
+    代码的量不大，只有700行不到，核心的函数有下面几个：
+a)int readInstructions (void)
+    这个函数负责读取代码文件，是逐行处理的，对于每一行的文件首先检查指令是否符合这个虚拟机的汇编指令的格式，然后分辩这个指令的类型，再根据这个指令的类型存储不同的指令中opcode里的数据，每读取完一行代码如果没有错误的话就把指令及相应的opcode存储到指令存储区中，就是INSTRUCTION iMem [IADDR_SIZE]数组中，当读取文件结束的时候，这个数组中就都是相应的指令了，而后面的存储区存放的是HALT指令。
+b)int doCommand (void)
+    这个函数负责读取stdin中用户输入的命令行参数来执行不同的动作，相关的动作这里不再详述，这个函数会一直执行下去，一直到用户输入q时才退出，在主函数main中是这样调用这个函数的：
+  do
+    done = ! doCommand ();
+  while (! done );
+c)STEPRESULT stepTM (void)
+    这个函数是根据指令内存区中的指令逐步执行程序的函数，其中设定的一个局部变量
+  INSTRUCTION currentinstruction  ;
+负责存储当前的指令：
+  /* 从PC寄存器中读取下一条指令地址 */
+  pc = reg[PC_REG] ;
+  /* 如果小于零或者大于IADDR_SIZE，就是超过指令内存大小，就返回srIMEM_ERR错误 */
+  if ( (pc < 0) || (pc >; IADDR_SIZE)  )
+    return srIMEM_ERR ;
+  /* PC加一 */
+  reg[PC_REG] = pc + 1 ;
+  /* 从内存中根据PC地址值读取当前要执行的指令 */
+  currentinstruction = iMem[ pc ] ;
+每读取完一个指令，就根据指令的类型以及指令所定义的不同的动作来执行代码，比如说：
+  /* 根据iop中存储的OPCODE来执行指令，每个case右边是指令的执行情况 */
+  switch ( currentinstruction.iop)
+  {
+  case opHALT :    /* RR     halt, operands are ignored */
+    printf("HALT: %1d,%1d,%1d\n",r,s,t);
+    return srHALT ;
+    /* break; */</strong></strong>
+<strong><strong>  case opIN :    /* RR     read into reg(r); s and t are ignored */
+    do{
+      printf("Enter value for IN instruction: ") ;
+      fflush (stdin);
+      fflush (stdout);
+      gets(in_Line);
+      lineLen = strlen(in_Line) ;
+      inCol = 0;
+      ok = getNum();
+      if ( ! ok )
+     printf ("Illegal value\n");
+      else
+     reg[r] = num;
+    } while (! ok);
+    break;
+    剩余的其它函数都是简单的辅助函数了，无非是一些跳过空格，跳过检查是否是特定字符，得到字符串以及得到数字等等之类的函数了。 </strong></strong>
+<strong><strong>3)汇编指令的格式
+    这个虚拟机能够识别的汇编指令有一定的格式，如下：
+a)忽略空行
+b)以“*”号开头的都是注释
+c)任何其它行都必须以整数开头，这个整数用于指定代码的位置，任何指令后面的文字都被认为是注释而忽略掉。
+    至于支持的指令就是与opcode一一对应的，不再详述 </strong></strong>
+<strong><strong>4)虚拟机的使用方式
+TM虚拟机只有一个文件，只需要简单的编译就可以了，下面提供一个与该虚拟机对应的汇编代码：
+  0:     LD  6,0(0)
+  1:     ST  0,0(0)
+  2:     IN  0,0,0
+  3:     ST  0,0(5)
+  4:    LDC  0,0(0)
+  5:     ST  0,0(6)
+  6:     LD  0,0(5)
+  7:     LD  1,0(6)
+  8:    SUB  0,1,0
+  9:    JLT  0,2(7)
+ 10:    LDC  0,0(0)
+ 11:    LDA  7,1(7)
+ 12:    LDC  0,1(0)
+ 14:    LDC  0,1(0)
+ 15:     ST  0,1(5)
+ 16:     LD  0,1(5)
+ 17:     ST  0,0(6)
+ 18:     LD  0,0(5)
+ 19:     LD  1,0(6)
+ 20:    MUL  0,1,0
+ 21:     ST  0,1(5)
+ 22:     LD  0,0(5)
+ 23:     ST  0,0(6)
+ 24:    LDC  0,1(0)
+ 25:     LD  1,0(6)
+ 26:    SUB  0,1,0
+ 27:     ST  0,0(5)
+ 28:     LD  0,0(5)
+ 29:     ST  0,0(6)
+ 30:    LDC  0,0(0)
+ 31:     LD  1,0(6)
+ 32:    SUB  0,1,0
+ 33:    JEQ  0,2(7)
+ 34:    LDC  0,0(0)
+ 35:    LDA  7,1(7)
+ 36:    LDC  0,1(0)
+ 37:    JEQ  0,-22(7)
+ 38:     LD  0,1(5)
+ 39:    OUT  0,0,0
+ 13:    JEQ  0,27(7)
+ 40:    LDA  7,0(7)
+ 41:   HALT  0,0,0
+    假设编译好的虚拟机的可执行文件是TM，而汇编代码文件是1.tm(这个虚拟机默认的可识别的汇编文件是*.tm),那么只需要简单的使用: TM 1.tm 就可以了。 </strong></strong>
+<strong><strong>    OK，第一个虚拟机的分析到此，下面是完整的源代码：</strong></strong>
+<strong><strong>/****************************************************/
+/* File: tm.c                                       */
+/* The TM ("Tiny Machine") computer                 */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/</strong></strong>
+<strong><strong>#include ;
+#include ;
+#include ;
+#include ;</strong></strong>
+<strong><strong>#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif</strong></strong>
+<strong><strong>/******* const *******/
+/* 只读指令存储区的大小 */
+#define   IADDR_SIZE  1024 /* increase for large programs */
+/* 数据区的大小 */
+#define   DADDR_SIZE  1024 /* increase for large programs */
+/* 寄存器的数目 */
+#define   NO_REGS 8
+/* PC寄存器（程序计数器）的下标 */
+#define   PC_REG  7</strong></strong>
+<strong><strong>#define   LINESIZE  121
+#define   WORDSIZE  20</strong></strong>
+<strong><strong>/******* type  *******/</strong></strong>
+<strong><strong>/* 虚拟机的指令类型，有三种 */
+typedef enum {
+   opclRR,     /* reg operands r,s,t */
+   opclRM,     /* reg r, mem d+s */
+   opclRA      /* reg r, int d+s */
+} OPCLASS;</strong></strong>
+<strong><strong>/* 虚拟机的汇编指令对应的OPCODE */
+typedef enum {
+   /* RR instructions */
+   opHALT,    /* RR     halt, operands are ignored */
+   opIN,      /* RR     read into reg(r); s and t are ignored */
+   opOUT,     /* RR     write from reg(r), s and t are ignored */
+   opADD,     /* RR     reg(r) = reg(s)+reg(t) */
+   opSUB,     /* RR     reg(r) = reg(s)-reg(t) */
+   opMUL,     /* RR     reg(r) = reg(s)*reg(t) */
+   opDIV,     /* RR     reg(r) = reg(s)/reg(t) */
+   opRRLim,   /* limit of RR opcodes */</strong></strong>
+<strong><strong>   /* RM instructions */
+   opLD,      /* RM     reg(r) = mem(d+reg(s)) */
+   opST,      /* RM     mem(d+reg(s)) = reg(r) */
+   opRMLim,   /* Limit of RM opcodes */</strong></strong>
+<strong><strong>   /* RA instructions */
+   opLDA,     /* RA     reg(r) = d+reg(s) */
+   opLDC,     /* RA     reg(r) = d ; reg(s) is ignored */
+   opJLT,     /* RA     if reg(r)<0 then reg(7) = d+reg(s) */
+   opJLE,     /* RA     if reg(r)<=0 then reg(7) = d+reg(s) */
+   opJGT,     /* RA     if reg(r)>;0 then reg(7) = d+reg(s) */
+   opJGE,     /* RA     if reg(r)>;=0 then reg(7) = d+reg(s) */
+   opJEQ,     /* RA     if reg(r)==0 then reg(7) = d+reg(s) */
+   opJNE,     /* RA     if reg(r)!=0 then reg(7) = d+reg(s) */
+   opRALim    /* Limit of RA opcodes */
+} OPCODE;</strong></strong>
+<strong><strong>/* 枚举执行结果 */
+typedef enum {
+   srOKAY,        /* 正确执行 */
+   srHALT,        /* 停止执行 */
+   srIMEM_ERR,        /* IMEM错误 */
+   srDMEM_ERR,        /* DMEM错误 */
+   srZERODIVIDE       /* 零除错误 */
+} STEPRESULT;</strong></strong>
+<strong><strong>/* 存储指令的值，iop是OPCODE，剩下三个是r,s,t */
+typedef struct {
+   int iop;
+   int iarg1;
+   int iarg2;
+   int iarg3;
+} INSTRUCTION;</strong></strong>
+<strong><strong>/******** vars ********/
+/* 指向只读指令存储区的指针 */
+int iloc = 0 ;
+/* 指向数据存储区的指针 */
+int dloc = 0 ;
+/* 是否跟踪程序执行情况 */
+int traceflag = FALSE;
+/* 是否需要打印出执行的指令数量 */
+int icountflag = FALSE;</strong></strong>
+<strong><strong>/* 只读指令存储区 */
+INSTRUCTION iMem [IADDR_SIZE];
+/* 数据存储区 */
+int dMem [DADDR_SIZE];
+/* 寄存器 */
+int reg [NO_REGS];</strong></strong>
+<strong><strong>/* 指令列表，用于在stdout上打印出程序执行情况之用，与enum OPCODE对应,其中的"????"则与相应的LIM值对应，无意义 */
+char *opCodeTab[] = {
+   /* RR opcodes */
+   "HALT","IN","OUT","ADD","SUB","MUL","DIV","????",
+     /* RM opcodes */
+   "LD","ST","????",
+   /* RA opcodes */
+   "LDA","LDC","JLT","JLE","JGT","JGE","JEQ","JNE","????"
+};</strong></strong>
+<strong><strong>/* 程序结果列表，用于在stdout上打印出程序执行情况之用，与enum STEPRESULT对应 */
+char * stepResultTab[] =
+{
+   "OK",
+   "Halted",
+   "Instruction Memory Fault",
+   "Data Memory Fault",
+   "Division by 0"
+};</strong></strong>
+<strong><strong>/* 存储文件名 */
+char pgmName[20];
+/* 代码文件的FILE指针 */
+FILE *pgm  ;</strong></strong>
+<strong><strong>/* 文件的每一行都存在这个数组里 */
+char in_Line[LINESIZE] ;
+/* 读取到当前文件的行数记录 */
+int lineLen;
+/* in_Line数组中的下标 */
+int inCol;
+/* 存储getNum()函数的结果 */
+int num  ;
+/* 存储getWord()函数的结果 */
+char word[WORDSIZE] ;
+/* 存储getCh()函数的结果 */
+char ch  ;
+/* 存储docomand()函数的执行结果，用于表示程序是否结束 */
+int done  ;</strong></strong>
+<strong><strong>/*************************************************************************************
+ * int opClass( int c )：根据c的值在OPCODE枚举型中查找指令的类型,有RR,RM,RA三种指令
+ *************************************************************************************/
+int opClass( int c )
+{
+   if ( c <= opRRLim)
+      return ( opclRR );
+   else if ( c <= opRMLim)
+      return ( opclRM );
+   else
+      return ( opclRA );
+} /* opClass */</strong></strong>
+<strong><strong>/**************************************************************************************
+ *void writeInstruction ( int loc ):向stdout上打印出程序的执行情况
+ **************************************************************************************/
+void writeInstruction ( int loc )
+{
+   printf( "%5d: ", loc) ;
+   if ( (loc >;= 0) && (loc < IADDR_SIZE) )
+   {
+      printf("%6s%3d,", opCodeTab[iMem[loc].iop], iMem[loc].iarg1);
+      switch ( opClass(iMem[loc].iop) )
+      {
+      case opclRR:
+         printf("%1d,%1d", iMem[loc].iarg2, iMem[loc].iarg3);
+         break;
+      case opclRM:
+      case opclRA:
+         printf("%3d(%1d)", iMem[loc].iarg2, iMem[loc].iarg3);
+         break;
+      }
+      printf ("\n") ;
+   }
+} /* writeInstruction */</strong></strong>
+<strong><strong>/*************************************************************************************
+ * void getCh (void):在in_line数组中读取字符，如果到文件尾，就返回空字符,并且将结果存入ch中
+ **************************************************************************************/
+void getCh (void)
+{
+   if (++inCol < lineLen)
+      ch = in_Line[inCol] ;
+   else ch = ' ' ;
+} /* getCh */</strong></strong>
+<strong><strong>/**************************************************************************************
+ * int nonBlank (void): 查找某行文件后面是否都是空格，如果是则设置ch=' '并且返回false，
+ *                      否则设置ch为第一个非空字符返回true
+ ***************************************************************************************/
+int nonBlank (void)
+{
+   while ((inCol < lineLen)
+      && (in_Line[inCol] == ' ') )
+      inCol++ ;
+   if (inCol < lineLen)
+   {
+      ch = in_Line[inCol] ;
+      return TRUE ;
+   }
+   else
+   {
+      ch = ' ' ;
+      return FALSE ;
+   }
+} /* nonBlank */</strong></strong>
+<strong><strong>/***************************************************************************************
+ * int getNum (void):判断字符是否是数字,不是就返回false，否则返回true并且num中存储读入的数字
+ ****************************************************************************************/
+int getNum (void)
+{
+   int sign;
+   int term;
+   int temp = FALSE;
+   num = 0 ;</strong></strong>
+<strong><strong>   do {
+      sign = 1;
+      while ( nonBlank() && ((ch == '+') || (ch == '-')) )
+      {
+         temp = FALSE ;
+         if (ch == '-') 
+          sign = - sign ;
+         getCh();
+      }
+      term = 0 ;
+      nonBlank();
+      while (isdigit(ch))
+      {
+         temp = TRUE ;
+         term = term * 10 + ( ch - '0' ) ;
+         getCh();
+      }
+      num = num + (term * sign) ;
+   } while ( (nonBlank()) && ((ch == '+') || (ch == '-')) ) ;</strong></strong>
+<strong><strong>   return temp;
+} /* getNum */</strong></strong>
+<strong><strong>/****************************************************************************************
+ *int getWord (void):判断后面紧接着的是否是符号，就是以字母或者数字开头的符号，是就返回true
+ *                   并且将该符号存入word数组之中，否则返回false
+ ****************************************************************************************/
+int getWord (void)
+{
+   int temp = FALSE;
+   int length = 0;
+   if (nonBlank ())
+   {
+      while (isalnum(ch))
+      {
+         if (length < WORDSIZE-1)
+          word [length++] =  ch ;
+         getCh() ;
+      }
+      word[length] = '\0';
+      temp = (length != 0);
+   }</strong></strong>
+<strong><strong>   return temp;
+} /* getWord */</strong></strong>
+<strong><strong>/***************************************************************************************** 
+ *int skipCh ( char c  ):略过指定的字符，如果找不到这个字符那么返回false，否则返回true
+ *****************************************************************************************/
+int skipCh ( char c  )
+{
+   int temp = FALSE;
+   if ( nonBlank() && (ch == c) )
+   {
+      getCh();
+      temp = TRUE;
+   }
+   return temp;
+} /* skipCh */</strong></strong>
+<strong><strong>/******************************************************************************************  
+ *int atEOL(void):是否到达行尾，是就返回非零值，否则返回零值
+ ******************************************************************************************/
+int atEOL(void)
+{
+   return ( ! nonBlank ());
+} /* atEOL */</strong></strong>
+<strong><strong>/*******************************************************************************************   
+ * int error( char * msg, int lineNo, int instNo):打印出错信息，其中msg是出错信息，
+ *                                                lineNo是行数，instNo是指令数
+ *******************************************************************************************/
+int error( char * msg, int lineNo, int instNo)
+{
+   printf("Line %d",lineNo);
+   if (instNo >;= 0)
+      printf(" (Instruction %d)",instNo);
+   printf("   %s\n",msg);
+   return FALSE;
+} /* error */</strong></strong>
+<strong><strong>/*******************************************************************************************   
+ * int readInstructions (void):读取代码文件进行处理
+ *******************************************************************************************/
+int readInstructions (void)
+{
+   /* op存储指令 */
+   OPCODE op;
+   /* 存储r,s,t */
+   int arg1, arg2, arg3;
+   /* loc是指令的位置, regNO是寄存器的位置,lineNO是代码中的行数 */
+   int loc, regNo, lineNo;</strong></strong>
+<strong><strong>   /* 清空寄存器 */
+   for (regNo = 0 ; regNo < NO_REGS ; regNo++)
+      reg[regNo] = 0 ;
+   /* 不明白为什么这样做？ */
+   dMem[0] = DADDR_SIZE - 1 ;
+   /* 清空数据区 */
+   for (loc = 1 ; loc < DADDR_SIZE ; loc++)
+      dMem[loc] = 0 ;
+   /* 初始化指令存储区的OPCODE是opHALT */
+   for (loc = 0 ; loc < IADDR_SIZE ; loc++)
+   {
+      iMem[loc].iop = opHALT ;
+      iMem[loc].iarg1 = 0 ;
+      iMem[loc].iarg2 = 0 ;
+      iMem[loc].iarg3 = 0 ;
+   }
+   /* 初始化行数为0 */
+   lineNo = 0 ;
+   while (! feof(pgm))    /* 对文件进行逐行的读取操作，然后对每一行代码进行处理 */
+   {
+      /* 读入一行代码 */
+      fgets( in_Line, LINESIZE-2, pgm  ) ;
+      /* 设置行的列号为0 */
+      inCol = 0 ;
+      /* 行数加一 */
+      lineNo++;
+      lineLen = strlen(in_Line)-1 ;
+      /* 把行尾置为'\0'，方便字符串操作 */
+      if (in_Line[lineLen]=='\n')
+         in_Line[lineLen] = '\0' ;
+      else
+         in_Line[++lineLen] = '\0';
+      /* 如果指令不是空格或者注释 */
+      if ( (nonBlank()) && (in_Line[inCol] != '*') )
+      {
+         /* 如果不是数字，就显示错误，因为指令都是以数字开始 */
+         if (! getNum())
+          return error("Bad location", lineNo,-1);
+         /* 存储指令的位置 */
+         loc = num;
+         /* 大于指令存储区的大小 */
+         if (loc >; IADDR_SIZE)
+          return error("Location too large",lineNo,loc);
+         /* 如果后面没有紧接着':'，则显示出错 */
+         if (! skipCh(':'))
+          return error("Missing colon", lineNo,loc);
+         /* 如果后面紧接着的不是符号，则显示出错 */
+         if (! getWord ())
+          return error("Missing opcode", lineNo,loc);
+         /* 初始化为HALT指令 */
+         op = opHALT ;
+         /* 循环查找word指令对应的OPCODE，op就是在opCodeTab中对应的指令的下标 */
+         while ((op < opRALim)
+            && (strncmp(opCodeTab[op], word, 4) != 0) )
+          op++ ;
+         /* 没有找到对应的OPCODE，显示出错 */
+         if (strncmp(opCodeTab[op], word, 4) != 0)
+          return error("Illegal opcode", lineNo,loc);
+        
+         /* 调用opClass函数对指令进行分类，不同的指令处理不相同 */
+         switch ( opClass(op) )
+         {
+         case opclRR :  /* 处理RR指令，具体为什么会如下处理可以查看RR指令的格式 */
+          /* 如果后面紧接着的不是数字或者数字是非法的就显示出错 */
+          if ( (! getNum ()) || (num < 0) || (num >;= NO_REGS) )
+             return error("Bad first register", lineNo,loc);
+          arg1 = num;
+          /* 如果后面没有紧跟着','，就显示出错 */
+          if ( ! skipCh(','))
+             return error("Missing comma", lineNo, loc);
+                    /* 如果后面紧接着的不是数字或者数字是非法的就显示出错 */
+          if ( (! getNum ()) || (num < 0) || (num >;= NO_REGS) )
+             return error("Bad second register", lineNo, loc);
+          arg2 = num;
+          /* 如果后面没有紧跟着','，就显示出错 */
+          if ( ! skipCh(','))
+             return error("Missing comma", lineNo,loc);
+          /* 如果后面紧接着的不是数字或者数字对于RR命令是非法的就显示出错 */
+          if ( (! getNum ()) || (num < 0) || (num >;= NO_REGS) )
+             return error("Bad third register", lineNo,loc);
+          arg3 = num;
+          break;</strong></strong>
+<strong><strong>         case opclRM :  /* 处理RM指令，具体为什么会如下处理可以查看RM指令的格式 */
+         case opclRA :  /* 处理RA指令，具体为什么会如下处理可以查看RA指令的格式 */
+          /* 如果后面紧接着的不是数字或者数字是非法的就显示出错 */
+          if ( (! getNum ()) || (num < 0) || (num >;= NO_REGS) )
+             return error("Bad first register", lineNo,loc);
+          arg1 = num;
+          /* 如果后面没有紧跟着','就显示出错 */
+          if ( ! skipCh(','))
+             return error("Missing comma", lineNo,loc);
+          /* 如果后面没有紧跟着数字就显示出错 */
+          if (! getNum ())
+             return error("Bad displacement", lineNo,loc);
+          arg2 = num;
+          /* 如果后面没有紧跟着'('或者是','就显示出错 */
+          if ( ! skipCh('(') && ! skipCh(',') )
+             return error("Missing LParen", lineNo,loc);
+          /* 如果紧跟的不是数字或者数字是非法的就显示出错 */
+          if ( (! getNum ()) || (num < 0) || (num >;= NO_REGS))
+             return error("Bad second register", lineNo,loc);
+          arg3 = num;
+          break;
+         } /* switch ( opClass(op) ) */
+         /* OK，读取一行代码结束，把指令存入指令存储区 */
+         iMem[loc].iop = op;
+         iMem[loc].iarg1 = arg1;
+         iMem[loc].iarg2 = arg2;
+         iMem[loc].iarg3 = arg3;
+      } /* if ( (nonBlank()) && (in_Line[inCol] != '*') ) */
+   }    /* while (! feof(pgm)) */</strong></strong>
+<strong><strong>   return TRUE;
+} /* readInstructions */</strong></strong>
+<strong><strong>/********************************************************************************************
+ * STEPRESULT stepTM (void):根据指令内存区中的存储的指令逐步执行指令，并且返回执行结果
+ ********************************************************************************************/
+STEPRESULT stepTM (void)
+{
+   INSTRUCTION currentinstruction  ;
+   int pc  ;
+   int r,s,t,m  ;
+   int ok ;</strong></strong>
+<strong><strong>   /* 从PC寄存器中读取下一条指令地址 */
+   pc = reg[PC_REG] ;
+   /* 如果小于零或者大于IADDR_SIZE，就是超过指令内存大小，就返回srIMEM_ERR错误 */
+   if ( (pc < 0) || (pc >; IADDR_SIZE)  )
+      return srIMEM_ERR ;
+   /* PC加一 */
+   reg[PC_REG] = pc + 1 ;
+   /* 从内存中根据PC地址值读取当前要执行的指令 */
+   currentinstruction = iMem[ pc ] ;
+  
+     /*  调用opClass函数确定opcode的类型 */
+   switch (opClass(currentinstruction.iop) )
+   {
+   case opclRR :        /* 对于RR指令而言，opcode格式是opcode r, s, t */
+      r = currentinstruction.iarg1 ;
+      s = currentinstruction.iarg2 ;
+      t = currentinstruction.iarg3 ;
+      break;
+     
+   case opclRM :        /* 对于RM指令而言，opcode格式是opcode r, d(s)，而m = d + reg(s) */
+      r = currentinstruction.iarg1 ;
+      s = currentinstruction.iarg3 ;
+      /* 对应RM指令中的m = d + reg[s]，相当于变址寻址,这个地址用于访问数据区 */
+      m = currentinstruction.iarg2 + reg[s] ;
+      /* 如果地址是非法的(对于数据存储区而言)，就返回一个srDMEM_ERR错误 */
+      if ( (m < 0) || (m >; DADDR_SIZE))
+         return srDMEM_ERR ;
+      break;</strong></strong>
+<strong><strong>   case opclRA :        /* 对于RA指令而言，opcode格式是opcode r, d(s),而m = d + reg(s)，m值最后存入相应的寄存器 */
+      r = currentinstruction.iarg1 ;
+      s = currentinstruction.iarg3 ;
+      m = currentinstruction.iarg2 + reg[s] ;
+      break;
+   } /* case */</strong></strong>
+<strong><strong>   /* 根据iop中存储的OPCODE来执行指令，每个case右边是指令的执行情况 */
+   switch ( currentinstruction.iop)
+   {
+   case opHALT :        /* RR     halt, operands are ignored */
+      printf("HALT: %1d,%1d,%1d\n",r,s,t);
+      return srHALT ;
+      /* break; */</strong></strong>
+<strong><strong>   case opIN :        /* RR     read into reg(r); s and t are ignored */
+      do{
+         printf("Enter value for IN instruction: ") ;
+         fflush (stdin);
+         fflush (stdout);
+         gets(in_Line);
+         lineLen = strlen(in_Line) ;
+         inCol = 0;
+         ok = getNum();
+         if ( ! ok )
+          printf ("Illegal value\n");
+         else
+          reg[r] = num;
+      } while (! ok);
+      break;</strong></strong>
+<strong><strong>   case opOUT :         /* RR     write from reg(r), s and t are ignored */
+      printf ("OUT instruction prints: %d\n", reg[r] ) ;
+      break;
+   case opADD :         /* RR     reg(r) = reg(s)+reg(t) */
+      reg[r] = reg[s] + reg[t] ; 
+      break;
+   case opSUB :         /* RR     reg(r) = reg(s)-reg(t) */
+      reg[r] = reg[s] - reg[t] ; 
+      break;
+   case opMUL :         /* RR     reg(r) = reg(s)*reg(t) */
+      reg[r] = reg[s] * reg[t] ; 
+      break;</strong></strong>
+<strong><strong>   case opDIV :       /* RR     reg(r) = reg(s)/reg(t) */
+      if ( reg[t] != 0 )
+         reg[r] = reg[s] / reg[t];
+      else
+         return srZERODIVIDE ;
+      break;</strong></strong>
+<strong><strong>     /*************** RM instructions ********************/
+   case opLD :          /* RM     reg(r) = mem(d+reg(s)) */
+      reg[r] = dMem[m] ; 
+      break;
+   case opST :          /* RM     mem(d+reg(s)) = reg(r) */
+      dMem[m] = reg[r] ; 
+      break;</strong></strong>
+<strong><strong>   /*************** RA instructions ********************/
+   case opLDA :         /* RA     reg(r) = d+reg(s) */
+      reg[r] = m ;
+      break;
+   case opLDC :         /* RA     reg(r) = d ; reg(s) is ignored */
+      reg[r] = currentinstruction.iarg2 ;  
+      break;
+   case opJLT :         /* RA     if reg(r)<0 then reg(7) = d+reg(s) */
+      if ( reg[r] <  0 )
+         reg[PC_REG] = m ;
+      break;
+   case opJLE :         /* RA     if reg(r)<=0 then reg(7) = d+reg(s) */
+      if ( reg[r] <=  0 )
+         reg[PC_REG] = m ;
+      break;
+   case opJGT :         /* RA     if reg(r)>;0 then reg(7) = d+reg(s) */
+      if ( reg[r] >;  0 )
+         reg[PC_REG] = m ;
+      break;
+   case opJGE :         /* RA     if reg(r)>;=0 then reg(7) = d+reg(s) */
+      if ( reg[r] >;=  0 )
+         reg[PC_REG] = m ;
+      break;
+   case opJEQ :         /* RA     if reg(r)==0 then reg(7) = d+reg(s) */
+      if ( reg[r] == 0 )
+         reg[PC_REG] = m ;
+      break;
+   case opJNE :         /* RA     if reg(r)!=0 then reg(7) = d+reg(s) */
+      if ( reg[r] != 0 )
+         reg[PC_REG] = m ;
+      break;</strong></strong>
+<strong><strong>      /* end of legal instructions */
+   } /* case */
+  
+     /* 如果程序能够正常执行到这里，就返回执行正确的信息 */
+   return srOKAY ;
+} /* stepTM */</strong></strong>
+<strong><strong>/********************************************************************************************
+ *int doCommand (void):执行指令
+ * *******************************************************************************************/
+int doCommand (void)
+{
+   char cmd;
+   int stepcnt=0, i;
+   int printcnt;
+   int stepResult;
+   int regNo, loc;</strong></strong>
+<strong><strong>   do {           /* 读入执行虚拟机的命令行参数 */
+      printf ("Enter command: ");
+      fflush (stdin);
+      fflush (stdout);
+      gets(in_Line);
+      lineLen = strlen(in_Line);
+      inCol = 0;
+   } while (! getWord ());</strong></strong>
+<strong><strong>   cmd = word[0] ;
+   switch ( cmd )
+   {
+   case 't' :       /* 是否跟踪调试 */
+      traceflag = ! traceflag ;
+      printf("Tracing now ");
+      if ( traceflag )
+         printf("on.\n");
+      else
+         printf("off.\n");
+      break;</strong></strong>
+<strong><strong>   case 'h' :       /* 打印出命令及相应功能列表 */
+      printf("Commands are:\n");
+      printf("   s(tep ;      "\
+         "Execute n (default 1) TM instructions\n");
+      printf("   g(o            "\
+         "Execute TM instructions until HALT\n");
+      printf("   r(egs          "\
+         "Print the contents of the registers\n");
+      printf("   i(Mem ;>;  "\
+         "Print n iMem locations starting at b\n");
+      printf("   d(Mem ;>;  "\
+         "Print n dMem locations starting at b\n");
+      printf("   t(race         "\
+         "Toggle instruction trace\n");
+      printf("   p(rint         "\
+         "Toggle print of total instructions executed"\
+         " ('go' only)\n");
+      printf("   c(lear         "\
+         "Reset simulator for new execution of program\n");
+      printf("   h(elp          "\
+         "Cause this list of commands to be printed\n");
+      printf("   q(uit          "\
+         "Terminate the simulation\n");
+      break;</strong></strong>
+<strong><strong>   case 'p' :       /* 是否打印出执行的指令的步数 */
+      icountflag = ! icountflag ;
+      printf("Printing instruction count now ");
+      if ( icountflag )
+         printf("on.\n");
+      else
+         printf("off.\n");
+      break;</strong></strong>
+<strong><strong>   case 's' :       /* 指定执行的步数 */
+      if ( atEOL ()) 
+         stepcnt = 1;
+      else if ( getNum ()) 
+         stepcnt = abs(num);
+      else
+         printf("Step count?\n");
+      break;</strong></strong>
+<strong><strong>   case 'g' :           /* 执行指令一直到HALT */
+      stepcnt = 1 ;    
+      break;</strong></strong>
+<strong><strong>   case 'r' :       /* 打印出寄存器中的内容 */
+      for (i = 0; i < NO_REGS; i++)
+      {
+         printf("%1d: %4d    ", i,reg);
+         if ( (i % 4) == 3 )
+          printf ("\n");
+      }
+      break;</strong></strong>
+<strong><strong>   case 'i' :   /* 打印出只读指令存储区的内容（指令），也可以自己指定存储区的位置 */
+      printcnt = 1 ;
+      /* printcnt用于计数，计算总共要打印出多少行的内容，而iloc是指向这一段内存的指针 */
+      if ( getNum ())
+      {
+         iloc = num ;
+         if ( getNum ())
+          printcnt = num ;
+      }
+      if ( ! atEOL ())
+         printf ("Instruction locations?\n");
+      else
+      {
+         while ((iloc >;= 0) && (iloc < IADDR_SIZE)
+            && (printcnt >; 0) )
+         {
+          writeInstruction(iloc);
+          iloc++ ;
+          printcnt-- ;
+         }
+      }
+      break;</strong></strong>
+<strong><strong>   case 'd' :   /* 打印出数据存储区的内容（指令），也可以自己指定存储区的位置 */
+      printcnt = 1 ;
+      /* printcnt用于计数，计算总共要打印出多少行的内容，而dloc是指向这一段内存的指针 */
+      if ( getNum  ())
+      {
+         dloc = num ;
+         if ( getNum ())
+          printcnt = num ;
+      }
+      if ( ! atEOL ())   
+         printf("Data locations?\n");
+      else
+      {
+         while ((dloc >;= 0) && (dloc < DADDR_SIZE)
+            && (printcnt >; 0))
+         {
+          printf("%5d: %5d\n",dloc,dMem[dloc]);
+          dloc++;
+          printcnt--;
+         }
+      }
+      break;</strong></strong>
+<strong><strong>   case 'c' :       /* 清空虚拟机所有状态 */
+      iloc = 0;
+      dloc = 0;
+      stepcnt = 0;
+      for (regNo = 0;  regNo < NO_REGS ; regNo++)
+         reg[regNo] = 0 ;
+      dMem[0] = DADDR_SIZE - 1 ;
+      for (loc = 1 ; loc < DADDR_SIZE ; loc++)
+         dMem[loc] = 0 ;
+      break;</strong></strong>
+<strong><strong>   case 'q' :         /* 退出 */
+      return FALSE;  </strong></strong>
+<strong><strong>   default :        /* 未知命令 */
+      printf("Command %c unknown.\n", cmd);
+      break;
+   }  /* case */
+   stepResult = srOKAY;
+   if ( stepcnt >; 0 )
+   {
+      if ( cmd == 'g' )
+      {
+         stepcnt = 0;
+         /* 当命令行参数是g的时候，就一直执行程序 */
+         while (stepResult == srOKAY)
+         {
+          iloc = reg[PC_REG] ;
+          /* 如果设置了跟踪标志，那么在stdout上打印出执行的指令 */
+          if ( traceflag )
+             writeInstruction( iloc ) ;
+          stepResult = stepTM ();
+          stepcnt++;
+         }
+         /* 打印出执行的指令数量 */
+         if ( icountflag )
+          printf("Number of instructions executed = %d\n",stepcnt);
+      }
+      else        /* 否则根据stepResult中指定的步长执行指令 */
+      {
+         while ((stepcnt >; 0) && (stepResult == srOKAY))
+         {
+          iloc = reg[PC_REG] ;
+          if ( traceflag )
+             writeInstruction( iloc ) ;
+          stepResult = stepTM ();
+          stepcnt-- ;
+         }
+      }
+      printf( "%s\n",stepResultTab[stepResult] );
+   }
+   return TRUE;
+} /* doCommand */</strong></strong>
+<strong><strong>/********************************************************************************************
+ *int main( int argc, char * argv[] ):主函数
+ ********************************************************************************************/
+int main( int argc, char * argv[] )
+{
+   if (argc != 2)
+   { printf("usage: %s ;\n",argv[0]);
+      exit(1);
+   }
+   strcpy(pgmName,argv[1]) ;
+   if (strchr (pgmName, '.') == NULL)
+      strcat(pgmName,".tm");
+   pgm = fopen(pgmName,"r");
+   if (pgm == NULL)
+   { printf("file '%s' not found\n",pgmName);
+      exit(1);
+   }</strong></strong>
+<strong><strong>   /* read the program */
+   if ( ! readInstructions ())
+      exit(1) ;
+   /* switch input file to terminal */
+   /* reset( input ); */
+   /* read-eval-print */
+   printf("TM  simulation (enter h for help)...\n");
+   do
+      done = ! doCommand ();
+   while (! done );
+   printf("Simulation done.\n");</strong></strong>
+<strong><strong>   return 0;
+}
+</strong></strong>

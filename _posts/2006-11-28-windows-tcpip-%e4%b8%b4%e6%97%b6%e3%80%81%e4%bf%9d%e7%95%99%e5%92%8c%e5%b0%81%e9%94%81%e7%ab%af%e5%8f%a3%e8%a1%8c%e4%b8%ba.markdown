@@ -1,0 +1,162 @@
+---
+layout: post
+title: Windows TCP/IP 临时、保留和封锁端口行为
+author: Alvin
+date: !binary |-
+  MjAwNi0xMS0yOCAyMzozODoyMSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0yOCAxNTozODoyMSArMDgwMA==
+---
+<div class="date">转至MSDN</div>
+<div class="overview">
+本文介绍 Windows 套接字应用程序可用的各种类型的传输控制协议 (TCP) 和用户数据报协议 (UDP) 端口及其在 Windows XP 和 Windows Server 2003 中的范围。</div>
+<div style="HEIGHT: 18px"><font color="#800080"></font></div>
+<h2>导言</h2>
+TCP 和 UDP 使用端口号来标识源和目标应用程序。对于典型的客户-服务器协议（例如那些用于 Web 和电子邮件访问的协议），通信是由客户端计算机发起的。服务器应用程序通常监听众所周知的 TCP 或 UDP 端口，它们是由 Internet 号码分配机构 (IANA) 分配的。对于源端口，客户端应用程序通常查询操作系统中已不再由其他应用程序占用的动态分配的 TCP 或 UDP 端口。当应用程序请求而后绑定到一个动态分配的端口时，这就是通常所说的通配绑定。
+动态分配的端口也称为临时端口。术语“临时”（短暂）并不表示端口的生存期一定很短。例如，用于超文本传输协议的端口在数据传输完成之后会立即关闭。临时是指，与通常在整个服务器计算机运行期间都保持打开的服务器应用程序端口相比，客户端应用程序端口的生存期相对较短（至多只在应用程序运行期间保持打开）。
+客户端计算机使用临时端口而不是众所周知的端口，以防与可能使用众所周知端口的本地服务发生冲突。例如，运行 Microsoft Windows XP 的计算机可能会使用 Internet Explorer，还可能运行 Internet 信息服务 (IIS)。当 Internet Explorer 访问网页时，它无法将 TCP 端口 80 用作源端口，因为该本地端口可能已被 IIS 占用。如果两个应用程序都设计成独占使用同一端口，则一次只有其中一个应用程序能够成功运行。<a name="EMB"></a>
+<h2>临时端口</h2>
+在 Microsoft Windows XP 或 Windows Server 2003 中，由 Windows 套接字分配给应用程序的临时 TCP 或 UDP 端口号的最大值是由注册表设置 MaxUserPort 控制的，该参数的默认值为 5000。临时端口从端口号 1025 开始编号。因此，默认情况下，Windows XP 或 Windows Server 2003 会为执行通配绑定的应用程序分配一个范围从 1025 到 5000 的号码。
+要在运行 Windows XP 或 Windows Server 2003 的计算机上更改临时端口的最大值，请执行以下操作：
+<table cellspacing="0" cellpadding="0" border="0" class="numberedList">
+<tbody>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+1.            </td>
+<td>
+单击<strong>开始</strong>，再单击<strong>运行</strong>，键入 <strong>regedit.exe</strong>，然后单击<strong>确定</strong>。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+2.            </td>
+<td>
+找到而后单击以下注册表子项：
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+3.            </td>
+<td>
+在<strong>编辑</strong>菜单上，指向<strong>新建</strong>，然后单击<strong>双字节值</strong>。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+4.            </td>
+<td>
+键入 <strong>MaxUserPort</strong>，然后按 ENTER。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+5.            </td>
+<td>
+双击 <strong>MaxUserPort</strong> 值，然后以十进制或十六进制键入最大值。
+键入的数值必须在 5000&uml;C65534（十进制）之间。如果此参数设置的值超出有效范围，则使用最接近的有效值（5000 或 65534）。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+6.            </td>
+<td>
+单击<strong>确定</strong>。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+7.            </td>
+<td>
+退出注册表编辑器。            </td>        </tr>    </tbody></table>
+<table id="EFD" cellspacing="0" cellpadding="0" class="dataTable">
+<thead>    </thead>
+<tbody>
+<tr class="record" valign="top">
+<td style="BORDER-RIGHT: #cccccc 1px solid">
+<p class="lastInCell"><strong>警告</strong> 如果错误使用注册表编辑器，可能会导致严重问题以至于需要您重新安装操作系统。Microsoft 无法保证您能够解决由于错误使用注册表编辑器而引起的问题。您必须自行承担使用注册表编辑器所带来的风险。            </td>        </tr>    </tbody></table>
+<div class="dataTableBottomMargin"></div>
+必须重新启动计算机，方可使 MaxUserPort 注册表设置更改生效。
+如果应用程序使用通配绑定同时打开大量连接，可能只需更改这个值，而且需确保应用程序不会用尽可用的临时端口。例如，一个使用文件传输协议 (FTP) 传输大量小文件的数据备份应用程序就可能用尽临时端口。<a name="ESD"></a>
+<h2>端口保留</h2>
+通过端口保留，应用程序可以阻止一定范围内的端口在通配绑定期间被分配。然而，保留某一端口范围并不会阻止应用程序在保留的范围内执行特定的绑定（请求使用特定端口）。保留端口范围时，所选择的端口号连续范围必须是从 1025 到 MaxUserPort 设置值（默认值为 5000）或从 49152 到 65535。多个客户端应用程序可保留相同的范围。取消保留（删除保留）时，Windows 套接字会删除它找到的第一个完全包含在取消保留请求内的条目。
+还可以执行以下操作，通过注册表来指定保留端口的范围：
+<table cellspacing="0" cellpadding="0" border="0" class="numberedList">
+<tbody>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+1.            </td>
+<td>
+单击<strong>开始</strong>，再单击<strong>运行</strong>，键入 <strong>regedit.exe</strong>，然后单击<strong>确定</strong>。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+2.            </td>
+<td>
+找到而后单击以下注册表子项：
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+3.            </td>
+<td>
+在<strong>编辑</strong>菜单上，指向<strong>新建</strong>，然后单击<strong>多字符串值</strong>。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+4.            </td>
+<td>
+键入 <strong>ReservedPorts</strong>，然后按 ENTER。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+5.            </td>
+<td>
+双击 <strong>ReservedPorts</strong> 值，使用以下语法键入端口范围：x-y
+要指定单个端口，请对 x 和 y 使用相同的值。例如，要指定端口 4000，请键入 <strong>4000-4000</strong>。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+6.            </td>
+<td>
+单击<strong>确定</strong>。            </td>        </tr>
+<tr valign="top">
+<td class="listNumber" nowrap="nowrap" align="right">
+7.            </td>
+<td>
+退出注册表编辑器。            </td>        </tr>    </tbody></table>
+<div style="MARGIN-TOP: 3px; MARGIN-BOTTOM: 10px"><font size="5"><strong>端口范围</strong></font></div>
+通过端口封锁，应用程序可以防止其他应用程序执行对指定范围内端口的特定绑定。封锁端口范围时，应用程序所选择的连续端口号范围必须介于 MaxUserPort 设置值（默认值为 5000）+ 1 与 49151（对于未安装服务包的 Windows XP 和 Windows Server 2003）或 65535（对于 Windows Server 2003 Service Pack 1）之间。不能存在到封锁端口范围内端口的现有绑定。Windows 套接字会以句柄形式返回封锁范围内的最后一个端口号。解除封锁（取消封锁）时，Windows 套接字会解除与解除封锁请求具有相同左边界的封锁范围。<a name="ESF"></a>
+<h2>端口范围</h2>
+对于运行未安装服务包的 Windows XP 或 Windows Server 2003 的计算机，下面给出了不同的端口范围：
+<table cellspacing="0" cellpadding="0" border="0">
+<tbody>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+众所周知的端口范围（由 IANA 保留）：0 到 1023            </td>        </tr>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+临时端口范围（对于通配绑定）：1025 到 MaxUserPort 注册表设置值            </td>        </tr>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+可用作特定端口（对于特定绑定）：从 0 到 65535 的任何未封锁端口            </td>        </tr>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+保留端口的可用范围：1025 到 MaxUserPort 以及 49152 到 65535            </td>        </tr>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+封锁端口的可用范围：MaxUserPort + 1 到 49151（除非 MaxUserPort 的值设置为 49152 或更高，这种情况下没有可封锁端口范围）            </td>        </tr>    </tbody></table>
+对于运行未安装服务包的 Windows XP 或 Windows Server 2003 的计算机，下图显示了不同的端口范围。<img alt="端口范围" src="http://www.microsoft.com/library/media/1033/technet/images/community/columns/cableguy/cg120501.jpg" border="0" />
+尽管将众所周知的端口范围、可保留的端口范围以及可封锁的端口范围分开是很有意义的，但有时需要将 MaxUserPort 设置为高于 49152 的值并且需要封锁端口。为了给端口请求提供服务并保持向后兼容，Windows Server 2003 Service Pack 1 (SP1) 允许在保留范围内封锁端口。因此，对于 Windows Server 2003 SP1，范围如下所示：
+<table cellspacing="0" cellpadding="0" border="0">
+<tbody>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+众所周知的端口范围（由 IANA 保留）：0 到 1023            </td>        </tr>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+临时端口范围：1025 到 MaxUserPort 注册表设置值            </td>        </tr>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+可用作特定端口：从 0 到 65535 的任何未封锁端口            </td>        </tr>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+保留端口的可用范围：1025 到 MaxUserPort 以及 49152 到 65535            </td>        </tr>
+<tr>
+<td class="listBullet" valign="top">&bull;</td>
+<td class="listItem">
+封锁端口的可用范围：MaxUserPort + 1 到 65535            </td>        </tr>    </tbody></table>
+对于运行带 SP1 的 Windows Server 2003 的计算机，下图显示了不同的端口范围。<img alt="端口范围" src="http://www.microsoft.com/library/media/1033/technet/images/community/columns/cableguy/cg120502.jpg" border="0" />
+<div style="MARGIN-TOP: 3px; MARGIN-BOTTOM: 10px"></div>

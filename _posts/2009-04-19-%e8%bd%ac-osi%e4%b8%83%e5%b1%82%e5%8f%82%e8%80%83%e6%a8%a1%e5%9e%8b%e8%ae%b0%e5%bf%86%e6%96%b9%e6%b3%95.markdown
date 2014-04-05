@@ -1,0 +1,26 @@
+---
+layout: post
+title: ! '[转] OSI七层参考模型记忆方法'
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wNC0xOSAyMzo0NjoyNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNC0xOSAxNTo0NjoyNSArMDgwMA==
+---
+文章作者：<span style="COLOR: #0000ff">Slyar
+</span>文章来源：Slyar Home (<a title="Slyar" href="http://www.slyar.com/" target="_blank"><span style="color: #2970a6;">www.slyar.com</span></a>)
+开放系统互联参考模型-OSI(Open System Interconnection)
+OSI参考模型采用了分层的结构化技术，将功能逻辑上划分开来，以使整个结构具有较高的灵活性。OSI参考模型共七层。
+应用层(Application Layer)
+表示层(Presentation Layer)
+会话层(Session Layer)
+传输层(Transport Layer)
+网络层(Network Layer)
+数据链路层(Data Link Layer)
+物理层(Physical Layer)
+有一句英文可以巧妙记忆OSI七层参考模型：
+<span style="COLOR: #ff0000">All people seem to need data process.</span>
+<span style="COLOR: #ff0000">(所有的人看起来都需要进行数据处理)</span>
+从上到下，每个单词的最前一个字母与每一个层相对应。
+还有一句比较雷人的中文：
+<span style="COLOR: #ff0000">阿婆死踢你的屁</span>

@@ -1,0 +1,12 @@
+---
+layout: post
+title: P3P 隐私偏好设定平台
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0xNiAyMzowODo1MCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0xNiAxNTowODo1MCArMDgwMA==
+---
+P3pP 一个日常 web 开发中极少用到，却又实实在在起到关键作用的东西，在跨域设置 cookie 中起着至关重要的作用。
+
+过段时间我会放出自己的 P3P 演示 PPT

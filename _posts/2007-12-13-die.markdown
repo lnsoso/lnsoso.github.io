@@ -1,0 +1,13 @@
+---
+layout: post
+title: DIE
+author: Alvin
+date: !binary |-
+  MjAwNy0xMi0xMyAyMzozODo1NyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0xMi0xMyAxNTozODo1NyArMDgwMA==
+---
+
+<h3>您的生命只剩下： 1330003404 秒</h3>
+你将于公元2050年2月4日去世，终年67岁！
+在这个《<a target="_blank" href="http://www.ddhealth.cn/dotest.aspx">看看你能活多久！</a>》的测试中，我仅活到了67……so sad am i.

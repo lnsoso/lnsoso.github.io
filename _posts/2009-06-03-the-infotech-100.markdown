@@ -1,0 +1,806 @@
+---
+layout: post
+title: The InfoTech 100
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wNi0wMyAyMjoyNTo1OCArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNi0wMyAxNDoyNTo1OCArMDgwMA==
+---
+<p class="text"><strong>Nokia掉到第49名了？腾讯升到第9名了，盈收增长率 排名第1啊？？</strong>
+<p class="text"><em>BusinessWeek</em> 2009 ranking of the tops in tech showcases companies that managed to thrive even in the face of a bruising global recession.
+ 
+<p class="text">How do you pick through the world best-performing tech companies? With the help of Standard & Poor Compustat, BusinessWeek combed the financial results of tens of thousands of publicly traded businesses and ranked tech players on shareholder return, return on equity, total revenues, and revenue growth. Leading the list are those with the best aggregate ranking. (For a detailed explanation of methodology, see page 42.) Amazon.com was No. 1 for the second consecutive year, with Oracle No. 2 and IBM fifth. One trend this year: 43 U.S. companies made the list, up from 33 last year. Still, when we launched the list in 1998, 75 were U.S. companies.
+<script type="text/javascript"></script><span class="smalltext">Click column heading once to reorder from highest to lowest. Click twice to reorder from lowest to highest.</span>
+<table id="dataTable" border="0" cellspacing="1" cellpadding="0">
+<tbody>
+<tr>
+<td class="header active" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=rankid&sortOrder=2&pageNum=1&resultNum=50">Rank
+<img src="http://bwnt.businessweek.com/bwnt_images/up_delta.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=name&sortOrder=1&pageNum=1&resultNum=50">Name
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=industry&sortOrder=1&pageNum=1&resultNum=50">Industry
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=country&sortOrder=2&pageNum=1&resultNum=50">Country
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=rev_millions&sortOrder=2&pageNum=1&resultNum=50">Revenue
+(Millions)
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=rev_rank&sortOrder=2&pageNum=1&resultNum=50">Revenue
+Rank
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=revgr_per&sortOrder=2&pageNum=1&resultNum=50">Revenue Growth
+(%)
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=revgr_rank&sortOrder=2&pageNum=1&resultNum=50">Revenue Growth
+Rank
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=roe_per&sortOrder=2&pageNum=1&resultNum=50">Return on Equity
+(%)
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=roe_rank&sortOrder=2&pageNum=1&resultNum=50">Return on Equity
+Rank
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=sr_per&sortOrder=2&pageNum=1&resultNum=50">Shareholder's Return
+(%)
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=sr_rank&sortOrder=2&pageNum=1&resultNum=50">Shareholder's Return
+Rank
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+<td class="header" align="center" valign="bottom"><a href="http://bwnt.businessweek.com/interactive_reports/it100_2009/index.asp?sortCol=profits&sortOrder=2&pageNum=1&resultNum=50">Profits
+<img src="http://bwnt.businessweek.com/bwnt_images/bw_1x1.gif" border="0" alt="" width="7" height="8" /></a></td>
+</tr>
+<tr>
+<td class="header" style="padding: 0px;" colspan="13"> </td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">1 </td>
+<td class="smalltext" align="left"><a title="More information about AMAZON.COM" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=AMZN" target="_blank">AMAZON.COM</a> </td>
+<td class="smalltext" align="left">Net</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">19,920</td>
+<td class="smalltext" align="right">24 </td>
+<td class="smalltext" align="right">25 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">23 </td>
+<td class="smalltext" align="right">30 </td>
+<td class="smalltext" align="right">2 </td>
+<td class="smalltext" align="right">19 </td>
+<td class="smalltext" align="right">679</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">2 </td>
+<td class="smalltext" align="left"><a title="More information about ORACLE" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=ORCL" target="_blank">ORACLE</a> </td>
+<td class="smalltext" align="left">Soft</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">23,630</td>
+<td class="smalltext" align="right">21 </td>
+<td class="smalltext" align="right">12 </td>
+<td class="smalltext" align="right">50 </td>
+<td class="smalltext" align="right">25 </td>
+<td class="smalltext" align="right">26 </td>
+<td class="smalltext" align="right">-7 </td>
+<td class="smalltext" align="right">30 </td>
+<td class="smalltext" align="right">5,739</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">3 </td>
+<td class="smalltext" align="left"><a title="More information about SAP" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=SAP" target="_blank">SAP</a> </td>
+<td class="smalltext" align="left">Soft</td>
+<td class="smalltext" align="left">Germany</td>
+<td class="smalltext" align="right">16,093</td>
+<td class="smalltext" align="right">27 </td>
+<td class="smalltext" align="right">13 </td>
+<td class="smalltext" align="right">48 </td>
+<td class="smalltext" align="right">27 </td>
+<td class="smalltext" align="right">22 </td>
+<td class="smalltext" align="right">-9 </td>
+<td class="smalltext" align="right">32 </td>
+<td class="smalltext" align="right">2,698</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">4 </td>
+<td class="smalltext" align="left"><a title="More information about INVENTEC" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">INVENTEC</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">11,715</td>
+<td class="smalltext" align="right">33 </td>
+<td class="smalltext" align="right">45 </td>
+<td class="smalltext" align="right">5 </td>
+<td class="smalltext" align="right">14 </td>
+<td class="smalltext" align="right">66 </td>
+<td class="smalltext" align="right">-2 </td>
+<td class="smalltext" align="right">24 </td>
+<td class="smalltext" align="right">165</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">5 </td>
+<td class="smalltext" align="left"><a title="More information about IBM" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=IBM" target="_blank">IBM</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">100,839</td>
+<td class="smalltext" align="right">4 </td>
+<td class="smalltext" align="right">NA</td>
+<td class="smalltext" align="right">96 </td>
+<td class="smalltext" align="right">91 </td>
+<td class="smalltext" align="right">1 </td>
+<td class="smalltext" align="right">-13 </td>
+<td class="smalltext" align="right">42 </td>
+<td class="smalltext" align="right">12,310</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">6 </td>
+<td class="smalltext" align="left"><a title="More information about BHARTI AIRTEL" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">BHARTI AIRTEL</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">India</td>
+<td class="smalltext" align="right">5,804</td>
+<td class="smalltext" align="right">51 </td>
+<td class="smalltext" align="right">46 </td>
+<td class="smalltext" align="right">4 </td>
+<td class="smalltext" align="right">31 </td>
+<td class="smalltext" align="right">16 </td>
+<td class="smalltext" align="right">-16 </td>
+<td class="smalltext" align="right">51 </td>
+<td class="smalltext" align="right">1,439</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">7 </td>
+<td class="smalltext" align="left"><a title="More information about QUANTA COMPUTER" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">QUANTA COMPUTER</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">25,295</td>
+<td class="smalltext" align="right">18 </td>
+<td class="smalltext" align="right">5 </td>
+<td class="smalltext" align="right">80 </td>
+<td class="smalltext" align="right">24 </td>
+<td class="smalltext" align="right">29 </td>
+<td class="smalltext" align="right">7 </td>
+<td class="smalltext" align="right">13 </td>
+<td class="smalltext" align="right">625</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">8 </td>
+<td class="smalltext" align="left"><a title="More information about WISTRON" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">WISTRON</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">8,859</td>
+<td class="smalltext" align="right">45 </td>
+<td class="smalltext" align="right">55 </td>
+<td class="smalltext" align="right">3 </td>
+<td class="smalltext" align="right">19 </td>
+<td class="smalltext" align="right">44 </td>
+<td class="smalltext" align="right">-11 </td>
+<td class="smalltext" align="right">39 </td>
+<td class="smalltext" align="right">212</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center"><strong>9 </strong></td>
+<td class="smalltext" align="left"><a title="More information about TENCENT HOLDINGS" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank"><strong>TENCENT HOLDINGS</strong></a><strong> </strong></td>
+<td class="smalltext" align="left"><strong>Net</strong></td>
+<td class="smalltext" align="left"><strong>China</strong></td>
+<td class="smalltext" align="right"><strong>1,041</strong></td>
+<td class="smalltext" align="right"><strong>95 </strong></td>
+<td class="smalltext" align="right"><strong>87 </strong></td>
+<td class="smalltext" align="right"><strong>1 </strong></td>
+<td class="smalltext" align="right"><strong>40 </strong></td>
+<td class="smalltext" align="right"><strong>9 </strong></td>
+<td class="smalltext" align="right"><strong>34 </strong></td>
+<td class="smalltext" align="right"><strong>3 </strong></td>
+<td class="smalltext" align="right"><strong>406</strong></td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">10 </td>
+<td class="smalltext" align="left"><a title="More information about ACER" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">ACER</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">14,276</td>
+<td class="smalltext" align="right">31 </td>
+<td class="smalltext" align="right">18 </td>
+<td class="smalltext" align="right">28 </td>
+<td class="smalltext" align="right">14 </td>
+<td class="smalltext" align="right">65 </td>
+<td class="smalltext" align="right">3 </td>
+<td class="smalltext" align="right">18 </td>
+<td class="smalltext" align="right">360</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">11 </td>
+<td class="smalltext" align="left"><a title="More information about ACCENTURE" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=ACN" target="_blank">ACCENTURE</a> </td>
+<td class="smalltext" align="left">Svcs</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">25,282</td>
+<td class="smalltext" align="right">19 </td>
+<td class="smalltext" align="right">9 </td>
+<td class="smalltext" align="right">66 </td>
+<td class="smalltext" align="right">75 </td>
+<td class="smalltext" align="right">2 </td>
+<td class="smalltext" align="right">-20 </td>
+<td class="smalltext" align="right">62 </td>
+<td class="smalltext" align="right">1,795</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">12 </td>
+<td class="smalltext" align="left"><a title="More information about MTN GROUP" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">MTN GROUP</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">S. Africa</td>
+<td class="smalltext" align="right">11,604</td>
+<td class="smalltext" align="right">34 </td>
+<td class="smalltext" align="right">40 </td>
+<td class="smalltext" align="right">6 </td>
+<td class="smalltext" align="right">20 </td>
+<td class="smalltext" align="right">41 </td>
+<td class="smalltext" align="right">-21 </td>
+<td class="smalltext" align="right">63 </td>
+<td class="smalltext" align="right">1,733</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">13 </td>
+<td class="smalltext" align="left"><a title="More information about HTC" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">HTC</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">4,622</td>
+<td class="smalltext" align="right">56 </td>
+<td class="smalltext" align="right">29 </td>
+<td class="smalltext" align="right">12 </td>
+<td class="smalltext" align="right">47 </td>
+<td class="smalltext" align="right">5 </td>
+<td class="smalltext" align="right">-20 </td>
+<td class="smalltext" align="right">61 </td>
+<td class="smalltext" align="right">885</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">14 </td>
+<td class="smalltext" align="left"><a title="More information about RESEARCH IN MOTION" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=RIM" target="_blank">RESEARCH IN MOTION</a> </td>
+<td class="smalltext" align="left">Comm</td>
+<td class="smalltext" align="left">Canada</td>
+<td class="smalltext" align="right">11,065</td>
+<td class="smalltext" align="right">37 </td>
+<td class="smalltext" align="right">84 </td>
+<td class="smalltext" align="right">2 </td>
+<td class="smalltext" align="right">32 </td>
+<td class="smalltext" align="right">14 </td>
+<td class="smalltext" align="right">-33 </td>
+<td class="smalltext" align="right">91 </td>
+<td class="smalltext" align="right">1,893</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">15 </td>
+<td class="smalltext" align="left"><a title="More information about SAMSUNG ELECTRONICS" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">SAMSUNG ELECTRONICS</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Korea</td>
+<td class="smalltext" align="right">99,487</td>
+<td class="smalltext" align="right">6 </td>
+<td class="smalltext" align="right">23 </td>
+<td class="smalltext" align="right">20 </td>
+<td class="smalltext" align="right">9 </td>
+<td class="smalltext" align="right">84 </td>
+<td class="smalltext" align="right">-16 </td>
+<td class="smalltext" align="right">50 </td>
+<td class="smalltext" align="right">4,532</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">16 </td>
+<td class="smalltext" align="left"><a title="More information about AMERICA MOVIL" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=AMX" target="_blank">AMERICA MOVIL</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Mexico</td>
+<td class="smalltext" align="right">28,710</td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">11 </td>
+<td class="smalltext" align="right">57 </td>
+<td class="smalltext" align="right">42 </td>
+<td class="smalltext" align="right">7 </td>
+<td class="smalltext" align="right">-25 </td>
+<td class="smalltext" align="right">74 </td>
+<td class="smalltext" align="right">4,993</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">17 </td>
+<td class="smalltext" align="left"><a title="More information about SWISSCOM" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">SWISSCOM</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Switzerland</td>
+<td class="smalltext" align="right">10,974</td>
+<td class="smalltext" align="right">38 </td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">65 </td>
+<td class="smalltext" align="right">33 </td>
+<td class="smalltext" align="right">13 </td>
+<td class="smalltext" align="right">-9 </td>
+<td class="smalltext" align="right">33 </td>
+<td class="smalltext" align="right">1,580</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">18 </td>
+<td class="smalltext" align="left"><a title="More information about SAIC" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=SAI" target="_blank">SAIC</a> </td>
+<td class="smalltext" align="left">Svcs</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">10,070</td>
+<td class="smalltext" align="right">40 </td>
+<td class="smalltext" align="right">13 </td>
+<td class="smalltext" align="right">49 </td>
+<td class="smalltext" align="right">21 </td>
+<td class="smalltext" align="right">33 </td>
+<td class="smalltext" align="right">-5 </td>
+<td class="smalltext" align="right">26 </td>
+<td class="smalltext" align="right">447</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">19 </td>
+<td class="smalltext" align="left"><a title="More information about APPLE" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=AAPL" target="_blank">APPLE</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">33,689</td>
+<td class="smalltext" align="right">15 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">33 </td>
+<td class="smalltext" align="right">21 </td>
+<td class="smalltext" align="right">38 </td>
+<td class="smalltext" align="right">-28 </td>
+<td class="smalltext" align="right">79 </td>
+<td class="smalltext" align="right">5,018</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">20 </td>
+<td class="smalltext" align="left"><a title="More information about HEWLETT-PACKARD" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=HPQ" target="_blank">HEWLETT-PACKARD</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">118,697</td>
+<td class="smalltext" align="right">2 </td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">63 </td>
+<td class="smalltext" align="right">20 </td>
+<td class="smalltext" align="right">40 </td>
+<td class="smalltext" align="right">-22 </td>
+<td class="smalltext" align="right">68 </td>
+<td class="smalltext" align="right">8,050</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">21 </td>
+<td class="smalltext" align="left"><a title="More information about DIMENSION DATA HOLDINGS" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">DIMENSION DATA HOLDINGS</a> </td>
+<td class="smalltext" align="left">Svcs</td>
+<td class="smalltext" align="left">S. Africa</td>
+<td class="smalltext" align="right">4,511</td>
+<td class="smalltext" align="right">57 </td>
+<td class="smalltext" align="right">20 </td>
+<td class="smalltext" align="right">26 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">53 </td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">118</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">22 </td>
+<td class="smalltext" align="left"><a title="More information about MICROSOFT" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=MSFT" target="_blank">MICROSOFT</a> </td>
+<td class="smalltext" align="left">Soft</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">61,175</td>
+<td class="smalltext" align="right">8 </td>
+<td class="smalltext" align="right">6 </td>
+<td class="smalltext" align="right">79 </td>
+<td class="smalltext" align="right">43 </td>
+<td class="smalltext" align="right">6 </td>
+<td class="smalltext" align="right">-27 </td>
+<td class="smalltext" align="right">78 </td>
+<td class="smalltext" align="right">15,821</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">23 </td>
+<td class="smalltext" align="left"><a title="More information about CHINA MOBILE" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=CHL" target="_blank">CHINA MOBILE</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">China</td>
+<td class="smalltext" align="right">57,243</td>
+<td class="smalltext" align="right">12 </td>
+<td class="smalltext" align="right">16 </td>
+<td class="smalltext" align="right">39 </td>
+<td class="smalltext" align="right">26 </td>
+<td class="smalltext" align="right">24 </td>
+<td class="smalltext" align="right">-48 </td>
+<td class="smalltext" align="right">99 </td>
+<td class="smalltext" align="right">16,453</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">24 </td>
+<td class="smalltext" align="left"><a title="More information about ILIAD" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">ILIAD</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">France</td>
+<td class="smalltext" align="right">2,191</td>
+<td class="smalltext" align="right">79 </td>
+<td class="smalltext" align="right">29 </td>
+<td class="smalltext" align="right">11 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">51 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">6 </td>
+<td class="smalltext" align="right">141</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">25 </td>
+<td class="smalltext" align="left"><a title="More information about INFOSYS TECHNOLOGIES" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">INFOSYS TECHNOLOGIES</a> </td>
+<td class="smalltext" align="left">Svcs</td>
+<td class="smalltext" align="left">India</td>
+<td class="smalltext" align="right">4,663</td>
+<td class="smalltext" align="right">55 </td>
+<td class="smalltext" align="right">12 </td>
+<td class="smalltext" align="right">54 </td>
+<td class="smalltext" align="right">34 </td>
+<td class="smalltext" align="right">12 </td>
+<td class="smalltext" align="right">-12 </td>
+<td class="smalltext" align="right">40 </td>
+<td class="smalltext" align="right">1,281</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">26 </td>
+<td class="smalltext" align="left"><a title="More information about ASUSTEK COMPUTER" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">ASUSTEK COMPUTER</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">23,337</td>
+<td class="smalltext" align="right">22 </td>
+<td class="smalltext" align="right">35 </td>
+<td class="smalltext" align="right">7 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">49 </td>
+<td class="smalltext" align="right">-48 </td>
+<td class="smalltext" align="right">100 </td>
+<td class="smalltext" align="right">853</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">27 </td>
+<td class="smalltext" align="left"><a title="More information about NETFLIX" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=NFLX" target="_blank">NETFLIX</a> </td>
+<td class="smalltext" align="left">Net</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">1,439</td>
+<td class="smalltext" align="right">89 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">32 </td>
+<td class="smalltext" align="right">27 </td>
+<td class="smalltext" align="right">23 </td>
+<td class="smalltext" align="right">42 </td>
+<td class="smalltext" align="right">2 </td>
+<td class="smalltext" align="right">92</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">28 </td>
+<td class="smalltext" align="left"><a title="More information about SK TELECOM" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">SK TELECOM</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Korea</td>
+<td class="smalltext" align="right">11,500</td>
+<td class="smalltext" align="right">35 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">36 </td>
+<td class="smalltext" align="right">11 </td>
+<td class="smalltext" align="right">78 </td>
+<td class="smalltext" align="right">-5 </td>
+<td class="smalltext" align="right">27 </td>
+<td class="smalltext" align="right">982</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">29 </td>
+<td class="smalltext" align="left"><a title="More information about ERICSSON TELEFON" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=LM" target="_blank">ERICSSON TELEFON</a> </td>
+<td class="smalltext" align="left">Comm</td>
+<td class="smalltext" align="left">Sweden</td>
+<td class="smalltext" align="right">29,119</td>
+<td class="smalltext" align="right">16 </td>
+<td class="smalltext" align="right">11 </td>
+<td class="smalltext" align="right">56 </td>
+<td class="smalltext" align="right">8 </td>
+<td class="smalltext" align="right">91 </td>
+<td class="smalltext" align="right">-1 </td>
+<td class="smalltext" align="right">23 </td>
+<td class="smalltext" align="right">1,571</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">30 </td>
+<td class="smalltext" align="left"><a title="More information about TATA CONSULTANCY SERVICES" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">TATA CONSULTANCY SERVICES</a> </td>
+<td class="smalltext" align="left">Svcs</td>
+<td class="smalltext" align="left">India</td>
+<td class="smalltext" align="right">4,910</td>
+<td class="smalltext" align="right">54 </td>
+<td class="smalltext" align="right">22 </td>
+<td class="smalltext" align="right">23 </td>
+<td class="smalltext" align="right">41 </td>
+<td class="smalltext" align="right">8 </td>
+<td class="smalltext" align="right">-31 </td>
+<td class="smalltext" align="right">83 </td>
+<td class="smalltext" align="right">1,079</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">31 </td>
+<td class="smalltext" align="left"><a title="More information about TELSTRA" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">TELSTRA</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Australia</td>
+<td class="smalltext" align="right">19,205</td>
+<td class="smalltext" align="right">25 </td>
+<td class="smalltext" align="right">5 </td>
+<td class="smalltext" align="right">84 </td>
+<td class="smalltext" align="right">31 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">-18 </td>
+<td class="smalltext" align="right">57 </td>
+<td class="smalltext" align="right">2,856</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">32 </td>
+<td class="smalltext" align="left"><a title="More information about VERIZON COMMUNICATIONS" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=VZ" target="_blank">VERIZON COMMUNICATIONS</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">100,112</td>
+<td class="smalltext" align="right">5 </td>
+<td class="smalltext" align="right">6 </td>
+<td class="smalltext" align="right">78 </td>
+<td class="smalltext" align="right">15 </td>
+<td class="smalltext" align="right">59 </td>
+<td class="smalltext" align="right">-16 </td>
+<td class="smalltext" align="right">52 </td>
+<td class="smalltext" align="right">6,431</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">33 </td>
+<td class="smalltext" align="left"><a title="More information about BYD" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">BYD</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">China</td>
+<td class="smalltext" align="right">3,908</td>
+<td class="smalltext" align="right">64 </td>
+<td class="smalltext" align="right">26 </td>
+<td class="smalltext" align="right">15 </td>
+<td class="smalltext" align="right">9 </td>
+<td class="smalltext" align="right">87 </td>
+<td class="smalltext" align="right">50 </td>
+<td class="smalltext" align="right">1 </td>
+<td class="smalltext" align="right">149</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">34 </td>
+<td class="smalltext" align="left"><a title="More information about QUALCOMM" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=QCOM" target="_blank">QUALCOMM</a> </td>
+<td class="smalltext" align="left">Comm</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">11,067</td>
+<td class="smalltext" align="right">36 </td>
+<td class="smalltext" align="right">14 </td>
+<td class="smalltext" align="right">42 </td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">82 </td>
+<td class="smalltext" align="right">NA</td>
+<td class="smalltext" align="right">22 </td>
+<td class="smalltext" align="right">1,679</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">35 </td>
+<td class="smalltext" align="left"><a title="More information about TURKCELL ILETISIM HIZMETLERI" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=TKC" target="_blank">TURKCELL ILETISIM HIZMETLERI</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Turkey</td>
+<td class="smalltext" align="right">6,970</td>
+<td class="smalltext" align="right">48 </td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">64 </td>
+<td class="smalltext" align="right">34 </td>
+<td class="smalltext" align="right">11 </td>
+<td class="smalltext" align="right">-17 </td>
+<td class="smalltext" align="right">53 </td>
+<td class="smalltext" align="right">1,837</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">36 </td>
+<td class="smalltext" align="left"><a title="More information about VODAFONE GROUP" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">VODAFONE GROUP</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Britain</td>
+<td class="smalltext" align="right">59,391</td>
+<td class="smalltext" align="right">11 </td>
+<td class="smalltext" align="right">14 </td>
+<td class="smalltext" align="right">43 </td>
+<td class="smalltext" align="right">9 </td>
+<td class="smalltext" align="right">90 </td>
+<td class="smalltext" align="right">-17 </td>
+<td class="smalltext" align="right">54 </td>
+<td class="smalltext" align="right">11,149</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">37 </td>
+<td class="smalltext" align="left"><a title="More information about GOOGLE" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=GOOG" target="_blank">GOOGLE</a> </td>
+<td class="smalltext" align="left">Net</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">22,118</td>
+<td class="smalltext" align="right">23 </td>
+<td class="smalltext" align="right">22 </td>
+<td class="smalltext" align="right">25 </td>
+<td class="smalltext" align="right">15 </td>
+<td class="smalltext" align="right">61 </td>
+<td class="smalltext" align="right">-31 </td>
+<td class="smalltext" align="right">85 </td>
+<td class="smalltext" align="right">4,343</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">38 </td>
+<td class="smalltext" align="left"><a title="More information about DELL" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=DELL" target="_blank">DELL</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">61,101</td>
+<td class="smalltext" align="right">9 </td>
+<td class="smalltext" align="right">NA</td>
+<td class="smalltext" align="right">95 </td>
+<td class="smalltext" align="right">58 </td>
+<td class="smalltext" align="right">3 </td>
+<td class="smalltext" align="right">-38 </td>
+<td class="smalltext" align="right">95 </td>
+<td class="smalltext" align="right">2,478</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">39 </td>
+<td class="smalltext" align="left"><a title="More information about ZTE" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">ZTE</a> </td>
+<td class="smalltext" align="left">Comm</td>
+<td class="smalltext" align="left">China</td>
+<td class="smalltext" align="right">6,461</td>
+<td class="smalltext" align="right">49 </td>
+<td class="smalltext" align="right">27 </td>
+<td class="smalltext" align="right">14 </td>
+<td class="smalltext" align="right">12 </td>
+<td class="smalltext" align="right">77 </td>
+<td class="smalltext" align="right">-13 </td>
+<td class="smalltext" align="right">43 </td>
+<td class="smalltext" align="right">242</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">40 </td>
+<td class="smalltext" align="left"><a title="More information about HON HAI PRECISION INDUSTRY" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">HON HAI PRECISION INDUSTRY</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">60,260</td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">15 </td>
+<td class="smalltext" align="right">41 </td>
+<td class="smalltext" align="right">15 </td>
+<td class="smalltext" align="right">60 </td>
+<td class="smalltext" align="right">-36 </td>
+<td class="smalltext" align="right">94 </td>
+<td class="smalltext" align="right">1,703</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">41 </td>
+<td class="smalltext" align="left"><a title="More information about COMPUTERSHARE" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">COMPUTERSHARE</a> </td>
+<td class="smalltext" align="left">Svcs</td>
+<td class="smalltext" align="left">Australia</td>
+<td class="smalltext" align="right">1,587</td>
+<td class="smalltext" align="right">86 </td>
+<td class="smalltext" align="right">11 </td>
+<td class="smalltext" align="right">58 </td>
+<td class="smalltext" align="right">37 </td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">5 </td>
+<td class="smalltext" align="right">16 </td>
+<td class="smalltext" align="right">282</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">42 </td>
+<td class="smalltext" align="left"><a title="More information about COMPUTER SCIENCES" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=CSC" target="_blank">COMPUTER SCIENCES</a> </td>
+<td class="smalltext" align="left">Svcs</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">17,113</td>
+<td class="smalltext" align="right">26 </td>
+<td class="smalltext" align="right">7 </td>
+<td class="smalltext" align="right">71 </td>
+<td class="smalltext" align="right">16 </td>
+<td class="smalltext" align="right">56 </td>
+<td class="smalltext" align="right">-15 </td>
+<td class="smalltext" align="right">48 </td>
+<td class="smalltext" align="right">915</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">43 </td>
+<td class="smalltext" align="left"><a title="More information about WIPRO" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=WIT" target="_blank">WIPRO</a> </td>
+<td class="smalltext" align="left">Svcs</td>
+<td class="smalltext" align="left">India</td>
+<td class="smalltext" align="right">3,980</td>
+<td class="smalltext" align="right">62 </td>
+<td class="smalltext" align="right">30 </td>
+<td class="smalltext" align="right">10 </td>
+<td class="smalltext" align="right">25 </td>
+<td class="smalltext" align="right">25 </td>
+<td class="smalltext" align="right">-31 </td>
+<td class="smalltext" align="right">86 </td>
+<td class="smalltext" align="right">692</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">44 </td>
+<td class="smalltext" align="left"><a title="More information about ENTEL-EMPRESA NACION TELECOM" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">ENTEL-EMPRESA NACION TELECOM</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Chile</td>
+<td class="smalltext" align="right">1,893</td>
+<td class="smalltext" align="right">81 </td>
+<td class="smalltext" align="right">18 </td>
+<td class="smalltext" align="right">29 </td>
+<td class="smalltext" align="right">21 </td>
+<td class="smalltext" align="right">36 </td>
+<td class="smalltext" align="right">-8 </td>
+<td class="smalltext" align="right">31 </td>
+<td class="smalltext" align="right">272</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">45 </td>
+<td class="smalltext" align="left"><a title="More information about TELE NORTE LESTE PARTICIPACO" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">TELE NORTE LESTE PARTICIPACO</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Brazil</td>
+<td class="smalltext" align="right">9,514</td>
+<td class="smalltext" align="right">42 </td>
+<td class="smalltext" align="right">7 </td>
+<td class="smalltext" align="right">72 </td>
+<td class="smalltext" align="right">12 </td>
+<td class="smalltext" align="right">74 </td>
+<td class="smalltext" align="right">9 </td>
+<td class="smalltext" align="right">12 </td>
+<td class="smalltext" align="right">586</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">46 </td>
+<td class="smalltext" align="left"><a title="More information about EMBRATEL PARTICIPACOES" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">EMBRATEL PARTICIPACOES</a> </td>
+<td class="smalltext" align="left">Tele</td>
+<td class="smalltext" align="left">Brazil</td>
+<td class="smalltext" align="right">4,965</td>
+<td class="smalltext" align="right">53 </td>
+<td class="smalltext" align="right">13 </td>
+<td class="smalltext" align="right">46 </td>
+<td class="smalltext" align="right">7 </td>
+<td class="smalltext" align="right">93 </td>
+<td class="smalltext" align="right">22 </td>
+<td class="smalltext" align="right">4 </td>
+<td class="smalltext" align="right">311</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">47 </td>
+<td class="smalltext" align="left"><a title="More information about PRICELINE.COM" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=PCLN" target="_blank">PRICELINE.COM</a> </td>
+<td class="smalltext" align="left">Net</td>
+<td class="smalltext" align="left">U.S.</td>
+<td class="smalltext" align="right">1,944</td>
+<td class="smalltext" align="right">80 </td>
+<td class="smalltext" align="right">29 </td>
+<td class="smalltext" align="right">13 </td>
+<td class="smalltext" align="right">28 </td>
+<td class="smalltext" align="right">19 </td>
+<td class="smalltext" align="right">-24 </td>
+<td class="smalltext" align="right">71 </td>
+<td class="smalltext" align="right">200</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">48 </td>
+<td class="smalltext" align="left"><a title="More information about TAIWAN SEMICONDUCTOR MFG." href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=TSM" target="_blank">TAIWAN SEMICONDUCTOR MFG.</a> </td>
+<td class="smalltext" align="left">Semi</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">10,293</td>
+<td class="smalltext" align="right">39 </td>
+<td class="smalltext" align="right">3 </td>
+<td class="smalltext" align="right">87 </td>
+<td class="smalltext" align="right">21 </td>
+<td class="smalltext" align="right">37 </td>
+<td class="smalltext" align="right">-12 </td>
+<td class="smalltext" align="right">41 </td>
+<td class="smalltext" align="right">3,087</td>
+</tr>
+<tr class="r1style">
+<td class="smalltext" align="center">49 </td>
+<td class="smalltext" align="left"><a title="More information about NOKIA" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=NOK" target="_blank">NOKIA</a> </td>
+<td class="smalltext" align="left">Comm</td>
+<td class="smalltext" align="left">Finland</td>
+<td class="smalltext" align="right">70,990</td>
+<td class="smalltext" align="right">7 </td>
+<td class="smalltext" align="right">-1 </td>
+<td class="smalltext" align="right">97 </td>
+<td class="smalltext" align="right">28 </td>
+<td class="smalltext" align="right">21 </td>
+<td class="smalltext" align="right">-40 </td>
+<td class="smalltext" align="right">96 </td>
+<td class="smalltext" align="right">5,583</td>
+</tr>
+<tr class="r2style">
+<td class="smalltext" align="center">50 </td>
+<td class="smalltext" align="left"><a title="More information about COMPAL ELECTRONIC" href="http://investing.businessweek.com/businessweek/research/stocks/snapshot/snapshot.asp?symbol=" target="_blank">COMPAL ELECTRONIC</a> </td>
+<td class="smalltext" align="left">Comp</td>
+<td class="smalltext" align="left">Taiwan</td>
+<td class="smalltext" align="right">14,791</td>
+<td class="smalltext" align="right">29 </td>
+<td class="smalltext" align="right">-4 </td>
+<td class="smalltext" align="right">100 </td>
+<td class="smalltext" align="right">17 </td>
+<td class="smalltext" align="right">48 </td>
+<td class="smalltext" align="right">-10 </td>
+<td class="smalltext" align="right">37 </td>
+<td class="smalltext" align="right">419</td>
+</tr>
+</tbody></table>

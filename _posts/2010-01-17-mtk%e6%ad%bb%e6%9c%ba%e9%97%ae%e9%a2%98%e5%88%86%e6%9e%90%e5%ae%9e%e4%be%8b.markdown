@@ -1,0 +1,98 @@
+---
+layout: post
+title: MTK死机问题分析实例
+author: gavinkwoe
+date: !binary |-
+  MjAxMC0wMS0xNyAxMzoyOTozMSArMDgwMA==
+date_gmt: !binary |-
+  MjAxMC0wMS0xNyAwNToyOTozMSArMDgwMA==
+---
+Dear Sir :
+下午有看到贵司上传上来的memorydump，但是没有抓全，只有不到1k，正常是External ram Internal Ram的size，至少要5M以上。
+请确认在抓的时候 点击 start之后等到Finished Memorydump的对话框自动弹出才可以
+新的bin文件download 到手机后:
+1、开机进入“信息”
+2、选择“短信”
+3、按“确定”
+4、进入了新的界面，在这个界面选择“收件箱”
+5、按“确定”
+6、进入了“所有信息”的列表
+7、任选择一短信
+8、按“确定”
+9、进入了“信息内容”的界面
+10、按左软键“选项”
+11、进入了“信息选项”界面
+12、选择11项“使用号码”
+13、按“确定”
+结果：黑屏重启
+开启memory dump显示：
+[1]Fatal Error:
+kal buffer pool ID is invalid
+1=809 2=770063
+MMI
+对於共用memory的APP，请务必保证不能有两个APP同时使用这块memory，请贵司检查这部分 这种共用memory的方法，不是很建议用
+Dear Customer,
+May you please update the status of this issue?
+If we don&rsquo;t see any issue update in 3 days, we will presume that the problem has been resolved and will close the issue.
+Thank you for your cooperation.
+MTK
+1、我们正在按你说的做，但是几率比较小不好抓memory dump；现在我个人判断大概是内存不够共享内存出了问题，因为放歌，进WAP，下载都要耗内存，但我们是共享内存的，见scatTET25_GEMINI.txt文件；2、但我不知道此文件中的0&times;082F99C0，0&times;00030d40 等数据是如何得来的，如何去修改它，以上仅代表我个人的初步判断。
+Memory timing 这边检查过没有什麼问题，请您按照上一条note先消除一下log里面报出的关闭中断过久的问题，然后麻烦您提供一份memorydump，这边再做进一步分析确认，感谢
+附上抓memorydump的guide，请参考！
+为了进一步分析问题，请帮忙Dump memory
+请您提供以下文件：
+1. Memorydump.bin
+2. Catcher log (*.clg)
+3. ELF 文件 (\build\\*.elf)
+提示：请务必保证抓Memory dump对应的Binary和ELF文件是同一次编译生成的！！！
+您可以按如下步骤进行：
+1. 打开makefile(\make\.mak)中的-g选项
+在makefile中设置CUSTOM_CFLAGS = -g -gtp
+2. 对工程作new操作, 然后Download Binary.
+3. 打开Memory dump开关；
+进入工程模式，选择Misc.\Memory dump, 将其设置为On
+提示：该开关默认为关，并且开机时系统会将其恢复成默认值，所以您的设置只对当次开机有效，若需抓Memory dump，请在每次开机的重新开启此开关
+4. 连上Catcher(Catcher 的filter设置为Field Trial)，复制问题；
+5. 当发生异常时，选择Advance\Memory Dump(在CatcherV3.10.10以前的版本此处为Download DebugInfo)，在弹出的窗口中选择Start按钮开始Memory dump；
+提示：发生异常时，LCD上显示错误类型，并且不会重启，若手机直接重启，并且第1步确认正确完成，请将此现象回复给我们
+Catcher Dump完成之后，会弹出提示窗口告诉您，请不要在此之前关闭Catcher或者断开手机与PC连接
+6. Memory dump完成之后，请同时保存Log (选择File\Save As)；
+7. 将以上两步保存下来的文件(*.bin, *.clg)及Build\\*.elf寄给我们。
+对於以上第3步打开Memory dump开关，若无法进入工模操作请尝试修改代码来打开，方法如下：
+在application_initialize之前extern kal_uint32 INT_MemoryDumpFlag;
+在application_initialize中调用mainp的上一行添加INT_MemoryDumpFlag = 0&times;26409001;
+若无法成功抓取memory dump，请先检查以下几项:
+1. Download cable driver较旧, 建议更新至最新版本再来尝试
+a.Prolific cable latest driver download address: http://www.prolific.com.tw/eng/downloads.asp?ID=31
+b.FTDI cable latest driver download address: http://www.ftdichip.com/Drivers/VCP.htm
+2. download cable不稳定(通常在set filter时即有catcher error log的话更可佐证)
+可尝试更换download cable，也可尝试以下步骤进行重连
+a. 先在Catcher tool端执行disconnect
+b. 拔掉PC端的USB接头
+c. 接回PC端的USB接头
+d. 在Catcher tool端执行connect
+e. 连结成功则执行memory dump, 80%均可排除此情况
+3. 系统可能完全死机，system service无法回应Catcher tool 的指令, 此种情况只能透过TRACE32调试
+另外，提醒一点：之后若有类似死机的问题，请在提交问题时一并提供memory dump，以加速问题的处理
+谢谢！
+Dear Sir：
+麻烦附上 custom/system文件夹，我这边做一下检查。同时请注意调整下面的信息：
+请注意Log Sys Trace中如下信息：
+lr=[return address], du= [duration]
+lr表示打开中断时函数返回地址，表示与此操作对应的关中断操作关得太久，du表示关闭的时长，单位为Qbit (约为1us)，要求中断不能关超过60 Qbit (约60 us)
+对於此类问题，可通过lr查询sym file (build\\*.sym)找到相关中断操作所在的函数，地址小於lr且最接近lr对应的函数即为我们要找的
+找到相关函数后，请修正至没有warning出现为止
+谢谢
+我们用的是三星的，是你们公司验证过的，型号为：K5L2731CAM,K5L2731CAA.
+我定义的
+1. CS0_PART_NUMBER=K5L2731CAM
+CS1_PART_NUMBER=K5L2731CAM
+2. CS0_PART_NUMBER=K5L2731CAM
+CS1_PART_NUMBER=K5L2731CAA
+上述2种情况我都试过，都会出现.
+另外我想请教一下，在你们memeorydevicelist.xls中定义的，CS项：0对应的K5L2731CAM，1对应的是K5L2731CAA，但我看到很多人定义的却是： CS0_PART_NUMBER=K5L2731CAM
+CS1_PART_NUMBER=K5L2731CAM
+这些人为什么把两者定义成一样的呢？这个CS0_PART_NUMBER，CS1_PART_NUMBER与memeorydevicelist.xls中对应CS项的0和1不是同一个概念吗？CS0_PART_NUMBER，CS1_PART_NUMBER和硬件的接线有关系吗？能不能具体解释一下，最好是举个例子说明。
+MTK 2009-12-17 20:16:03 Dear Customer, 请问贵司使用的 Memory 是哪一颗？ 是否是敝司验证过的?
+确实如此，频次是20次就会3次是这样的情况！
+Dear Customer, 可否尽快确认一下上一个问题？ 谢谢!

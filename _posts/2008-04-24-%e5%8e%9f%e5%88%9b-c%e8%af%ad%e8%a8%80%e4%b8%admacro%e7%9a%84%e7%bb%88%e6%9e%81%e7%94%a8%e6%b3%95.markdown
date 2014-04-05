@@ -1,0 +1,221 @@
+---
+layout: post
+title: ! '[原创] C语言中Macro的终极用法'
+author: gavinkwoe
+date: !binary |-
+  MjAwOC0wNC0yNCAyMToyNzowNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wNC0yNCAxMzoyNzowNiArMDgwMA==
+---
+    转载请注明出处，谢谢。 <a href="http://www.donevii.com/">www.donevii.com</a> 或 <a href="http://www.cpplite.com">www.cpplite.com</a> 
+    工作2年了，难得有时间把一些平时写程序的小技巧记录下来。看到标题就知道，C语言中的宏(Macro)是最令人头痛，同时又被某些牛人所青睐的。宏(Macro)这一概念通常出现在编译性语言中，意旨编译期间替代人工做某些简短重复的CODING工作。在编译期间，根据您所使用的编译器不同，根据实际展开能力对宏来逐层展开，最终宏会像我们预先定义的样子来展开代码。
+    那么，接下来我就先来介绍一下常用的宏技巧吧（听起来有点老套，不过请耐心看下去，会有收获的）。
+    <strong>1. 头文件包含守护
+</strong>        出现在某.h或.hpp .hxx中，
+<span style="color: #0000ff;">        #ifndef __HTML_PAGE_BUILDER_H__
+        #define __HTML_PAGE_BUILDER_H__
+                  // 一大堆声明出现在这里
+        #endif  // #ifndef __HTML_PAGE_BUILDER_H__ （加这样的注释是一种好习惯呕~）</span>
+        通常用来使某一头文件在编译期间只被其他源文件只包含一次，从而使整个编译逻辑中所有单元的Dependence清晰明确。当然我所说的Dependence只是我们按宏的表面作用来讲的，具体的Dependence还是要真对不同的编译系统再讨论。
+    <strong>2. 文件域内/外的常量定义
+</strong>        为什么说“文件域内/外”呢？因为宏(Macro)根据它定义所在单元(文件)不同，将拥有不同的有效域，或叫不同的外部视野。
+        a) 定义在.c/.cpp/.cxx源文件内
+            在.c类似的源文件编译单元内，宏只能被该单元可见。也就是说在该单元被第一次预编译时，会先找出单元所属所有的宏，然后在该单元可见，在该单元编译结束时，所有这些宏又全部消失掉。
+            从而，我们可以做个实验，以VC的COMPILER为例：
+<span style="color: #0000ff;">            // my_a.c
+            #define __AVAIL_ONLY_IN_MY_A_C__
+            // my_b.c
+            #if defined(__AVAIL_ONLY_IN_MY_A_C__)
+            #error Error will never occurred
+            #endif // #if defined(__AVAIL_ONLY_IN_MY_A_C__)</span>
+            不管以怎样的编译顺序，在Compile my_b.c时都不会发生错误。
+            那这时候您想问，“请问宏的名字能不能在单元内被复用？”，我可以回答说，“能，但有限制”，如下面的用法：
+<span style="color: #0000ff;">           // my_a.c
+           #define SOME_FACTOR   (1.0)
+               // ...
+               {
+                    // ...
+                    some_var = calc_with( SOME_FACTOR );
+               }
+           #undef SOME_FACTOR
+           #define SOME_FACTOR   (2.0)
+               // ...
+               {
+                    // ...
+                    some_var = calc_with( SOME_FACTOR );
+               }
+           #undef SOME_FACTOR</span>
+           明白了吧，当您的代码结足够好，逻辑足够清楚时，也可以尝试一下这种用法。
+           宏定义是没有位置限制的，也可以尝试一下下面的BT用法：
+  <span style="color: #0000ff;">         void some_func( void )
+           {
+               #if defined(SOME_FACTOR)
+               #error OH MY GOD, it make the codes so confused!
+               #endif // #if defined(SOME_FACTOR)
+               #define SOME_FACTOR  (1.0)
+               // ...
+               calc_with( SOME_FACTOR );
+               // ...
+               some_var = calc2_with( SOME_FACTOR );
+               some_var = calc3_with( SOME_FACTOR );
+               // ...
+               #undef SOME_FACTOR
+           }</span>
+           这样做的优点就是，在IDE非常弱智的话可以在任意代码处看到宏的值是什么，修改起来比较方便。
+           如果这些宏通常只要你在自己的模块中调试时所用，并且不想改动任何其他人的头文件时，也是不错的办法。
+        b) 定义在.h/.hxx/.hpp头文件内
+           这个就不多说了，被全局引用的宏定义。通常是一些Feature开关的设定。比如：
+<span style="color: #0000ff;">           // xxx_global_features.h
+           #define __PC_SIDE_DEBUG__
+           #if defined(__ON_HARDWARE__)
+           #define __PC_SIDE_DEBUG__
+           #endif // #if defined(__ON_HARDWARE__)
+</span>
+    <strong>3. 简写
+</strong>        所以要简写……
+<span style="color: #0000ff;">        // xxx.h
+        #define XXX_CONTRACT_FLAG_TAG_MUST_BE_PRESENT   (0x0000 << 0)
+        #define XXX_CONTRACT_FLAG_TAG_MUST_BE_PAIRED   (0x0000 << 1)
+        // xxx.c
+        #include "xxx.h"
+        #define __CF_PRST  XXX_CONTRACT_FLAG_TAG_MUST_BE_PRESENT
+        #define __CF_PAIR  XXX_CONTRACT_FLAG_TAG_MUST_BE_PAIRED
+        {
+             // ...
+             xxx_flag = __CF_PRST|__CF_PAIR;
+        }</span>
+        如果这招从来没用过……别跟我讲你是用C语言写程序的……。
+    <strong>3. 代码和静态数据分离
+</strong>        先声明，我以确在别人的源代码中见过这种用法，不过在我看到之前我本人就已经在用了…… 不能说是我发明的，但的确是英雄所见。
+        举个例子，比如我们有一个算法库，里面有定义很多很多很多数组，在一个特殊的OS A（Nucleus）上出于加速及优化方法考虑，一定要定义为静态数组。但同时，由于我要移植到另一个特别OS B上（如Symbian），不允许这样使用。因此，我们要把所有代码里所有的静态数组都找出来，再在栈上定义它们。
+       这样的话，我们将有两份或多份代码来同时维护，如：
+<span style="color: #0000ff;">       // my_algo.c for OS A
+       static uint32_t __some_global_datas[] = {
+            0, 1, 2, 3, 4, 5 ....
+            0, 1, 2, 3, 4, 5 ....
+            ....
+       };
+       // my_algo.c for OS B
+       {
+           uint32_t __some_global_datas[] = {
+                0, 1, 2, 3, 4, 5 ....
+                0, 1, 2, 3, 4, 5 ....
+                ....
+           };
+       }</span>
+        有一个办法可以只通过一个宏，将两份代码合并到一起，而且不会使代码冗长，最可能不是最好的办法。
+        1) 先定义一个OS Feature的头文件：
+<span style="color: #0000ff;">        // which_os.h
+        //#define __OS_A__
+        #define __OS_B__</span>
+        2) 再定义一个专门用来存数组数据的头文件：
+<span style="color: #0000ff;">        // array_datas.h
+        #if defined(__MY_ALGO_C__)
+                0, 1, 2, 3, 4, 5 ....
+                0, 1, 2, 3, 4, 5 ....
+                ....
+        #endif // #if defined(__MY_ALGO_C__)</span>
+        是的你没有看错，的确在头文件里是这样写的，而且没有任何的包括守护。
+        3) 再来看看新的my_algo.c：
+<span style="color: #0000ff;">        #define __MY_ALGO_C__
+        #include "which_os.h"
+        #if defined(__OS_A__)
+        static uint32_t __some_global_datas[] = {
+              #include "array_datas.h"
+       };
+       #endif // #if defined(__OS_A__)
+       // ....
+        {
+              #if defined(__OS_B__)
+              uint32_t __some_global_datas[] = {
+                   #include "array_datas.h"
+              };
+              #endif // #if defined(__OS_B__)
+       }</span>
+       想想有多份代码的话，有一天老板告诉你说，“我们要真对那些数据的内容做一次修改，然后要对每份代码进行同步。”，如果你真的不知道这种Hack技巧，OH MY GOD，我想我真的要疯掉了。
+       如果你跟我一样，在代码中的确需要这样的功能，有这样的特殊需求，那么可以试一下。
+       适应不同的OS的同时，代码整洁不了，不是吗？
+    <strong>4. 数据填充模板
+</strong>       看过之上几招之后，是不是感觉很用法怪异，作者很BT？那我再来告诉你招巨BT，但不太实用的Hack技巧吧。
+       打个比方，我有n个固定的UI Widget的样式数据，像下面这样写在头文件如：
+<span style="color: #0000ff;">       // x,   y,   z,  w,     h, ext
+            0,   0,  0,  200, 20,  0x11, // Icon bar
+            0,   200, 0, 200, 20, 0x22, // Soft bar
+            ....</span>
+       而我要用到这些数据的结构体一共有2个，被定义如下：
+ <span style="color: #0000ff;">      struct __struct_UI_widget_coord {
+              uint32_t x;
+              uint32_t y;
+       };
+       struct __struct_UI_widget_ext {
+              uint8_t ext;
+       };
+       static struct __struct_UI_widget_coord  __global_UI_coords[TOTAL_UI_WIDGETS];
+       static struct __struct_UI_UI_widget_ext __global_UI_exts[TOTAL_UI_WIDGETS];</span>
+       怎样将我的UI_widget_detail.h中的数据分别填进两个数据中？看看下面的方法：
+       1) 修改UI_widget_detail.h为如下的格式：
+<span style="color: #0000ff;">       // UI_widget_detail.h
+       // x,   y,   z,  w,     h, ext
+            __FILL_DATA( 0,   0,  0,  200, 20,  0x11 ),// Icon bar
+            __FILL_DATA( 0,   200, 0, 200, 20, 0x22 ),// Soft bar
+            ....</span>       
+       2) 填充数组数据
+<span style="color: #0000ff;">       #undef __FILL_DATA
+       #define __FILL_DATA( x, y, z, w, h, ext )   { x, y }
+       static struct __struct_UI_widget_coord  __global_UI_coords[TOTAL_UI_WIDGETS] = {
+            #include "UI_widget_detail.h"
+       };
+       #undef __FILL_DATA
+       #define __FILL_DATA( x, y, z, w, h, ext )   { ext }
+       static struct __struct_UI_UI_widget_ext __global_UI_exts[TOTAL_UI_WIDGETS] = {
+            #include "UI_widget_detail.h"
+       };</span>
+    <strong>5. 代码复用模板
+</strong>       我想你一定认为我疯了，不过这些大多不为人知或不常用的技巧的的确确，我一直在用。
+       不敢说如火纯青，大概也让我少敲击了几下键盘。来看看代码复用模板是怎么一回事？
+       还是以举个例子：
+             比如我有一个LIST数据结构，让我感觉烦的是，每次做迭代操作都要写一大堆代码，而且都是一样的。
+             像下面这个样子：
+<span style="color: #0000ff;">              {
+                    lnode_ptr_t curr;
+                    lnode_ptr_t next;
+                    // ...
+                    curr = some_first_node;
+                    while ( NULL != curr ) {
+                        next = curr->_next;
+                        operate1( curr );
+                        operate2( curr );
+                        curr = next;
+                   }
+                   // ...
+             }</span>
+             如果这样的代码在几百个.c中到处被用到，而且只有中间操作过程不一样，会不会感觉很烦呀？
+            
+             那我来给你个提示，怎么复用这些框架代码：
+<span style="color: #0000ff;">             #define FOREACH_NODE_FORWARD( __first, __curr, __op ) \
+                          do { \
+                                lnode_ptr_t curr__ = (__first);  \
+                                while ( NULL != curr__ ) \
+                                { \
+                                      (__curr) = curr__; \
+                                      curr__ = curr__->_next; \
+                                      __op \
+                                } \
+                          } while ( 0 );</span>
+              使用方式如下：
+  <span style="color: #0000ff;">            {
+                    lnode_ptr_t curr_ptr = NULL;
+                   // ...
+                   FOREACH_NODE_FORWARD
+                   (
+                         some_first_node,
+                         curr_ptr,
+                         { 
+                             operate1( curr );
+                             operate2( curr );
+                         }
+                   );
+                   // ...
+              }</span>
+              看懂了吗？我们真的用宏把这些框架代码给复用了，而且使代码很整洁美观。我们并没有增加一个变量就能使结构如此的完美。
+       好了，就先说这些多，还有其他更多的技巧请关注我和Dengwei的BLOG。晚安。

@@ -1,0 +1,99 @@
+---
+layout: post
+title: 点出统计器[原创]
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0yMiAxODo1MzozMyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0yMiAxMDo1MzozMyArMDgwMA==
+---
+这个程序可以用 <script src="clickout.js"></script> 加到任意页面的 </body> 前面。
+当用户点击 a 标签时触发事件
+/*
+ * 说明：点出统计器
+ * 作者：Alvin
+ * 日期：2006-07-25
+ * 版本：v1.2
+ */
+document.write('
+<div id="ClickOut" style="width:0px;height:0px;"></div>');
+function ClickOut()
+{
+ this.oCO  = null;
+ this.src_onclick = null;
+ this.isDEBUG  = true || "status";
+ this.isOP  = (navigator.appName + " " + navigator.appVersion);
+ this.isOP  = (this.isOP.indexOf('Opera')>-1?true:false);
+ this.debug  = function(arg) {
+  if( this.isDEBUG == "status" ) window.status = arg.toString();
+  else if ( this.isDEBUG ) alert(arg.toString());
+ }
+ this.save  = function() {
+  var IOUT = "";
+  // GET 方式接收数据的页面
+  var sUrl = "<a href="http://www.xxx.com/">http://www.xxx.com/</a>" + "clickout.php?";
+  try
+  {
+   if( Traffic_Counter.IOUT )
+   {
+    IOUT = Traffic_Counter.IOUT;
+   }
+   else
+   {
+    IOUT = "";
+   }
+  }
+  catch(e)
+  {
+   IOUT = "";
+  }
+  sUrl += "IOUT=" + encodeURIComponent(IOUT);
+  sUrl += "&src=" + encodeURIComponent(this.click_src);
+  sUrl += "&text=" + encodeURIComponent(this.click_text);
+  this.addins(sUrl);
+  return true;
+ }
+ this.addins  = function(sUrl) {
+  var code;
+  
+  if( !this.isOP )
+  {
+   code = '<img src="' + sUrl + '" style="display: none;" width="0px" height="0px" \/>';
+  }
+  else
+  {
+   code = '<iframe width="0" height="0" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" src="' + sUrl + '"><\/iframe>';
+  }
+  document.getElementById("ClickOut").innerHTML =  code;
+  this.debug("已发送请求");
+  return true;
+ }
+ this.onclick  = function(evt) {
+  if( evt == null ) evt = window.event; // For FF
+  if( this.src_onclick != null ) this.src_onclick(evt);
+  
+  var obj = evt.srcElement ? evt.srcElement : evt.target ; // For FF
+  var tag = obj.tagName.toLowerCase();
+  
+  if( tag != "a" ) return;
+  this.click_tag  = tag;
+  this.click_src  = obj.href;
+  this.click_text  = obj.innerHTML;
+    
+  this.debug(this.click_path);
+  objClickOut_doSave();
+ }
+}
+// 实例
+var objClickOut = new ClickOut();
+// 保存原有的 onclick 事件
+objClickOut.src_onclick = document.onclick;
+function objClickOut_click_tmp(evt) {
+ objClickOut.onclick(evt);
+}
+function objClickOut_doSave() {
+ objClickOut.save();
+}
+// bind event
+document.onclick = objClickOut_click_tmp;
+ 

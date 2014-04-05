@@ -1,0 +1,10 @@
+---
+layout: post
+title: 将提供模板下载
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0yNCAxOTozODo1NiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0yNCAxMTozODo1NiArMDgwMA==
+---
+从我自己下载 zblog 开始改模板到完成，因为平时要上班，所以只有用休息时间来搞一搞。<br/>自己大概估算了一下，如果用全天时间来弄的话，一天一个模板应该没啥问题的。<br/>这是我现在用的 ejeliot 的模板截图，我正在准备再次改版，改版完成后就放出这一次的 ejeliot 模板。<br/>不知道大家对这种模板感觉如何？当然，有一些细节的地方我没有仔细调整，主要是自己学习一下如何在 zblog 中改模板。<br/>总体感觉 zblog 的 DIY 还是很随意的，赞一个先～！<br/>先放图，过两天就上传模板<br/> <br/>如果大家等不急也可以自己先去下源文件<br/><br/><img onload="ResizeImage(this,240)" src="http://static.flickr.com/75/223383182_81390a1188_b.jpg" alt="" title=""/><br/><img onload="ResizeImage(this,240)" src="http://static.flickr.com/70/223383184_243defc1a0_b.jpg" alt="" title=""/><br/><img onload="ResizeImage(this,240)" src="http://static.flickr.com/92/223383185_0b66393639_b.jpg" alt="" title=""/><br/><img onload="ResizeImage(this,240)" src="http://static.flickr.com/72/223383186_190e529ce4_b.jpg" alt="" title=""/>

@@ -1,0 +1,605 @@
+---
+layout: post
+title: ! '[转]AT指令集及S寄存器 '
+author: gavinkwoe
+date: !binary |-
+  MjAwOC0wMS0xNiAxMTo0NjozNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wMS0xNiAwMzo0NjozNSArMDgwMA==
+---
+<p id="textboxContent" class="p_entry2">AT命令使计算机或终端与调制解调器通讯,所有命令行必须由ASCII字符“AT”开始并由 <Enter> 结束。除了A/指令和推出(缺省为+++)。这些将在后面讨论。字母"AT"用以提醒调制解调器注意，其后将有一条或多条命令出现, "AT"及其后的字母可以是大写或小写。
+<h5>
+<p align="center"><font color="#ff0000">AT必须同为大写或小写。如"At"或"aT"是不允许的。</font>
+</h5>
+<blockquote>    一串命令可以写在一行里。为了便于阅读可以加或不加空格。命令中或命令间的空格会被忽略，命令行的最多字符数为39(包括"AT")。在输入一条命令期间，可以用退格键(backspace)改正除"AT"以外的错误。若命令行中任一处出现语法错误，本行其后的内容将被忽略，并返回ERROR。大数带有超出正常范围的参数的命令将不被接收并返回 ERROR.本章列出所有设置调制解调器的命令。包括控制ACTIVE调制解调器的贺氏标准AT命令集。贺氏V系列命令集和扩展命令集
+<strong>AT命令集的描述</strong>
+  <strong>    符号 * 表明该命令的设置可用AT&Wn命令存于两个用户方案中的一个</strong>
+<strong>A/        重执行命令</strong>
+<blockquote>
+<blockquote>重执行前一AT命令行，主要用于连接时占线，无应答或号码错误。这一命令必须单独构成一命令行并由"/"字符结束,(<Enter> 不能用于结束命令)。</blockquote>
+</blockquote>
+<strong>+++       退出字符 缺省:+</strong>
+<blockquote>
+<blockquote>切换调制解调器从在线状态到命令状态，而不会中断数据连接。可以通过改变S寄存器S2的值来改变这一字符。</blockquote>
+</blockquote>
+<strong>AT=x      写入被选的S寄存器</strong>
+<blockquote>
+<blockquote>这一命令将数值x写入当前被选的S寄存器，一个S寄存器可由ATSn命令选择，若 x 是一个数字,所有S 寄存器将返回 OK 响应。</blockquote>
+</blockquote>
+<strong>AT?       读被选的S寄存器</strong>
+<blockquote>  这一命令读并且显示被选的S寄存器的内容。一个S寄存器可由ATSn命令选择。</blockquote>
+<strong>ATA       应答</strong>
+<blockquote>
+<blockquote>它必须是命令行中的最后一条指令。调制解调器在应答方式下继续执行连接程序。在与远端调制解调器交换载波后进入连接状态,如果在由寄存器S7规定的时间内(缺省值=50秒)没有检测到载波, 调制解调器将挂机。在连接过程中，通过DTE输入的任何一个字母都将中断这一命令。</blockquote>
+</blockquote>
+<strong>ATBn*     选择ITU-T或Bell模式 缺省=0</strong>
+<blockquote>
+<blockquote> ATB0 选择在1200和300bps速率下通讯的ITU-T V.22和V.21协议
+ ATB1 选择在1200和300bps速率下通讯的Bell 212A和103协议</blockquote>
+</blockquote>
+<strong>ATCn      载波控制缺省=1</strong>
+<blockquote>
+<blockquote>包含这一命令只是为了保证兼容性，执行号只是返回一结果码而没有其它作用。
+ATC1 正常传输载波切换</blockquote>
+</blockquote>
+<strong>ATDn      拨号</strong>
+<blockquote>
+<blockquote>它必须是命令行中的最后一条指令, ATD命令使调制解调器摘机后, 根据输入的参数拨号,以建立连接。如果不带参数，调制解调器摘机后，不拨号进入发起方式。
+使用标点可使命令更易读懂。圆括号,连字符和空格符会被忽略。拔号命令行中如果出现了非法字符，则该字符及其后的内容将被忽略。调制解调器允许的拨号命令长度为36个字符。
+参数：0-9 A B C D * # L P T R ! @ W , ; ^ S=n
+0-9     DTMF 符号0到9
+A-D     DTMF 符号A,B,C和D。在一些国家中不使用这些符号
+*       "星"号(仅用于音频拨号)
+#       "#"号(仅用于音频拨号)
+J       为本次呼叫执行在可提供的最高速率下的MNP10链路协商(可选)
+K       使本次呼叫MNP10链路协商期间电源电平可调(可选)
+L       重拨上一次拨过的号码
+P       脉冲拨号
+T       双音频拨号
+R       逆叫方式。允许调制解调器使用应答方式呼叫只能作为发起使用的调制解调        器, 必须作为命令行中的最后一个字符输入。
+!       使调制解调器按照S29中规定的值挂机一段时间再摘机。
+@       使调制解调器等待5秒钟的无声回答
+w       按照寄存器S7中规定的时间，在拨号前等待拨号音。
+,       在拨号过程中，按照寄存器S8中规定的时间,暂停
+;       拨号后返回命令状态
+^       打开呼叫音
+()      被忽视，用于格式化号码串
+-       被忽视，用于格式化号码串
+<space> 被忽视,用于格式化号码串
+S=n     用AT&Zn 命令存在地址n处的号码拨号</blockquote>
+</blockquote>
+<strong>ATE*     命令回应           缺省:1</strong>
+<blockquote>
+<blockquote>ATE0 关闭命令回应
+ATE1 打开 命令回应</blockquote>
+</blockquote>
+<strong>ATHn     摘挂机控制       缺省:0</strong>
+<blockquote>
+<blockquote>ATH0 使调制解调器挂机
+ATH1 当调制解调器处于挂机状态，使调制解调器摘机，返回响 OK，等待进一步的命令。</blockquote>
+</blockquote>
+<strong>ATIn     识别</strong>
+<blockquote>
+<blockquote>I0 报告产品代码
+I1 报告ROM中预先计算的校验和
+I2 计算校验和并与ROM中的校验和比较,返回"OK"或"ERROR"结果码
+I3 报告固件修正
+I4 报告OEM定义的识别串
+I5 报告国家代码参数
+I6 报告固件修正
+I7 报告调制解调器数据泵类型</blockquote>
+</blockquote>
+<strong>ATLn*    扬声器音量       缺省:2</strong>
+<blockquote>
+<blockquote>ATL0 扬声器低音量
+ATL1 扬声器低音量
+ATL2 扬声器中音量
+ATL3 扬声器高音量</blockquote>
+</blockquote>
+<strong>ATMn*    扬声器控制       缺省:1</strong>
+<blockquote>
+<blockquote>ATM0 关闭扬声器
+ATM1 扬声器在呼叫建立握手阶段打开至检测到来自于远端调制解调器的载波后关闭
+ATM2 扬声器持续开
+ATM3 扬声器在应答期间打开。当检测到来自于远端的调制解调器的载波和拨号时关闭</blockquote>
+</blockquote>
+<strong>ATNn*     调制握手       缺省:1</strong>
+<blockquote>
+<blockquote><strong> </strong>ATN0 要求调制解调器S37选择连接速率,若S37＝0,则连接速率必须与发出的上一条AT命令的速率相匹配。如果所选择的速率可用不止一个通讯标准实现(如Bell212A或ITU-T V.22 速率在 1200bps)调制解调器同时参考ATB 命令选择。ATN1 允许时使用双方调制解调器都支持的任一速率握手，使能够自动检测。在这一方式下，ATB命令被忽视，调制解调器只用ITU-T方式连接。</blockquote>
+</blockquote>
+<strong>ATOn     进入数据在现状态 缺省:0</strong>
+<blockquote>
+<blockquote>ATO0 使调制解调器从命令在现状态直接返回数据在线状态,不经过自动均衡。
+ATO1 使调制解调器从命令在现状态返回数据在状态,经过自动均衡。</blockquote>
+</blockquote>
+<strong>ATP*     设脉冲拨号为缺省</strong>
+ 
+<strong>ATQn*    结果码显示        缺省:0</strong>
+<blockquote>
+<blockquote>ATQ0 调制解调器向DTE发送结果码
+ATQ1 禁止调制解调器向DTE发送结果码</blockquote>
+</blockquote>
+</blockquote>
+<p align="center"><a target="_blank" href="http://www.lsllhd.com/gksmpale/sspek.htm"><font color="#ff0000">点击查看S寄存器详解！</font></a>
+<blockquote><strong>ATSn     设S寄存器n为缺省寄存器</strong>
+ <strong>ATSn?    读S寄存器</strong>
+<blockquote>
+<blockquote>读S寄存器中的内容，所有的S寄存器都可以读</blockquote>
+</blockquote>
+<strong>ATSn=x   写入S寄存器</strong>
+<blockquote>
+<blockquote>将 x值写入指定的S寄存器n</blockquote>
+</blockquote>
+<strong>ATT*     设音频拔号为缺省</strong>
+ 
+<strong>ATVn*    结束码类型 (消息控制)        缺省</strong>:1
+<blockquote>
+<blockquote>ATV0 发送短型 (数字型) 结果码
+ATV1 发送长型 (字符型) 结果码</blockquote>
+</blockquote>
+<strong>ATWn*    协商进程报告                缺省:0</strong>
+<blockquote>
+<blockquote>ATW0 不报告纠错呼叫进程
+ATW1 报告纠错呼叫进程
+ATW2 不报告纠错呼叫进程，CONNECT xxxx指示DCE速率。</blockquote>
+</blockquote>
+<strong>ATXn*     扩展结果码            缺省:4</strong>
+<blockquote>
+<blockquote>ATX0<strong> </strong>调制解调器忽视拨号音和忙音。当由盲拨建立连接时，发送CONNECT信息。ATX1 调制解调器忽视拨号音和忙音。当由盲拨建立连接时，CONNECT XXXX 反映的是比特速率
+ATX2 调制解调器忽视忙音，但在拨号前等待拨号音，如果5秒钟内检测不到拨号音，则发送NO DIAL TONE 信息，连接建立后 发送 CONNECT xxxx反映比特速率。
+ATX3 调制解调器忽视拨号音,若检测到忙音,发送BUSY信息,当由盲拨建立起连接时, CONNECT XXXX 反映的是比特速率。
+ATX4 如果5秒钟内检测不到拨号音，发送NO DIAL TONE 讯息,检测到忙音, 发送BUSY信息。连接建立后发送CONNECT XXXX 反映比特速率。</blockquote>
+</blockquote>
+<strong>ATYn*     控制长间隔拆接         缺省:0</strong>
+<blockquote>
+<blockquote>ATY0 不允许长间隔拆接
+ATY1 允许长间隔拆接</blockquote>
+</blockquote>
+<strong>ATZn      复位                缺省:0</strong>
+<blockquote>
+<blockquote>重新调出由用户方案规定的动态配置
+ATZ0 软复位并重新调出用户方案0
+ATZ1 软复位并重新调出用户方案1</blockquote>
+</blockquote>
+<strong>AT&An*    握手异常终止(备选)    缺省:1</strong>
+<blockquote>
+<blockquote><strong> </strong>AT&A0 在握手时禁止用户进行异常终止。当拨号或应答时，握手不能异常终止,只有DTR 信号下降。AT&A1 用户可以在握手时进行异常终止.在接收到DTE的字符后,发起和应答可以在握手期间随时进行异常终止.</blockquote>
+</blockquote>
+<strong>AT&Cn*     RS232-C DCD          设置缺省:1</strong>
+<blockquote>
+<blockquote>AT&C0 DCD为ON，不论来自远端的调制解调器的数据载波的状态为何。
+AT&C1 DCD 跟随来自于远端调制解调器的数据载波的状态</blockquote>
+</blockquote>
+<strong>AT&Dn*    RS232-C DTR          设置缺省:2</strong>
+<blockquote>
+<blockquote>决定了调制解调器与来自串口的DTR信号相关的操作。由于跟踪DTR的下降引起的操作在下表列出:</blockquote>
+</blockquote>
+</blockquote>
+<table border="1" width="72%" height="201">
+<tr>
+<td width="20%"> </td>
+<td width="21%"><center>&D0 </center></td>
+<td width="20%"><center>&D1 </center></td>
+<td width="20%"><center>&D2 </center></td>
+<td width="19%"><center>&D3 </center></td>
+</tr>
+<tr>
+<td width="20%"><center>&Q0 </center></td>
+<td width="21%"><center>NONE </center></td>
+<td width="20%"><center>2 </center></td>
+<td width="20%"><center>3 </center></td>
+<td width="19%"><center>4 </center></td>
+</tr>
+<tr>
+<td height="22" width="20%"><center>&Q1 </center></td>
+<td height="22" width="21%"><center>1 </center></td>
+<td height="22" width="20%"><center>2 </center></td>
+<td height="22" width="20%"><center>3 </center></td>
+<td height="22" width="19%"><center>4 </center></td>
+</tr>
+<tr>
+<td width="20%"><center>&Q2 </center></td>
+<td width="21%"><center>3 </center></td>
+<td width="20%"><center>3 </center></td>
+<td width="20%"><center>3 </center></td>
+<td width="19%"><center>3 </center></td>
+</tr>
+<tr>
+<td width="20%"><center>&Q3 </center></td>
+<td width="21%"><center>3 </center></td>
+<td width="20%"><center>3 </center></td>
+<td width="20%"><center>3 </center></td>
+<td width="19%"><center>3 </center></td>
+</tr>
+<tr>
+<td width="20%"><center>&Q4 </center></td>
+<td width="21%"><center>1 </center></td>
+<td width="20%"><center>2 </center></td>
+<td width="20%"><center>3 </center></td>
+<td width="19%"><center>4 </center></td>
+</tr>
+<tr>
+<td width="20%"><center>&Q5 </center></td>
+<td width="21%"><center>NONE </center></td>
+<td width="20%"><center>2 </center></td>
+<td width="20%"><center>3 </center></td>
+<td width="19%"><center>4 </center></td>
+</tr>
+<tr>
+<td width="20%"><center>&Q6 </center></td>
+<td width="21%"><center>NONE </center></td>
+<td width="20%"><center>2 </center></td>
+<td width="20%"><center>3 </center></td>
+<td width="19%"><center>4 </center></td>
+</tr>
+</table>
+<dir><dir>
+<blockquote>1 调制解调器断开连接并发送结果码OK
+2 若在数据状态下,则进入命令状态,并发送结果码OK
+3 调制解调器断开连接并发送结果码OK, DTR 为 OFF时不能自动应答
+4 调制解调器执行热启动(即与ATZ命令相同)</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Fn     重新调用工厂            设置缺省:0</strong></blockquote>
+<dir><dir>
+<blockquote>&F0 重新调用作为V.42bis自动可靠方式的出厂缺省设置
+&F1 重新调用作为MNP5自动可靠方式的出厂缺省设置
+&F2 重新调用作为DIRECT方式的出厂缺省设置
+&F3 重新调用作为MNP10方式自动可靠方式的出厂缺省设置(可选)</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Gn*    设置保护音            缺省:0</strong></blockquote>
+<dir><dir>
+<blockquote>AT&G0 无保护音
+AT&G1 无保护音
+AT&G2 1800HZ保护音</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Jn*    电话插头选择          缺省:0</strong>
+ 
+<blockquote>
+<blockquote>包含这一命令只是基于兼容性的考虑，没有任何功能
+AT&J0 不操作任何功能
+AT&J1 不操作任何功能</blockquote>
+</blockquote>
+</blockquote>
+<blockquote><strong>AT&Kn*    DTE/调制解调器流    控制缺省:3</strong></blockquote>
+<dir><dir>
+<blockquote>AT&K0 关闭流控制
+AT&K3 使用RTS/CTS流控
+AT&K4 使用XON/XOFF流控
+AT&K5 使用透明XON/XOFF流控
+AT&K6 使用RTS/CTS和XON/XOFF流控(作为传真方式下的缺省)</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Ln*    传输线类型            缺省:0</strong></blockquote>
+<dir><dir>
+<blockquote>AT&L0 拨号线
+AT&L1 二线专线 （备选）
+AT&L2 四线专线 （备选）</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Mn*    通讯方式</strong></blockquote>
+<dir><dir>
+<blockquote>与AT&Q0-3相同</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Pn*    拨号脉冲占空比        缺省:0</strong></blockquote>
+<dir><dir>
+<blockquote>AT&P0 39％61％占空比@10PPS
+AT&P1 33％67％占空比@10PPS
+AT&P2 39％61％占空比@20PPS
+AT&P3 33％67％占空比@20PPS</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Qn*    通讯方式             缺省:5</strong></blockquote>
+<dir><dir>
+<blockquote>AT&Q0 选择直接异步操作
+AT&Q1 选择同步模式一操作
+AT&Q2 选择同步模式二操作
+AT&Q3 选择同步模式三操作
+AT&Q4 选择自动同步模式操作
+AT&Q5 选择纠错模式操作
+AT&Q6 选择标准模式下的异步操作</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Rn*    RS232-C RTS/CTS   设置缺省:0</strong>
+<blockquote>
+<blockquote>AT&R0 CTS跟踪RTS, 本地DTE发送的RTS由OFF变为ON经过由寄存器S26所规定的以10微秒为增量的延迟后,CTS变为ONAT&R1 调制解调器忽视RTS,除非使用了AT&K3命令,CTS保持为ON</blockquote>
+</blockquote>
+<strong>AT&Sn*    RS232-C DSR       设置缺省:0</strong></blockquote>
+<dir><dir>
+<blockquote>AT&S0 DSR始终为ON
+AT&S1 DSR根据EIA-232-C的规定操作</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Tn*    测试和诊断            缺省:4</strong></blockquote>
+<dir><dir>
+<blockquote>测试只能在非纠错方式下(标准或直接模式)下的异步操作中进行，除参数7和8以外，要中止正在进行中的测试必须首先敲入退出符。若S18非零，则测试经由S18规定的时间后自动中止并显示OK。AT&T0 终止进行中的测试
+AT&T1 启动本地模拟回环
+AT&T3 在本地启动远端数字回环&middot;,若连接未建通,返回ERROR
+AT&T4 允许调制解调器响应来自远端的进行远程数字环回测试的请求
+AT&T5 拒绝调制解调器响应来自远端的进行远程数字环回测试的求
+AT&T6 启动远端数字环回测试,若连接未通,返回ERROR
+T&T7 启动远端数字环回自测试,若连接未建通,返回ERROR
+AT&T8 启动本地模拟环回自测试
+ </blockquote>
+</dir></dir>
+<blockquote><strong>AT&V     看当今配置及用户参数</strong>
+<blockquote>
+<blockquote>AT&V0 查看当前配置、用户方案和存储的电话号码
+AT&V1 显示最后一次数据连接的详细情况</blockquote>
+</blockquote>
+</blockquote>
+<blockquote><strong>AT&Wn    储存用户参数              缺省：0</strong></blockquote>
+<dir><dir>
+<blockquote>AT&W0 作为用户0存贮
+AT&W1 作为用户1存贮</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Xn*</strong>   <strong> 选择同步时钟源             缺省：0</strong></blockquote>
+<dir><dir>
+<blockquote>AT&X0 调制解调器提供传输时钟，内部时钟。 AT&X1 DTE提供传输时钟，外部时钟。
+AT&X2 由调制解调器从接外载波信号中提供传输时钟，从属接收时钟</blockquote>
+</dir></dir>
+<blockquote><strong>AT&Yn*    指示缺省用户参数            缺省：0</strong>
+<blockquote>
+<blockquote>在硬复位后可选择将使用的用户方案。
+AT&Y0 选择用户方案0
+AT&Y1 选择用户方案1</blockquote>
+</blockquote>
+</blockquote>
+<blockquote><strong>AT&Zn=x   储存电话号码(n=0-3)         缺省：0</strong>
+<blockquote>
+<blockquote>将一36位数字电话号码(x)存放在一指定电话号码表中(n), 作以后拨号用(参见命令ATDS=n)</blockquote>
+</blockquote>
+</blockquote>
+<dir><dir>
+<blockquote>AT\An 最大MNP块的大小缺省:2
+AT\A0 设最大块为64个字符
+AT\A1 设最大块为128个字符
+AT\A2 设最大块为192个字符
+AT\A3 设最大块为256个字符</blockquote>
+</dir></dir>
+<blockquote><strong>AT\Bn     发送中断信号(n=1-9)        缺省:3</strong>
+<blockquote>
+<blockquote>当在非MNP连接期间输入此命令,调制解调器向远端调制解器发送一中断信号,中断信号长度参数为n值的100倍（以毫秒            为单位）,在MNP模式下,输入此命令,调制解调器向远端调制解调器发送一链路注意码PDU</blockquote>
+</blockquote>
+</blockquote>
+<blockquote><strong>AT\Gn     调制解调器到调制解调器的流控制    缺省:0</strong></blockquote>
+<dir><dir>
+<blockquote>AT\G0 关闭流控(XON/XOFF)
+AT\G1 打开流控(XON/XOFF)
+ </blockquote>
+</dir></dir>
+<blockquote><strong>AT\Jn     DTE速率自动调整控制            缺省:0</strong></blockquote>
+<dir><dir>
+<blockquote>AT\J0 关闭匹配线路速率的DTE速率调整功能
+AT\J1 打开匹配线路速率的DTE速率调整功能
+ </blockquote>
+</dir></dir>
+<blockquote><strong>AT\Kn     中断控制                     缺省:5</strong></blockquote>
+<dir><dir>
+<blockquote>在数据传输期间收到来自DTE的中断信号时,调制解调器作出如下响应AT\K0,2,4 调制解调器进入连机命令状态,而不向远端发送中断信号
+AT\K1 调制解调器清空终端的缓冲器并向远端调制解调器发送中断信号
+AT\K3 调制解调器不清空终端的缓冲器,但向远端调制解调器发送中断信号
+AT\K5 调制解调器随发送的数据发送中断信号. 调制解调器在连机命令状态时数据传输过程中，做如下操作
+AT\K0,1 调制解调器清空终端的缓冲器，并向远端调制解调器发送中断信号
+AT\K2,3 调制解调器不清空缓冲器，但向远端调制解调器发送中断信号
+AT\K4,5 调制解调器随传输的数据按顺序发送中断信号 在非纠错模式下收到来自DTE的中断信号时,调制解调器做如下操作
+AT\K0,1 调制解调器清除终端的缓冲器,并向本地DTE发送中断信号
+AT\K2,3 调制解调器不清除缓冲器,但向本地DTE发送中断信号
+AT\K4,5 调制解调器随接收的数据按顺序发送中断信号
+ 
+ </blockquote>
+</dir></dir>
+<blockquote><strong>AT\Ln     MNP块传输控制                 缺省:0</strong></blockquote>
+<dir><dir>
+<blockquote>AT\L0 对于MNP链路连接使用流模式
+AT\L1 对于MNP链路连接使用块模式
+ </blockquote>
+</dir></dir>
+<blockquote><strong>AT\Nn     操作模式控制                 缺省:3</strong>
+<blockquote>
+<blockquote>AT\N0 选择标准速度缓存模式(无纠错)
+AT\N1 选择直接模式(等效于&M0,&Q0)
+AT\N2 选择可靠模式,可靠连接失败会使调制解调器挂机
+AT\N3 选择自动可靠模式
+AT\N4 选择LAPM纠错模式,LAPM纠错连接失败会使调制解调器挂机
+AT\N5 选择MNP纠错模式,MNP纠错连接失败会使调制解调器挂机</blockquote>
+</blockquote>
+</blockquote>
+<blockquote><strong>AT\Vn     单线连接信息                 缺省：0</strong></blockquote>
+<dir><dir>
+<blockquote>AT\V0 关闭单线连接信息。
+AT\V1 打开单线连接信息。</blockquote>
+</dir></dir>
+<blockquote><strong>AT％C*    压缩控制                    缺省: 3</strong></blockquote>
+<dir><dir>
+<blockquote>AT%C0 关闭数据压缩 AT%C1 打开MNP5数据压缩
+AT%C2 打开V.42bis数据压缩
+AT%C3 打开MNP5和V.42bis数据压缩</blockquote>
+</dir></dir>
+<blockquote><strong>AT％En    开/关自动均衡                缺省：2</strong>
+ 
+<blockquote>
+<blockquote>控制是使调制解调器自动监听线路质量并请求均衡(％E1)还是当线路质量不好时降速，线路质量好时升速。</blockquote>
+</blockquote>
+</blockquote>
+<dir><dir>
+<blockquote>AT%E0 关闭线路质量监听和自动均衡。
+AT%E1 打开线路质量监听和自动均衡。
+AT%E2 打开线路质量监听和速率自动调整上升或下降。
+AT%E3 打开线路质量监听和采用快速挂机的自动均衡。</blockquote>
+</dir></dir>
+<blockquote><strong>AT％L     报告接收灵敏度</strong>
+<blockquote>
+<blockquote>返回接收信号的电平值,提供以下数值</blockquote>
+</blockquote>
+</blockquote>
+<dir><dir>
+<blockquote>001=-1dBm接收电平
+002=-2dBm接收电平
+: :
+043=-43dBm接收电平</blockquote>
+</dir></dir>
+<blockquote><strong>AT%On     选择应答或呼叫模式             缺省：1</strong></blockquote>
+<dir><dir>
+<blockquote>AT%O0 选择应答式模
+AT%O1 选择发起式模</blockquote>
+</dir></dir>
+<blockquote><strong>AT%Rn     选择接收灵敏度 (</strong>适用於专线型号)<strong> 缺省：0</strong></blockquote>
+<dir><dir>
+<blockquote>AT%R0 -43dBm
+AT%R1 -33dBm
+<strong>备选：</strong>适用於拔号线型号,JP2跳线：-33dBM 连接1-2 针；-43 连接2-3针</blockquote>
+</dir></dir>
+<blockquote><strong>AT％Q     显示线路信号质量</strong></blockquote>
+<dir><dir>
+<blockquote>返回眼图指标(EQM)值的高字节,该字节的表示范围为0到127,当这一数值为70DC&plusmn;10(依赖于线路速率)或更大时,若已使用了AT％E1命令则调制解调器将自动均衡,标准连接时这一数在0到15之间。到60时则为较差连接。</blockquote>
+</dir></dir>
+<blockquote><strong>AT#CIDn   呼叫者身份鉴定                 缺省：0</strong>
+<blockquote>
+<blockquote>AT#CID=0关闭呼叫者身份鉴定
+AT#CID=1打开DTE格式化形式的呼叫者身份鉴定
+AT#CID=2打开DTE非格式化形式的呼叫者身份鉴定
+AT#CID? 从调制解调器中恢复当前呼叫者身份鉴定方式
+AT#CID=? 返回调制解调器允许模式的列表,表中各部分间用逗号隔开</blockquote>
+</blockquote>
+<strong>AT-SDR=n  鉴别性振铃                    缺省：0</strong>
+<blockquote>
+<blockquote>AT-SDR=0 允许任何振铃、并报告"RING"
+AT-SDR=1 允许一类型振铃
+AT-SDR=2 允许二类型振铃
+AT-SDR=3 允许一及二类型振铃
+AT-SDR=4 允许三类型振铃
+AT-SDR=5 允许一及三类型振铃
+AT-SDR=6 允许二及三类型振铃
+AT-SDR=7 允许一、二及三类型振铃</blockquote>
+</blockquote>
+</blockquote>
+<table border="1" width="556" cellPadding="9">
+<tr>
+<td width="22%" vAlign="top"><center>振铃类型 </center></td>
+<td width="78%" vAlign="top"><center>振铃时段模式 </center></td>
+</tr>
+<tr>
+<td width="22%" vAlign="top"><center>1 </center></td>
+<td width="78%" vAlign="top">响2秒、停4秒</td>
+</tr>
+<tr>
+<td height="21" width="22%" vAlign="top"><center>2 </center></td>
+<td height="21" width="78%" vAlign="top">响0.8秒、停0.4秒、响0.8秒、停4秒</td>
+</tr>
+<tr>
+<td height="20" width="22%" vAlign="top"><center>3 </center></td>
+<td height="20" width="78%" vAlign="top">响0.4秒、停0.2秒、响0.4秒、停0.2秒、响0.8秒、停4秒</td>
+</tr>
+</table>
+<blockquote><strong>AT+MS*     选择线路调制方式</strong>
+<blockquote>
+<blockquote>命令格式为（336型号）:
+AT+MS=<模式>,<自动模式>,<最小速率>,<最大速率>
+缺省值为 AT+MS=11,1,300,33600 （336型号）命令格式为（560型号）:
+AT+MS=<模式>,<自动模式>,<最小速率>,<最大速率>,
+<x_law>,<rb_signal>,<maxup_rate>
+缺省值为 AT+MS=12,1,300,56000,33600 （560型号）
+<strong>AT+MS?  </strong>向包含所选选项的DTE发送一信息流
+<strong>AT+MS=?</strong> 向包含所提供选项的DTE发送一信息流
+ 
+ </blockquote>
+</blockquote>
+</blockquote>
+<table border="1" width="100%" cellPadding="9">
+<tr>
+<td width="22%" vAlign="top"><center>自动模式 </center></td>
+<td width="78%" vAlign="top"><center>选 项 </center></td>
+</tr>
+<tr>
+<td width="22%" vAlign="top"><center>0 </center></td>
+<td width="78%" vAlign="top"><center>关闭自动模式 </center></td>
+</tr>
+<tr>
+<td height="21" width="22%" vAlign="top"><center>1 </center></td>
+<td height="21" width="78%" vAlign="top"><center>打开自动模式 </center></td>
+</tr>
+</table>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<table border="1" width="100%" cellPadding="9">
+<tr>
+<td height="42" width="7%" vAlign="top"><center>模式 </center></td>
+<td height="42" width="16%" vAlign="top">  调制方式选择</td>
+<td height="42" width="77%" vAlign="top"><center>可能 波特率(bps) <最小 波特率> <最大 波特率> </center></td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>0 </center></td>
+<td width="16%" vAlign="top">V.21</td>
+<td width="77%" vAlign="top">300</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>1 </center></td>
+<td width="16%" vAlign="top">V.22</td>
+<td width="77%" vAlign="top">1200</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>2 </center></td>
+<td width="16%" vAlign="top">V.22bis</td>
+<td width="77%" vAlign="top">2400或1200</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>3 </center></td>
+<td width="16%" vAlign="top">V.23</td>
+<td width="77%" vAlign="top">1200</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>9 </center></td>
+<td width="16%" vAlign="top">V.32</td>
+<td width="77%" vAlign="top">9600或4800</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>10 </center></td>
+<td width="16%" vAlign="top">V.32bis</td>
+<td width="77%" vAlign="top">14400,12000,9600,7200 或4800</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>11 </center></td>
+<td width="16%" vAlign="top">V.34</td>
+<td width="77%" vAlign="top">33600,31200,28800,26400,24000,21600,19200, 16800,14400,12000, 
+9600,7200,4800或2400</td>
+</tr>
+<tr>
+<td height="83" width="7%" vAlign="top"><center>12 </center></td>
+<td height="83" width="16%" vAlign="top">V.90</td>
+<td height="83" width="77%" vAlign="top">56000,54667,53333,52000,50667,49333,48000,46667,45333,42667, 
+41333,40000,38667,37333,36000,34667,33333,32000,30667,29333, 
+28000 (560型号适用)</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>56 </center></td>
+<td width="16%" vAlign="top">K56flex</td>
+<td width="77%" vAlign="top">56000,54000,52000,50000,48000,46000,44000,42000,40000,38000, 
+36000,34000,32000 (560型号适用)</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>64 </center></td>
+<td width="16%" vAlign="top">Bell 103</td>
+<td width="77%" vAlign="top">300</td>
+</tr>
+<tr>
+<td width="7%" vAlign="top"><center>69 </center></td>
+<td width="16%" vAlign="top">Bell 212</td>
+<td width="77%" vAlign="top">1200</td>
+</tr>
+</table>
+<blockquote>
+<blockquote><x_law> 是一个可选的数字，用来确定码类型，选择是：
+<blockquote>0 = u-Law 1 = A-Law注意：ATZ命令将复位<x_law>值为0 (u-Law)。
+ 
+<rb_signaling> 是一个可选的数字，用于配置一个发送数据的调制解调器产生“丢失位”信号或不产生“丢               失位”信号；或配置一台接收数据的调制解调器检测“丢失位”信号或不检测“丢失位”信               号。选择是：</blockquote>
+</blockquote>
+</blockquote>
+<dir>
+<blockquote>
+<blockquote>0 = 发送数据的调制解调器产生丢失位信号。接收数据的调制解调器检测丢失位信号。1= 发送数据的调制解调器不产生丢失位信号。接收数据的调制解调器不检测丢失位信号。
+注意：ATZ命令将复位<rb_signaling>值为0。
+ </blockquote>
+</blockquote>
+</dir>
+<blockquote>
+<blockquote>Maxup_rate : 连接速率的最大值。</blockquote>
+</blockquote>
+<p id="TBPingURL">Trackback: http://tb.blog.csdn.net/TrackBack.aspx?PostId=1535176

@@ -1,0 +1,20 @@
+---
+layout: post
+title: P3P 应用释意
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0yNiAwMTo0ODozNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0yNSAxNzo0ODozNSArMDgwMA==
+---
+有 P3P 不代表能解决了跨域问题。
+最具代表性的例子就是，
+www.a.com/index.html 页面中有一个 <img src=" http;//www. b. com/example.php" /> 
+而在 example.php 中，当我们想设置 cookie 时，会因为 IE 默认的安全级别而禁止我们对 cookie 的写入。
+cookie 会由持久cookie而被 IE 动态调整为会话cookie 也称为 session cookie 。session cookie != session
+用途呢？很简单，比如一站式登录。
+用户在 a.com 登录时同时在 b.com 的域下写入一个标记已经登录的信息，当用户跳转到 b.com 时不用再登录了。
+当然，细节的地方还需要特殊注意了，免得产生安全问题。
+有人问我 example.php 可不可以把 cookie 写在其它域？
+答案是不。因为安全的原因，example.php 只能写在所在的域和页面所在域的上级域，也就是 www.b.com 和 b.com。
+：）

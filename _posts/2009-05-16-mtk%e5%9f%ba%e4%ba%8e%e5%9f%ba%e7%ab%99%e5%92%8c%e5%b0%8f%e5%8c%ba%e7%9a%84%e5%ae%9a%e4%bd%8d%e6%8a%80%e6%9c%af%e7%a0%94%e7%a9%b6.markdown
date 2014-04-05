@@ -1,0 +1,41 @@
+---
+layout: post
+title: MTK基于基站和小区的定位技术研究
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wNS0xNiAwMDoxMDo1NSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNS0xNSAxNjoxMDo1NSArMDgwMA==
+---
+我们的移动网络是通过一个个基站连接起来的，而一个基站又被划分成若干小区以方便查找。因为基站的位置相对比较固定，所以我们可以通过基站的编号cell_id和小区的编号LAC来定位地理位置。
+具体的理论原理大概是这样的。根据GSM协议通信管理过程，我们大致可以知道呼叫建立的过程首先是用户定位，查找被呼叫人的位置信息。在GSM协议中，我们知道，用户的位置信息由MSC/VLR管理，MSC/VLR被划分成若干个较小的区域。假设定义被叫人的区域为LA，则每一个LA由一个位置区标识（LAI）识别，它们结构如下：
+      LAI＝MCC＋MNC＋LAC
+&middot;MCC＝移动国家代码（被访问国家）
+&middot;MNC＝移动网代码（服务的PLMN）
+&middot;LAC＝位置区代码
+比如中国的MCC：460（注意不是＋86，＋86是中国区号），移动的MNC：00，联通的MNC：01。LA的数据可以从VLR，下面让我们看看VLR中的数据。
+VLR IMSI：        460  00  1234567890  
+LAC：        262  15  0987
+Data:          abc..      
+MCRN:        358 50 456456
+IMSI是全世界唯一的，可以唯一标志一张SIM卡，通俗一些说，就是SIM的身份证，所以IMSI号可以用来设计防盗追踪或者检查SIM是否被更换。其结构如下：
+IMSI＝MCC＋MNC＋MSIN
+&middot;MCC＝移动网国家代码（三位）
+&middot;MNC＝移动网代码（两位）
+&middot;MSIN＝移动用户识别码（十位）
+不过与本文无关，做不做过多介绍。
+既然通信网络可以通过LAI 查找到被叫者，我们应该也可以使用LAI来确定被叫者的位置，既然LAI可以确定被叫者位置，当然也可以确定我们自己的位置，只不过这个位置信息不是特别的精确，与当地基站分布的密度有关。当然在这个结构中，国家代码和网络代码只能确定国家和使用的网络，我们能够使用的应该是LAC，LAC大概由基站信息和小区编号组成。
+其具体算法就是首先获取本机所处位置的LAI数据，然后建立一张查找表，表中用基站编号和小区编号对应一个地理位置。通过查表就可以知道自己的地理位置。
+读MTK代码时发现一个形如下的结构：
+typedef struct {
+    kal_uint8 mcc1; /* MCC DIGIT1*/
+    kal_uint8 mcc2; /* MCC DIGIT2*/
+    kal_uint8 mcc3; /* MCC DIGIT3*/
+    kal_uint8 mnc1; /* MNC DIGIT1*/
+    kal_uint8 mnc2; /* MNC DIGIT2*/
+    kal_uint8 mnc3; /* MNC DIGIT3 Always 1111*/
+    kal_uint8 la_code[2];
+    kal_uint8 ra_code;  /* RA CODE*/
+    kal_uint16 cell_id; /* CELL ID*/
+} cell_info_struct;
+该结构描述了基站的信息，恰好与GSM协议相对应，该结构可以通过发消息获。网上也能找来基站与地理位置的数据信息，看来实现起来应该无啥难度。该功能在没有GPS的情况下实现粗略定位，相较GPS可以几乎无成本的使用，对于喜欢猎奇又不愿意花钱的朋友，无异是一个不错的选择。但由于网上流行的基站数据并不完整，对于基站和地理位置的对应，如果能建立一个共享的WAP网站，发动大众的力量实现动态更新升级，那可就是利国利民，造福世人的好事。不过刚刚在网上看贴子听说，基站与地理位置对应的信息属于国家机密，不知是真是假，要是那样的话，我们也就只能自己做了玩玩，却是不能推广的。把自己推广到监狱里了，那可就得不偿失了，玩的朋友们注意了。

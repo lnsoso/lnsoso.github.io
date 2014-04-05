@@ -1,0 +1,11 @@
+---
+layout: post
+title: 世界军人搏击赛
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wMS0zMSAxNTozMDoyMCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0zMSAwNzozMDoyMCArMDgwMA==
+---
+今天老大在群里发的链接，挺不错。
+<object width="474" height="461"><param name="wmode" value="transparent" /><param name="movie" value="http://v.blog.sina.com.cn/b/vblog_player.swf?vid=928429&uid=1270815500&initfull=0&cursound=null"/></param><embed src="http://v.blog.sina.com.cn/b/vblog_player.swf?vid=928429&uid=1270815500&initfull=0&cursound=null" wmode="transparent" type="application/x-shockwave-flash" width="474" height="461"></embed></object>

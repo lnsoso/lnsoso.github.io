@@ -1,0 +1,12 @@
+---
+layout: post
+title: hellotxt 更新
+author: Alvin
+date: !binary |-
+  MjAwOC0xMC0xNiAxMDoyMDoyNCArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMC0xNiAwMjoyMDoyNCArMDgwMA==
+---
+对 stats 加强，可看到更新状态如图片查看数等。
+可以通过 Nintendo Wii 主机来更新状态。
+<a href="http://www.flickr.com/photos/55518405@N00/2898718441"><img src="http://farm4.static.flickr.com/3101/2898718441_f6e9f76d3f.jpg" /></a>

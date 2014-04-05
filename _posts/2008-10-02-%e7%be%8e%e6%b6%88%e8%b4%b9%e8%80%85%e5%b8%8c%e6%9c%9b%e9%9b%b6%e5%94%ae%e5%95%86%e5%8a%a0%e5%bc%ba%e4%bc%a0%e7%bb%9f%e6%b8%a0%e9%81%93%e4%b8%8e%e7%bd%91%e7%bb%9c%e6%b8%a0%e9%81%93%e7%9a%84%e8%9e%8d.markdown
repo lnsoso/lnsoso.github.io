@@ -1,0 +1,11 @@
+---
+layout: post
+title: 美消费者希望零售商加强传统渠道与网络渠道的融合
+author: Alvin
+date: !binary |-
+  MjAwOC0xMC0wMiAxMzoyMToxNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMC0wMiAwNToyMToxNyArMDgwMA==
+---
+iResearch艾瑞咨询根据eMarketer发布的美国互联网用户希望拥有网络销售渠道的传统零售商提供的服务数据发现，81%的消费者希望使用网络渠道与使用传统渠道能够享有同等的自由退货权利；56%的消费者希望可以自由选择是送货上门还是自行取货。
+看来京东的这种模式还是比较正确，毕竟有个实体店即能提供服务，又能让用户有“信任感”特别是在国内，这种缺乏信任的地方。

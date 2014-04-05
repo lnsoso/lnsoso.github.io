@@ -1,0 +1,11 @@
+---
+layout: post
+title: Mentos
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMi0zMSAxMzoyODoxNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMi0zMSAwNToyODoxNiArMDgwMA==
+---
+两个国外的强人用可乐摹仿出了拉斯为加斯的喷泉效果……
+<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/5Zh1jYN2JPs"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/5Zh1jYN2JPs" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>

@@ -1,0 +1,44 @@
+---
+layout: post
+title: 为lucene加入简单中文分词
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wMS0zMSAxNTo0NDowNCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0zMSAwNzo0NDowNCArMDgwMA==
+---
+<font size="2">看到很多人做lucene的应用时候都要面临中文分词怎么加的问题，下面介绍一个简单的中文词库，这个词库附带相应的算法，数据结构学过的人看懂没什么问题，只要简单的构造一个对象，就可以分词了，对于不是太大的应用来说，还是相当可行的，</font><a href="http://maxwolf.cnblogs.com/Files/maxwolf/ChineseSegmenter.rar"><font size="2">点击下载
+</font></a><font size="2">      该分词库使用很简单，先初试化该类
+      ChineseSegmenter seg = ChineseSegmenter.getGBSegmenter();
+      然后调用seg.segmentLine("要分词的中文段", " ")//第二个参数为分词之间以什么间隔
+      <span style="font-size: 10pt">譬如</span></font><font size="3">    </font><span style="font-size: 10pt">输出为儿童 节日 儿童节   
+    
+     下面简要说以下如何加到搜索代码里，
+      lucene 建立索引的代码引入的analysis分词法为 WhitespaceAnalyzer
+      import org.apache.lucene.analysis.WhitespaceAnalyzer;</span><span style="font-size: 10pt">
+<p style="padding-right: 5px; padding-left: 4px; font-size: 13px; padding-bottom: 4px; width: 98%; word-break: break-all; padding-top: 4px; background-color: #eeeeee; border: #cccccc 1px solid"><span style="color: #000000">  IndexWriter writer </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> IndexWriter(Directory, </span><span style="color: #0000ff">new</span><span style="color: #000000"> WhitespaceAnalyzer(),</span><span style="color: #0000ff">true</span><span style="color: #000000">);     </span><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> AddDocument(String Title , String Content , ..)
+    {
+        Document doc </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> Document();
+        
+        ChineseSegmenter cs</span><span style="color: #000000">=</span><span style="color: #000000"> ChineseSegmenter.getGBSegmenter();    </span><span style="color: #008000">//</span><span style="color: #008000">初始化该类</span><span style="color: #008000">
+</span><span style="color: #000000">        
+            doc.add(Field.Text(</span><span style="color: #000000">"</span><span style="color: #000000">content</span><span style="color: #000000">"</span><span style="color: #000000">, cs.segmentLine(Content, </span><span style="color: #000000">"</span><span style="color: #000000"> </span><span style="color: #000000">"</span><span style="color: #000000">))); </span><span style="color: #008000">//</span><span style="color: #008000"> 将分好的词写进索引 </span><span style="color: #008000">
+</span><span style="color: #000000">    
+            doc.add(Field.Text(</span><span style="color: #000000">"</span><span style="color: #000000">title</span><span style="color: #000000">"</span><span style="color: #000000">, cs.segmentLine(Title, </span><span style="color: #000000">"</span><span style="color: #000000"> </span><span style="color: #000000">"</span><span style="color: #000000">)));</span><span style="color: #000000">        <span style="color: #0000ff">try</span><span style="color: #000000">
+        {
+            writer.addDocument(doc);
+        }
+        </span><span style="color: #0000ff">catch</span><span style="color: #000000">(IOException e)
+        {
+            System.</span><span style="color: #0000ff">out</span><span style="color: #000000">.println(</span><span style="color: #000000">"</span><span style="color: #000000">wrong</span><span style="color: #000000">"</span><span style="color: #000000">);
+            e.printStackTrace();
+        }
+    }</span>
+</span>
+</span>        上面建立索引时候为把文章的标题和内容进行断词然后存入了索引, 搜索的时候同样用WhitespaceAnalyzer,
+ 然后把结果hit中的结果合并就可以了.<font size="3"> </font>
+<p style="padding-right: 5px; padding-left: 4px; font-size: 13px; padding-bottom: 4px; width: 98%; word-break: break-all; padding-top: 4px; background-color: #eeeeee; border: #cccccc 1px solid"><span style="color: #000000"> </span><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> main(String[] args) throws Exception </span><span style="display: none; background-color: #ffffff; border: #808080 1px solid" id="Codehighlighter1_57_188_Closed_Text"></span><span id="Codehighlighter1_57_188_Open_Text"><span style="color: #000000">{      ChineseSegmenter seg <span style="color: #000000">=</span><span style="color: #000000"> ChineseSegmenter.getGBSegmenter();
+      System.</span><span style="color: #0000ff">out</span><span style="color: #000000">.println(seg.segmentLine(</span><span style="color: #000000">"</span><span style="color: #000000">儿童节日</span><span style="color: #000000">"</span><span style="color: #000000">, </span><span style="color: #000000">"</span><span style="color: #000000"> </span><span style="color: #000000">"</span><span style="color: #000000">));
+    
+   }</span>
+</span></span>

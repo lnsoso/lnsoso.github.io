@@ -1,0 +1,48 @@
+---
+layout: post
+title: 完美安装mplayer手册
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0yMiAxOTo1NjoxMiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0yMiAxMTo1NjoxMiArMDgwMA==
+---
+mplayer是linux下播放速度最快，支持媒体格式最多的播放器，它几乎能播放所有的win媒体文件！下面介绍它的安装方法： 
+本文大部分参考了本站主席发于ch2000技术论坛的文章，http://www.ch2000.com.cn/lbbbs/cgi-bin/topic.cgi?forum=19&topic=974&start=0&show=0，本人仅做一些补充 
+使用nvdia显卡的朋友请务必安装nvidia的for linux驱动，否则xv模式不能支持，虽然可以用sdl视频模式播放，但效果不理想。 
+1、<span style="COLOR: red">在本站下载mplayer的最新版本及安装所需软件包的集合包</span>http://www.linuxfans.org/nuke/modules.php?name=Downloads&d_op=getit&lid=23 
+2、<span style="COLOR: red">unzip mplayer.zip</span> 
+得到mplayer目录，<span style="COLOR: green">cd mplayer</span>，运行<span style="COLOR: green">ls</span>命令，应该可以看见<span style="COLOR: blue">divx4linux-20020418</span>，<span style="COLOR: blue">arial-18</span>，<span style="COLOR: blue">gcc3</span>，<span style="COLOR: blue">default</span>这四个目录（三个目录下各有一些文件，这里就不列出来了），及<span style="COLOR: blue">MPlayer-0.90pre5.tar</span>，<span style="COLOR: blue">w32codec-0.60.tar</span>，<span style="COLOR: blue">SDL-1.2.3-1.i686.rpm</span>，<span style="COLOR: blue">SDL-devel-1.2.3-1.i686.rpm</span>这四个文件 
+3、<span style="COLOR: red">升级gcc：</span> 
+检查你的gcc版本，运行gcc -v看输出是多少，如果是3.0以下的话，则建议安装gcc3.0以上（根据mplayer的官方说明，3.0以下的gcc可以用<span style="COLOR: green">./configre --disable-gcc-checking</span>参数编译，但可能不稳定），安装gcc3的方法是：进入gcc3目录，运行<span style="COLOR: green">rpm -ivh *.rpm --nodeps</span>，全部百分百安装后，开一个终端窗口，运行<span style="COLOR: green">mv /usr/bin/gcc /usr/bin/gcc2</span>和<span style="COLOR: green">mv /usr/bin/gcc3 /usr/bin/gcc</span>，再运行<span style="COLOR: green">gcc -v</span>，看输出是否为3.0.2，如果是，则ok，不是，则检查安装步骤。 
+4、<span style="COLOR: red">安装sdl及sdl-devel：</span> 
+检查你的系统有没有安装了sdl及相同版本（一定要相同版本的）的sdl-devel库：运行“软件包管理器”，按“查找软件包”按钮，输入sdl，查找，如果能找到sdl及sdl-devel包，则表示都已经安装，如果版本比1.2.0高，那么跳到第5步；如果没安装或版本比较低（小于1.2.0），则安装本站提供的sdl包，命令<span style="COLOR: green">rpm -ivh SDL*.rpm --nodeps</span>或<span style="COLOR: green">rpm -Uvh SDL*.rpm --nodeps</span>，安装完后运行一下sdl-config --version[/color]，看输出是不是1.2.3，如果正确，则ok；不正确或有问题，检查步骤，或发帖子问。 
+5、<span style="COLOR: red">安装win32 for linux的dll库：</span>（必须，只有安装它才可以播放win下的媒体文件，包括asf，wmv，mp3，avi，dat，mpg等） 
+运行命令：<span style="COLOR: green">tar vxf w32codec-0.60.tar</span>，得到w32codec-0.60.tar这个目录，建立/usr/lib/win32目录（<span style="COLOR: green">mkdir /usr/lib/win32</span>），将w32codec-0.60.tar目录下所有文件拷贝到/usr/lib/win32目录下（<span style="COLOR: green">cp w32codec-0.60/*.* /usr/lib/win32</span>） 
+6、<span style="COLOR: red">安装divx5 for linux：</span>（如果你想播放divx格式的电影文件的话必须安装这个，安装了这个后xine也可以利用，推荐） 
+进入divx4linux-20020418目录（<span style="COLOR: green">cd divx4linux-20020418</span>），运行<span style="COLOR: green">./install.sh</span> 
+7、<span style="COLOR: red">解压编译安装mplayer：</span> 
+<span style="COLOR: green">tar vxf MPlayer-0.90pre5.tar</span>，<span style="COLOR: green">cd MPlayer-0.90pre5.tar</span>，<span style="COLOR: green">./configure </span>（如果你想要gui的操作界面，则换用这个命令<span style="COLOR: green">./configrue --enable-gui</span>，但似乎这个版本的gui编译有错，我和linuxCN都无法成功，pre4版本则没问题），<span style="COLOR: green">make</span>，<span style="COLOR: green">make install</span>，都成功运行一下<span style="COLOR: green">mplayer</span>（这是为了让它在家目录下建立.mplayer这个配置目录，好进行下一步操作） 
+8、<span style="COLOR: red">拷贝配置文件:</span>（注意：下面这个etc目录是上一步中解压出来的MPlayer-0.90pre5目录下的，非/etc） 
+<span style="COLOR: green">cp etc/codecs.conf ~/.mplayer</span> 
+<span style="COLOR: green">cp etc/example.conf ~/.mplayer/config</span> 
+9、<span style="COLOR: red">安装font和skin:</span>（如果你选择了<span style="COLOR: green">./configure --enable-gui</span>那才需要skin，否则skin不用安装） 
+进入自己的home目录，显示隐藏文件，进入.mplayer文件夹，创2个建文件夹：font和Skin。然后把arial-18内的所有文件拷入到font内，把default整个文件夹（注意：是连同文件夹一起）拷到Skin内！ 
+10、<span style="COLOR: red">运行方式</span> 
+两种：（1）mpalyer /路径/要播放的媒体文件名；（2）gmplayer(只有用<span style="COLOR: green">./configure --enable-gui</span>编译的这个命令才有效) 
+11、<span style="COLOR: red">关于~/.mplayer/config文件的一些配置说明</span> 
+vo=xv(选择默认的播放模式，xv模式是支持显卡硬加速功能的模式，对cpu的占用很小，推荐；更多的显示模式可以用命令mplayer -vo help看，其中的vesa模式可以在不启动xwin界面时播放，有点象当年DOS下的金山影霸) 
+ao=oss（选择声音的播放模式，oss是兼容性最好的播放模式，推荐；你也可以试试sdl模式） 
+fs=yes（全屏模式，yes的话默认以全屏播放，no或前面加#号注释掉这行的话则默认是1：1播放模式） 
+zoom=yes（即时改变电影画面大小，yes的话则可以用鼠标随意将播放画面拉大拉小，no 的话不能） 
+gui = yes（默认是图形化操作界面，这需要你先前用./configure --enable-gui来编译，否则的话就算yes也没有gui操作界面） 
+skin = default（设置默认的skin，将等号右边的值换成skin所放目录就可以设置想要的skin为默认了，这个参数在用gui操作界面才有效） 
+cache = 8192（默认的播放缓存大小，如果机器内存够大，则将它加大一点，如果不是很大，譬如128以下，还是用默认的算了） 
+framedrop = yes（允许跳帧，如果你的机器CPU速度非常非常慢的话请将这个yes，默认是no或前面加#号将这行禁止；对于366MHZ以上的机器，建议都设成no或前面加#号） 
+其他设置用默认就行 
+<span style="COLOR: red">一些小技巧：</span> 
+标准播放模式时一般按F键可以切换到全屏模式，再按一下复原，按Q可以退出；播放时如果发现声音和画面不同步，可以按+号（shift+=）或-号调整；播放divx的avi时如果想支持中文字幕，则你的电影文件目录下必须要有和电影同名的idx和sub这两种格式的字幕文件存在；支持网络播放流式文件，譬如输入mplayer http://IP/1.asf可以在线播放1.asf 
+附贴图：./configure后的输出窗口，请注意Enabled optional drivers:的下面： 
+Codecs: divx5linux libavcodec directshow win32这行，它代表了支持电影格式包括divx，avi，win32dll里的所有媒体格式；如果你缺少了divx，则检查你的divx4linux安装有没有问题，如果你缺少了win32，则检查你的win32codec安装正确了没有。 
+Audio output: arts oss sdl mpegpes(file)这行，它表示音频的输出模式支持arts，oss，sdl和mpegpes模式，其中的mpegpes模式是将音频导出生成mpg文件；如果缺少sdl模式，则检查你的sdl及sdl-devel安装了没有；安装完后可以通过修改config文件设置默认的音频输出模式，或用mplayer -ao 模式 要播放的文件名即时改变播放模式，譬如mplayer -ao sdl 1.asf就是用sdl的音频模式播放1.asf 
+Video output: xvidix sdl vesa gif89a jpeg png mpegpes(file) fbdev svga opengl dga xv x11这行，它表示可以支持的视频输出模式；如果缺少sdl模式，则检查你的sdl及sdl-devel安装了没有；安装完后可以通过修改config文件设置默认的视频输出模式，或用mplayer -vo 模式 要播放的文件名即时改变播放模式，譬如mplayer -vo sdl 1.asf就是用sdl的视频模式播放1.asf，mplayer -vo sdl -ao sdl 1.asf就是音频视频都选用sdl模式来播放1.asf'

@@ -1,0 +1,90 @@
+---
+layout: post
+title: 在BREW程序中调用另一个mod的分析
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wNS0xNyAxNToxMDoyNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNS0xNyAwNzoxMDoyNyArMDgwMA==
+---
+近日读到这样一段程序。可以在程序运行时调用另一个mod文件并执行。这样可以做到应用自升级，压缩程序文件等实用的功能。
+ 
+ 要想理解这点，先看一下正常的BREW程序加载过程。
+ BREW程序的入口，即相当于c程序的main，是位于AEEModGen.c中的AEEMod_Load函数。这可以从mak文件的连接选项中看出来。
+ 
+LINK_ORDER = -first AEEMod_Load
+ 
+ 这个选项使得链接程序将该函数放在程序文件的0地址处。函数的定义如下：
+ 
+int AEEMod_Load(IShell *pIShell, void *ph, IModule **ppMod)
+{
+  <span> </span>// Invoke helper function to do the actual loading.
+   return AEEStaticMod_New(sizeof(AEEMod),pIShell,ph,ppMod,NULL,NULL);
+}
+  
+  BREW底层调用这个函数，需要提供三个参数。pIShell是ISHELL接口的指针，有了它就可以创建和访问其它接口。ph是helper function类函数的函数列表指针，有了它就可以调用MALLOC等函数。ppMod是用于返回给BREW底层的地址，存储生成的module的信息。
+  AEEMod_Load函数调用了AEEStaticMod_New函数。在这个函数中初始化了module数据结构，ppMod就是指向它的。函数结束后返回BREW底层。
+  BREW底层稍后通过存储在module数据结构中的函数指针，调用同样位于AEEModGen.c中的AEEMod_CreateInstance函数，生成该Module的某一个Applet实例。在这个函数中会调用到我们所编写的AEEClsCreateInstance函数。在我们这个函数中注册了HandleEvent函数和FreeAppDate函数。这些信息同样通过一个applet数据结构指针返回给BREW底层。这之后，BREW会通过给HandleEvent发各种Event，来驱动程序运行。
+ 
+  通过这整个过程，可以总结出BREW程序运行的必要条件。
+  程序必须得到IShell指针，Helper Function指针，这样程序中对BREW底层各种函数的调用才能进行。BREW底层必须知道两个地址，通过它们，可以将Event传递给程序，调用FreeAppDate函数。
+  因此，想在程序中调用另外一个mod,只需要想办法把程序里的IShell指针，Helper Function指针传递给mod，同时得到mod中的HandleEvent函数，FreeAppDate函数的地址就可以了。
+  剩下的问题就是,程序怎样和mod文件交互呢，mod文件的格式是怎样的？
+ 
+  生成mod的mak文件最后一般有这样两句话，
+ 
+ld *.o a.elf
+fromelf --bin a.elf a.mod
+ 
+  arm链接器ld生成ELF格式，之后用格式转换工具fromelf将ELF文件转换成mod文件。
+  ELF文件是带格式的可执行文件，对它的执行要靠操作系统的解析来进行。而通过--bin选项生成的mod文件，格式却是plain binary,即赤裸裸的二进制机器指令，其实是无格式的。只要将mod文件载入内存，跳转到它的0地址处，就可以一条条指令的执行下来。和mod文件交互，也就是要安排好mod文件0地址处的内容，知道mod文件的调用者会传入什么东西，mod文件会返回什么东西。
+ 
+  
+  下面来看一种实际的调用方法吧。代码如下：
+ 
+typedef int (*RunLoadMod)(IShell *pIShell, void *ph, IModule **ppMod);
+ 
+pData = MyLoadZip(pIShell);
+if( !pData )
+return EFAILED;
+DBGPRINTF("to RunLoadMod");
+if( SUCCESS != ((RunLoadMod)pData)(pIShell,ph,&pOrgMod) )
+{
+DBGPRINTF("RunLoadMod_Err");
+goto Crt_Err;
+}
+  
+  这段程序将mod文件读入内存，放在pData缓冲区内，用((RunLoadMod)pData)(pIShell,ph,&pOrgMod)一句执行之。RunLoadMod只不过是用typedef定义的一种函数指针类型。这句话的意思相当于是为待调用的mod文件准备好pIShell,ph,pOrgMod三个数据后，直接跳到内存中的mod文件的第一个字节处，将它当做普通机器指令一样执行。这种方法调用的mod文件，应是一个用完整的BREW框架编译后生成的。0地址处放下的是AEEMod_Load函数。Mod文件直接将Applet信息传递给BREW底层，注册HandleEvent函数。实际上是Mod文件取代了调用者的位置。
+  
+  但是这段程序很可能会运行失败。因为BREW底层除了传参外，还做了其它事情。这在AEEStdlib.h中可以看出。
+ 
+#define GET_HELPER()      (*(((AEEHelperFuncs **)AEEMod_Load) - 1))
+#define GET_HELPER_VER()  (*((uint32 *)(((byte *)AEEMod_Load) - sizeof(AEEHelperFuncs *) - sizeof(uint32))))
+ 
+  这两个宏定义可以看成是两个全局常量。第一个是BREW Helper Function的函数指针表，第二个是函数指针表的版本号。上面提到的通过参数传递Helper Function函数指针，是只在模拟器上成立的。手机上其实是通过全局常量形式传递的。为保证mod可以正常运行，也应在缓冲区前保存这两个常量。
+ 
+  这种“冒名顶替”的方式，对于只想压缩一下mod的应用来说是完全可以的。但有时，我们希望新调用的mod只是整个应用的一小部分，调用者继续存在。这就需要调用者充当BREW底层的一部分角色，记住mod返回的各种信息，在适当的时候调用mod中的相应函数。新调用的mod如果想要取得主mod的信息，类似于上面提到的HelperFuncs全局常量指针的方法是个可行的选择。
+ 
+  其实知道了BREW程序的加载过程，就可以比较灵活的达到调用mod的目的，甚至BREW程序架构都是可以改动的。但是改动之后，如何在模拟器上进行调试就又成了一个问题。
+ 
+  程序中调用mod的技巧，在国外几年前就已得到了应用。甚至有家公司专门开发了利用这个技巧压缩mod的工具。
+ 
+http://www.s-cradle.com/english/products/sophiacompress_brew/index.html
+ 
+参考文章：
+ 
+1.How to build A mod to load B mod?<span> </span>
+ 
+http://brewforums.qualcomm.com/showthread.php?t=11637
+ 
+2.How to run mod file that is loaded in the HEAP...
+ 
+http://brewforums.qualcomm.com/showthread.php?t=18413&highlight=modloader
+ 
+3.深入BREW模块加载机制
+ 
+http://nicefuture.ycool.com/post.722858.html
+ 
+4.深度剖析BREW实现原理收藏
+ 
+http://blog.csdn.net/Gemsea/archive/2006/09/07/1190206.aspx

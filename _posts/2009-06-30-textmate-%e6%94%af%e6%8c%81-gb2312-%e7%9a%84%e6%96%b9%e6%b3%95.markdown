@@ -1,0 +1,75 @@
+---
+layout: post
+title: textmate 支持 gb2312 的方法
+author: Alvin
+date: !binary |-
+  MjAwOS0wNi0zMCAxMToyMzoxNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNi0zMCAwMzoyMzoxNSArMDgwMA==
+---
+<a href="http://drop.io/nlu2q3s" title="下载 Bundle" target="_blank">下载 Textmate Bundle</a>
+<span style="font-family: Arial, sans-serifarial, Verdana, Helvetica; line-height: 18px;">问题就是我们使用<span class="hilite1" style="background-color: #FFFF00;">TextMate</span>不支持GB2312等编码，用着及其不方便，下面是解决方案：</span>
+<font face="Arial, sans-serifarial, Verdana, Helvetica"><span style="line-height: 18px;">打开Bundle Editor
+
+选则Show all
+
+
+选则文件夹<span class="hilite1" style="background-color: #FFFF00;">TextMate</span>（或者随便你选则什么）
+
+增加一个新的template&lsquo;openEncodedFile&rsquo;（或者随便你自己命名）
+
+在Template data中如下设定
+
+Extension：中 留空
+
+
+Command(s):</span></font>
+<span style="font-family: monospace; white-space: pre;"># open CocoaDialog's file select menu</span>
+<pre>
+file=$(CocoaDialog fileselect \
+        --title "Open an encoded file" \
+        --with-directory $HOME/ \
+)
+# check for valid file
+if [ -n "$file" ]; then
+# open CocoaDialog's dropdown menu
+# for more encodings add them to '--items'
+# to list all possibile encodings use the Terminal with 'iconv -l'
+        res=$(CocoaDialog dropdown \
+                --title "Open an encoded file" \
+                --text "Choose the encoding:" \
+                ??exit?onchange \
+                --button1 "Open" \
+                --button2 "Cancel" \
+                --items "BIG5" "EUC-TW" "GB2312" "SJIS" "EUC-JP" "KOI8-R" \
+        )
+# if user canceled exit
+        [[ $( (tail -r &amp;lt;&amp;lt;&amp;lt;"$res") | tail -n1)  == "2" ]] &amp;amp;&amp;amp; \
+                exit_discard
+        res=$(tail -n1 &amp;lt;&amp;lt;&amp;lt;"$res")
+# add more 'elif' according to '--items' if needed
+        if [ "$res" == 0 ]; then
+                ENC="BIG5"
+        elif [ "$res" == 1 ]; then
+                ENC="EUC-TW"
+        elif [ "$res" == 2 ]; then
+                ENC="GB2312"
+        elif [ "$res" == 3 ]; then
+                ENC="SJIS"
+        elif [ "$res" == 4 ]; then
+                ENC="EUC-JP"
+        elif [ "$res" == 5 ]; then
+                ENC="KOI8-R"
+        fi
+# start conversion to UTF-8 and send the result as a new file back to TM
+        iconv -f "$ENC" -t utf-8 "$file" &amp;gt; "$TM_NEW_FILE"
+fi
+</pre>
+<pre>
+<span style="font-family: Arial, sans-serifarial, Verdana, Helvetica; white-space: normal; line-height: 18px;">Output: Insert as Text 
+- Activation: Key Equivalent shift+option+o (我的建议) 
+- Scope: 留空</span>
+
+</pre>
+<pre>
+<img src="http://img.skitch.com/20090630-mus87c9y1hahuye2ye1pwiyrsg.jpg" alt="" class="myskitch-image-img" style="" />

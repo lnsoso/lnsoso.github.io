@@ -1,0 +1,1078 @@
+---
+layout: post
+title: ! '[分享] 某知名手机平台的XML Parser源代码'
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0xMS0yNSAxNDoyMToyNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0xMS0yNSAwNjoyMToyNyArMDgwMA==
+---
+    今天心情不错~ 分享一下小弟06年在某手机公司写的XML parser.
+虽然当时脑子里还没有FSM的概念, 但代码逻辑还算清晰, 颇有成就感!
+结构比较简单, 按DOM方式把指定文件解析成节点树, 另外提供几个简单的查找函数.
+部分功能等完善, 过段时间再发一份功能比较完善的C++版本.
+<h3><strong>PLX_XMLParser.h</strong></h3>
+#if _MSC_VER > 1000
+#pragma once
+#endif
+#ifndef __XMLPARSE_H
+#define __XMLPARSE_H
+#include
+//////////////////////////////
+// Configure
+#define USE_INLINE_FUNCTION
+#define USE_FILEBUFFER
+//////////////////////////////
+// Constants
+typedef enum {
+XMLERR_OK       = 0x0,
+XMLERR_EFILE,       // failed to open file
+XMLERR_ALRDOPEN,    // already opened
+XMLERR_EDOC,
+XMLERR_EPARSE,
+} XMLERR;
+typedef enum {
+NODETYPE_UNKN    = 0x0,
+NODETYPE_ELEM   = 0x1,
+NODETYPE_TEXT   = 0x2,
+NODETYPE_COMM   = 0x4,
+NODETYPE_INST   = 0x8, // Not support
+//NODETYPE_USEFUL = NODETYPE_ELEM|NODETYPE_TEXT,
+//NODETYPE_ALL    = NODETYPE_ELEM|NODETYPE_TEXT|NODETYPE_COMM|NODETYPE_INST,
+} NODETYPE;
+typedef enum {
+DSTAT_UNOPEN    = 0x0,
+DSTAT_OPENED    = 0x1,
+} DOCSTAT;
+typedef enum {
+ISTAT_STOP      = 0x0,
+ISTAT_CONTINUE  = 0x1,
+ISTAT_PASS      = 0x2,
+} ITERSTAT;
+enum {    MAXLEN_BSTR    = 256 };
+//////////////////////////////
+// Structures
+struct tagBString
+{
+LONG    m_lLength;
+union   {
+CHAR    m_paStr[1];
+LPCSTR  m_pszStr;
+};
+};
+typedef struct tagBString       BSTRING;
+typedef struct tagBString       *LPBSTRING;
+typedef struct tagBString const *LPCBSTRING;
+struct tagXMLAttrib;
+typedef struct tagXMLAttrib            XMLATTRIB;
+typedef struct tagXMLAttrib            *LPXMLATTRIB;
+typedef struct tagXMLAttrib    const    *LPCXMLATTRIB;
+struct tagXMLAttrib
+{
+LPBSTRING   m_pbstrName;
+LPBSTRING   m_pbstrValue;
+LPXMLATTRIB    m_pNext;
+};
+struct tagXMLNode;
+typedef struct tagXMLNode       XMLNODE;
+typedef struct tagXMLNode       *LPXMLNODE;
+typedef struct tagXMLNode const *LPCXMLNODE;
+struct tagXMLNode
+{
+NODETYPE    m_eNodeType;
+LONG        m_lDepth;
+LPBSTRING   m_pbstrTag;
+LONG        m_lChildNum;
+LONG        m_lChildNum_Elem;
+LPXMLNODE    m_pRoot;
+LPXMLNODE   m_pParent;
+LPXMLNODE   m_pFirstChild;
+LPXMLNODE   m_pLastChild;
+LPXMLNODE   m_pPrevSibling;
+LPXMLNODE   m_pNextSibling;
+LONG        m_lAttribNum;
+LPXMLATTRIB m_pFirstAttrib;
+};
+struct tagXMLDocument
+{
+DOCSTAT     m_eDocStat;
+LPXMLNODE   m_lpRootNode;
+};
+typedef struct tagXMLDocument       XMLDOCUMENT;
+typedef struct tagXMLDocument       *LPXMLDOCUMENT;
+typedef struct tagXMLDocument const *LPCXMLDOCUMENT;
+//////////////////////////////
+// Types
+typedef ITERSTAT    (CALLBACK *LPFNNODEPROC)( LPCXMLNODE pNode, LPVOID pvParam );
+//////////////////////////////
+// Macros
+#if    defined(USE_INLINE_FUNCTION)
+#define BSTR_C( pBStr )                     (&((pBStr)->m_paStr[0]))
+#define BSTR_CAST( pvAnyType )              ((LPBSTRING)pvAnyType)
+#define    BSTR_LEN( pBStr )                   ((pBStr)->m_lLength)
+#define BSTR_ALLOC( pszStr )                AllocBString( pszStr, (NULL != (pszStr) ? ((LONG)strlen(pszStr)) : (0L)) )
+#define BSTR_ALLOCEX( pszStr, nLen )        AllocBString( pszStr, (LONG)nLen )
+#define BSTR_FREE( pBStr )                  free( pBStr )
+#define BSTR_SAFEFREE( pBStr )              if ( NULL != pBStr ) { free( pBStr ); pBStr = NULL; }
+#define BSTR_EQUAL( pBStrL, pBStrR ) \
+( (BSTR_LEN(pBStrL) == BSTR_LEN(pBStrR) && 0 == strcmp(BSTR_C(pBStrL), BSTR_C(pBStrL))) ? \
+TRUE : FALSE )
+#define BSTR_EQUAL_STATIC( pBStr, szStatic ) \
+( (BSTR_LEN(pBStr) == (LONG)(sizeof(szStatic) - 1) && 0 == strcmp(BSTR_C(pBStr), szStatic)) ? \
+TRUE : FALSE )
+#define BSTR_EQUAL_CSTR( pBStr, pszStr ) \
+( (BSTR_LEN(pBStr) == (LONG)strlen(pszStr) && 0 == strcmp(BSTR_C(pBStr), pszStr)) ? \
+TRUE : FALSE )
+#define    XML_GetRootNode( pDoc )             ((NULL == (pDoc) || (pDoc)->m_eDocStat != DSTAT_OPENED) ? NULL : (pDoc)->m_lpRootNode)
+#define    XML_GetNodeType( pNode )             (NULL != (pNode) ? (pNode)->m_eNodeType : NODETYPE_UNKN)
+#define    XML_GetNodeDepth( pNode )            (NULL != (pNode) ? (pNode)->m_lDepth : (-1L))
+#define    XML_GetNodeParent( pNode )             (NULL != (pNode) ? (pNode)->m_pParent : NULL)
+#define    XML_GetNodeFirstChild( pNode )         (NULL != (pNode) ? (pNode)->m_pFirstChild : NULL)
+#define    XML_GetNodeLastChild( pNode )         (NULL != (pNode) ? (pNode)->m_pLastChild : NULL)
+#define    XML_GetNodeChildNum( pNode )         (NULL != (pNode) ? (pNode)->m_lChildNum : (0L))
+#define    XML_GetNodeChildNum_Elem( pNode )     (NULL != (pNode) ? (pNode)->m_lChildNum_Elem : (0L))
+#define    XML_GetNodePrevSibling( pNode )     (NULL != (pNode) ? (pNode)->m_pPrevSibling : NULL)
+#define    XML_GetNodeNextSibling( pNode )     (NULL != (pNode) ? (pNode)->m_pNextSibling : NULL)
+#define    XML_GetNodeTagName( pNode )         (NULL != (pNode) ? (pNode)->m_pbstrTag : NULL)
+#define    XML_GetNodeAttribNum( pNode )         (NULL != (pNode) ? (pNode)->m_lAttribNum : (0L))
+#define    XML_GetNodeFirstAttrib( pNode )     (NULL != (pNode) ? (pNode)->m_pFirstAttrib : NULL)
+#define    XML_GetNodeNextAttrib( pAttr )         (NULL != (pAttr) ? (pAttr)->m_pNext : NULL)
+#define XML_GetAttribValueBString( pAttr )  (NULL != (pAttr) ? (pAttr)->m_pbstrValue) : NULL)
+#define XML_GetAttribValueCString( pAttr )  (NULL != (pAttr) ? BSTR_C((pAttr)->m_pbstrValue) : NULL)
+#define XML_GetAttribValueLong( pAttr )     (NULL != (pAttr) ? (LONG)strtol(BSTR_C((pAttr)->m_pbstrValue), NULL, 0) : (0L))
+#define XML_GetAttribValueInt( pAttr )      (NULL != (pAttr) ? (int)strtol(BSTR_C((pAttr)->m_pbstrValue), NULL, 0) : (0))
+#endif
+//////////////////////////////
+// Function prototypes
+#if defined(__cplusplus)
+extern "C" {
+#endif
+size_t      strlen_when( LPCSTR lpszStr, CHAR ch );
+size_t        strlen_notin( LPCSTR lpszStr, LPCSTR lpszSet );
+LPCSTR        strchr_notin( LPCSTR lpszStr, LPCSTR lpszSet );
+LPCSTR        strchr_skipws( LPCSTR lpszStr );
+LPBSTRING   AllocBString( LPCSTR lpszStr, LONG lLen );
+XMLERR      XML_OpenDocument( LPXMLDOCUMENT pDoc, LPCSTR lpszFileName, DWORD dwReserve );
+XMLERR      XML_CloseDocument( LPXMLDOCUMENT pDoc );
+LPXMLNODE    XML_GetNode( LPXMLDOCUMENT pDoc, LPXMLNODE pStartPoint, LPCSTR lpszTag, LONG lLen );
+LPXMLATTRIB    XML_GetNodeAttrib( LPXMLNODE pNode, LPCSTR lpszAttr, LONG lLen );
+LPXMLNODE    XML_GetNodeSibling( LPXMLNODE pNode, LPCSTR lpszTag, LONG lLen, BOOL IncludeThis );
+LONG         XML_ForEachNode( LPXMLDOCUMENT pDoc, LPXMLNODE pStartPoint, LPFNNODEPROC pfnNodeProc, LPVOID pvParam );
+#if defined(__cplusplus)
+}   // extern "C" {
+#endif
+#endif // #ifndef __XMLPARSE_H
+<h3>PLX_XMLParser.c</h3>
+#include <assert.h>
+#include <fcntl.h>
+#include <io.h>
+#if defined(DEBUG) || defined(_DEBUG)
+#include <stdio.h>
+#endif
+#include "XMLParse.h"
+//#pragma warning(disable:4305)
+//////////////////////////////
+// Configure
+//#define  USE_MEMORY_HEAP
+#ifdef  USE_FILEBUFFER  // Whether use file system with os-layer buffer
+#define INVALID_FILE_HANDLE         ((int)-1)
+#define FILE_HANDLE                 int
+#define MODE_RDONLY                 (O_RDONLY)
+#define FILE_OPEN(pszFile,mode)     open( pszFile, mode )
+#define FILE_READ(hFile,pbuf,size)  read(hFile, (LPVOID)pbuf, size)
+#define FILE_SEEK(hFile,off,pos)    lseek( hFile, off, pos )
+#define FILE_CLOSE(hFile)           close( hFile )
+#else
+#define INVALID_FILE_HANDLE         ((FILE *)NULL)
+#define FILE_HANDLE                 FILE *
+#define MODE_RDONLY                 ("r")
+#define FILE_OPEN(pszFile,mode)     fopen( pszFile, mode )
+#define FILE_READ(hFile,pbuf,size)  fread((LPVOID)pbuf, size, 1, hFile)
+#define FILE_SEEK(hFile,off,pos)    fseek( hFile, off, pos )
+#define FILE_CLOSE(hFile)           fclose( hFile )
+#endif
+//////////////////////////////
+// Constants
+enum {    MAXLEN_READBUF    = 1024 };
+typedef enum {
+PSTAT_STOP      = 0x0,
+PSTAT_INITIAL,
+PSTAT_FINAL,
+PSTAT_DECL_BEG,
+PSTAT_DECL_END,
+PSTAT_ELEM_BEG,
+PSTAT_ELEM_END,
+PSTAT_TEXT_BEG,
+PSTAT_TEXT_END,
+PSTAT_CDATA_BEG,
+PSTAT_CDATA_END,
+PSTAT_COMM_BEG,
+PSTAT_COMM_END,
+PSTAT_ERROR,
+} PARSESTAT;
+//////////////////////////////
+// Macros
+#define ZERO_MEMORY(p, size) \
+( memset((LPVOID)(p), 0x0, (size_t)size) )
+#define is_WhiteSpace(ch)   (((ch) == ' '  || (ch) == '\t') ? TRUE : FALSE)
+#define is_LineBreak(ch)    (((ch) == '\r' || (ch) == '\n') ? TRUE : FALSE)
+#define is_LeftBracket(ch)    ((ch) == '<' ? TRUE : FALSE)
+#define is_RightBracket(ch)    ((ch) == '>' ? TRUE : FALSE)
+#define is_BufferEmpty(ps)  ((ps)->m_lReadCursor >= (ps)->m_lReadSize ? TRUE : FALSE)
+#define get_BufferChar(ps)  ((CHAR)((ps)->m_aReadBuf[(ps)->m_lReadCursor]))
+#define is_FirstChild(pn)    ((pn)->m_pPrevSibling == NULL ? TRUE : FALSE)
+#define is_LastChild(pn)    ((pn)->m_pNextSibling == NULL ? TRUE : FALSE)
+//////////////////////////////
+// Structures
+struct tagXMLParseStat
+{
+PARSESTAT   m_eParseStat;
+LONG        m_lDepth;
+LPXMLNODE    m_pRootNode;
+LPXMLNODE    m_pLastNode;
+FILE_HANDLE    m_hOpenFile;
+LONG        m_lFileCursor;
+LONG        m_lFileLength;
+LONG        m_lLineNo;
+LONG        m_lReadCursor;
+LONG        m_lReadSize;
+BYTE        m_aReadBuf[MAXLEN_READBUF];
+};
+typedef struct tagXMLParseStat            XMLPARSESTAT;
+typedef struct tagXMLParseStat            *LPXMLPARSESTAT;
+typedef struct tagXMLParseStat    const    *LPCXMLPARSESTAT;
+struct tagXMLIterator
+{
+LONG            m_lCount;
+LPFNNODEPROC    m_pfnProc;
+LPVOID          m_pvParam;
+LPXMLNODE       m_pStation;
+};
+typedef struct tagXMLIterator       XMLITERFATOR;
+typedef struct tagXMLIterator       *LPXMLITERFATOR;
+typedef struct tagXMLIterator const *LPCXMLITERFATOR;
+/*struct tagMemoryPage
+{
+LONG    lGranu ;
+LONG    lSize;
+LPVOID  pvPage;
+BYTE    bUseFlags[1];
+};
+typedef struct tagMemoryPage        MEMORYPAGE;
+typedef struct tagMemoryPage        *LPMEMORYPAGE;
+typedef struct tagMemoryPage const  *LPCMEMORYPAGE;*/
+//////////////////////////////
+// Function prototypes
+#if defined(__cplusplus)
+extern "C" {
+#endif
+static void        XML_FreeNodeTree( LPXMLNODE pNode );
+static void        XML_FreeAttribList( LPXMLATTRIB pAttrib );
+static void     XML_IterateTree( LPXMLNODE pTree, LPXMLITERFATOR pIterator );
+static BOOL     XMLCmpNode_EqualTag( LPCXMLNODE pNode, LPVOID pvParam );
+static BOOL        Parser_RoutineStart( LPXMLPARSESTAT pParseStat, LPXMLDOCUMENT pResult );
+static int        Parser_GetTagString( LPXMLPARSESTAT pParseStat, LPSTR lpszBuf );
+static BOOL        Parser_ReadStream( LPXMLPARSESTAT pParseStat );
+static void        Parser_OnInitial( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnElemBegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnElemEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnTextBegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnTextEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnCDATABegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnCDATAEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnCommBegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnCommEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnDeclBegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static void        Parser_OnDeclEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag );
+static BOOL        Parser_OnFinal( LPXMLPARSESTAT pParseStat );
+static BOOL        Parser_OnError( LPXMLPARSESTAT pParseStat );
+//#if defined(USE_MEMORY_HEAP)
+//static LPVOID   MemoryHeap_Create( LONG lInitialGranu, LONG lInitialSize );
+//static BOOL     MemoryHeap_Destroy( LPVOID );
+//static LPVOID   MemoryHeap_Alloc( void );
+//static void     MemoryHeap_Free( LPVOID pvBlock );
+//#endif
+#if defined(__cplusplus)
+}   // extern "C" {
+#endif
+//////////////////////////////
+// Function implementations
+#if defined(__cplusplus)
+extern "C" {
+#endif
+/*********************************************************************\
+* Function: strlen_when
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+size_t strlen_when( LPCSTR lpszStr, CHAR ch )
+{
+register size_t nLen;
+assert( NULL != lpszStr );
+for ( nLen = 0; *lpszStr != ch && *lpszStr != '\0';    lpszStr++, nLen++ )
+;
+return nLen;
+}
+/*********************************************************************\
+* Function: strlen_notin
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+size_t strlen_notin( LPCSTR lpszStr, LPCSTR lpszSet )
+{
+register size_t nLen;
+assert( NULL != lpszStr );
+for ( nLen = 0; *lpszStr != '\0' && NULL == strchr(lpszSet, *lpszStr); lpszStr++, nLen++ )
+;
+return nLen;
+}
+/*********************************************************************\
+* Function: strchr_notin
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+LPCSTR strchr_notin( LPCSTR lpszStr, LPCSTR lpszSet )
+{
+assert( NULL != lpszStr );
+for ( ; *lpszStr != '\0' && NULL == strchr(lpszSet, *lpszStr); lpszStr++ )
+;
+return lpszStr;
+}
+/*********************************************************************\
+* Function: strchr_skipws
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+LPCSTR strchr_skipws( LPCSTR lpszStr )
+{
+assert( NULL != lpszStr );
+for ( ; *lpszStr != '\0' && is_WhiteSpace(*lpszStr); lpszStr++ )
+;
+return lpszStr;
+}
+/*********************************************************************\
+* Function: AllocBString
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+LPBSTRING AllocBString( LPCSTR lpszStr, LONG lLen )
+{
+LPBSTRING pBStr = (LPBSTRING)malloc( sizeof(LONG) + lLen + 1 );
+assert( NULL != pBStr );
+pBStr->m_lLength = lLen;
+strncpy( &pBStr->m_paStr[0], lpszStr, lLen );
+pBStr->m_paStr[lLen] = '\0';
+return pBStr;
+}
+/*********************************************************************\
+* Function: XML_OpenDocument
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+XMLERR XML_OpenDocument( LPXMLDOCUMENT pDoc, LPCSTR lpszFileName, DWORD dwReserve )
+{
+BOOL            bRet;
+FILE_HANDLE        hFile;
+XMLPARSESTAT    xmlParseStat;
+assert( NULL != pDoc );
+assert( NULL != lpszFileName );
+if ( pDoc->m_eDocStat == DSTAT_OPENED )
+return XMLERR_ALRDOPEN;
+ZERO_MEMORY( &xmlParseStat, sizeof(XMLPARSESTAT) );
+hFile = FILE_OPEN( lpszFileName, MODE_RDONLY );
+if ( INVALID_FILE_HANDLE == hFile )
+return XMLERR_EFILE;
+xmlParseStat.m_hOpenFile    = hFile;
+xmlParseStat.m_lFileCursor    = 0;
+xmlParseStat.m_lFileLength    = FILE_SEEK( hFile, 0, SEEK_END );
+FILE_SEEK( hFile, 0, SEEK_SET );
+xmlParseStat.m_lDepth = 0;
+xmlParseStat.m_lLineNo = 1;
+bRet = Parser_RoutineStart( &xmlParseStat, pDoc );
+if ( FALSE == bRet )
+{
+FILE_CLOSE( hFile );
+return XMLERR_EPARSE;
+}
+pDoc->m_eDocStat    = DSTAT_OPENED;
+pDoc->m_lpRootNode    = xmlParseStat.m_pRootNode;
+FILE_CLOSE( hFile );
+return XMLERR_OK;
+}
+/*********************************************************************\
+* Function: XML_CloseDocument
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+XMLERR XML_CloseDocument( LPXMLDOCUMENT pDoc )
+{
+if ( NULL != pDoc && pDoc->m_eDocStat == DSTAT_OPENED )
+{
+XML_FreeNodeTree( pDoc->m_lpRootNode );
+pDoc->m_lpRootNode = NULL;
+pDoc->m_eDocStat = DSTAT_UNOPEN;
+}
+return XMLERR_OK;
+}
+/*********************************************************************\
+* Function: Parser_GetTagString
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+int Parser_GetTagString( LPXMLPARSESTAT pParseStat, LPSTR lpszBuf )
+{
+int        nLen;
+CHAR    ch;
+CHAR    chTerm;
+BOOL    bInclude;
+// Should to ensure barket match Here!
+nLen = 0;
+for ( ;; )
+{
+if ( is_BufferEmpty(pParseStat) && FALSE == Parser_ReadStream(pParseStat) )
+goto __RET;
+ch = get_BufferChar(pParseStat);
+if ( ch == '\n' )
+pParseStat->m_lLineNo++;
+if ( !is_WhiteSpace(ch) && !is_LineBreak(ch) )
+break;
+pParseStat->m_lReadCursor++;
+}
+if ( is_LeftBracket(ch) )
+{
+chTerm = '>';
+bInclude = TRUE;
+}
+else
+{
+chTerm = '<';
+bInclude = FALSE;
+}
+for ( ;; )
+{
+if ( is_BufferEmpty(pParseStat) && FALSE == Parser_ReadStream(pParseStat) )
+break;
+ch = get_BufferChar(pParseStat);
+if ( ch == '\n' )
+pParseStat->m_lLineNo++;
+if ( ch == chTerm )
+{
+if ( FALSE != bInclude )
+{
+lpszBuf[nLen++] = chTerm;
+pParseStat->m_lReadCursor++;
+}
+break;
+}
+lpszBuf[nLen++] = ch;
+pParseStat->m_lReadCursor++;
+}
+__RET:
+lpszBuf[nLen] = '\0';
+return nLen;
+}
+/*********************************************************************\
+* Function: Parser_ReadStream
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+BOOL Parser_ReadStream( LPXMLPARSESTAT pParseStat )
+{
+size_t    nSize;
+pParseStat->m_lReadCursor    = 0;
+pParseStat->m_lReadSize    = 0;
+nSize = FILE_READ( pParseStat->m_hOpenFile, (LPVOID)&pParseStat->m_aReadBuf[0], MAXLEN_READBUF );
+if ( nSize <= 0 )
+return FALSE;
+pParseStat->m_lReadSize        = (LONG)nSize;
+pParseStat->m_lFileCursor  += (LONG)nSize;
+return TRUE;
+}
+/*********************************************************************\
+* Function: Parser_RoutineStart
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+BOOL Parser_RoutineStart( LPXMLPARSESTAT pParseStat, LPXMLDOCUMENT pResult )
+{
+BOOL    bRet;
+CHAR    szTag[256];
+assert( NULL != pParseStat );
+pParseStat->m_eParseStat = PSTAT_INITIAL;
+while ( pParseStat->m_eParseStat != PSTAT_STOP )
+{
+switch ( pParseStat->m_eParseStat )
+{
+case PSTAT_INITIAL:     Parser_OnInitial( pParseStat, &szTag[0] );        break;
+case PSTAT_DECL_BEG:    Parser_OnDeclBegin( pParseStat, &szTag[0] );    break;
+case PSTAT_DECL_END:    Parser_OnDeclEnd( pParseStat, &szTag[0] );        break;
+case PSTAT_ELEM_BEG:    Parser_OnElemBegin( pParseStat, &szTag[0] );    break;
+case PSTAT_ELEM_END:    Parser_OnElemEnd( pParseStat, &szTag[0] );      break;
+case PSTAT_TEXT_BEG:    Parser_OnTextBegin( pParseStat, &szTag[0] );    break;
+case PSTAT_TEXT_END:    Parser_OnTextEnd( pParseStat, &szTag[0] );        break;
+case PSTAT_CDATA_BEG:    Parser_OnCDATABegin( pParseStat, &szTag[0] );    break;
+case PSTAT_CDATA_END:    Parser_OnCDATAEnd( pParseStat, &szTag[0] );        break;
+case PSTAT_COMM_BEG:    Parser_OnCommBegin( pParseStat, &szTag[0] );    break;
+case PSTAT_COMM_END:    Parser_OnCommEnd( pParseStat, &szTag[0] );        break;
+case PSTAT_FINAL:        bRet = Parser_OnFinal( pParseStat );            break;
+case PSTAT_ERROR:        bRet = Parser_OnError( pParseStat );            break;
+default:
+assert( !"Unknown parsing status!" );
+break;
+}
+}
+return bRet;
+}
+/*********************************************************************\
+* Function: Parser_OnInitial
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnInitial( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+int     nLen;
+assert( NULL != lpszTag );
+lpszTag[0] = '\0';
+nLen = Parser_GetTagString( pParseStat, lpszTag );
+if ( nLen <= 0 )
+{
+pParseStat->m_eParseStat = PSTAT_STOP;
+return;
+}
+if ( lpszTag[0] == '<'  )
+{
+if ( lpszTag[1] == '?')
+{
+pParseStat->m_eParseStat = PSTAT_DECL_BEG;
+}
+else if ( !strncmp(&lpszTag[1], "!--", 3) )
+{
+pParseStat->m_eParseStat = PSTAT_COMM_BEG;
+}
+else if ( lpszTag[1] == '/' )
+{
+pParseStat->m_eParseStat = PSTAT_ELEM_END;
+}
+else if ( isalpha(lpszTag[1]) )
+{
+pParseStat->m_eParseStat = PSTAT_ELEM_BEG;
+}
+else if ( !strncmp(&lpszTag[1], "![CDATA[", 8) )
+{
+pParseStat->m_eParseStat = PSTAT_CDATA_BEG;
+}
+else
+{
+pParseStat->m_eParseStat = PSTAT_ERROR;
+}
+}
+else if ( NULL != pParseStat->m_pLastNode )
+{
+pParseStat->m_eParseStat = PSTAT_TEXT_BEG;
+}
+else
+{
+pParseStat->m_eParseStat = PSTAT_ERROR;
+}
+}
+/*********************************************************************\
+* Function: Parser_OnFinal
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+BOOL Parser_OnFinal( LPXMLPARSESTAT pParseStat )
+{
+pParseStat->m_eParseStat = PSTAT_STOP;
+return TRUE;
+}
+/*********************************************************************\
+* Function: Parser_OnError
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+BOOL Parser_OnError( LPXMLPARSESTAT pParseStat )
+{
+XML_FreeNodeTree( pParseStat->m_pRootNode );
+pParseStat->m_pRootNode     = NULL;
+pParseStat->m_eParseStat = PSTAT_STOP;
+TRACE( "[Xml Parser]: Syntax error @ %s #%ld.\n", "", pParseStat->m_lLineNo);
+return FALSE;
+}
+/*********************************************************************\
+* Function: Parser_OnDeclBegin
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnDeclBegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+int nLenTag;
+if ( NULL != pParseStat->m_pRootNode )
+{
+pParseStat->m_eParseStat = PSTAT_ERROR;
+return;
+}
+lpszTag = (LPSTR)strchr_skipws( (LPCSTR)(lpszTag + 2) );
+if ( lpszTag == '\0' )
+{
+pParseStat->m_eParseStat = PSTAT_ERROR;
+return;
+}
+nLenTag = (int)strlen_notin(lpszTag, " \t\r\n>");
+if ( nLenTag == 3 && !strncmp(lpszTag, "xml", 3) )
+{
+// Here, dispose version and coding infomation in XML document header
+}
+else if ( nLenTag == 14 && !strncmp(lpszTag, "xml-stylesheet", 3) )
+{
+// Unsupport
+}
+else
+{
+// Unknown declaretion
+}
+pParseStat->m_eParseStat = PSTAT_INITIAL;
+}
+/*********************************************************************\
+* Function: Parser_OnDeclEnd
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnDeclEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+// Do noting
+}
+/*********************************************************************\
+* Function: Parser_OnElemBegin
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnElemBegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+int         nLenTag;
+int         nLenValue;
+LPSTR       lpszValue;
+LPXMLNODE   pNode;
+LPXMLATTRIB    pAttrib;
+LPXMLATTRIB pPrevAttr;
+assert( is_LeftBracket(lpszTag[0]) );
+// Multi-root node is not supproted
+if ( 0 == pParseStat->m_lDepth && NULL != pParseStat->m_pRootNode )
+goto __ERROR;
+pNode = (LPXMLNODE)malloc(sizeof(XMLNODE));
+if ( NULL == pNode )
+goto __ERROR;
+ZERO_MEMORY( pNode, sizeof(XMLNODE) );
+pNode->m_eNodeType    = NODETYPE_ELEM;
+pNode->m_lDepth        = pParseStat->m_lDepth;
+if ( NULL != pParseStat->m_pLastNode )
+{
+assert( pNode->m_lDepth >= pParseStat->m_pLastNode->m_lDepth );
+if ( pNode->m_lDepth > pParseStat->m_pLastNode->m_lDepth ) // new child
+{
+pNode->m_pParent = pParseStat->m_pLastNode;
+pParseStat->m_pLastNode->m_pFirstChild = pNode;
+}
+else if ( pNode->m_lDepth == pParseStat->m_pLastNode->m_lDepth ) // new sibling
+{
+pNode->m_pParent = pParseStat->m_pLastNode->m_pParent;
+pParseStat->m_pLastNode->m_pNextSibling = pNode;
+pNode->m_pPrevSibling = pParseStat->m_pLastNode;
+}
+if ( NULL != pNode->m_pParent )
+{
+pNode->m_pParent->m_lChildNum++;
+pNode->m_pParent->m_lChildNum_Elem++;
+}
+}
+if ( NULL == pParseStat->m_pRootNode )
+{
+pParseStat->m_pRootNode = pNode;
+}
+pNode->m_pRoot = pParseStat->m_pRootNode;
+pParseStat->m_pLastNode    = pNode;
+lpszTag++;
+nLenTag = (int)strlen_notin(lpszTag, " \t\r\n>");
+if ( nLenTag <= 0 )
+goto __ERROR;
+pNode->m_pbstrTag = BSTR_ALLOCEX(lpszTag, nLenTag);
+if ( NULL == pNode->m_pbstrTag )
+goto __ERROR;
+lpszTag = (LPSTR)(lpszTag + nLenTag);
+for ( pPrevAttr = NULL;; )
+{
+lpszTag = (LPSTR)strchr_skipws( lpszTag );
+if ( is_RightBracket(*lpszTag) )
+{
+pParseStat->m_lDepth++; // Move down one layer
+pParseStat->m_eParseStat = PSTAT_INITIAL;
+break;
+}
+else if ( !strncmp(lpszTag, "/>", 2) )
+{
+//pParseStat->m_lDepth--; //
+pParseStat->m_eParseStat = PSTAT_INITIAL;
+break;
+}
+nLenTag = (int)strlen_when( lpszTag, '=' );
+if ( nLenTag <= 0 )
+goto __ERROR;
+lpszValue = strchr( (LPCSTR)(lpszTag + nLenTag), '\"' );
+if ( NULL == lpszValue )
+goto __ERROR;
+lpszValue++;
+nLenValue = (int)strlen_when( lpszValue, '\"' );
+//if ( nLenValue <= 0 )
+//    goto __ERROR;
+pAttrib = (LPXMLATTRIB)malloc(sizeof(XMLATTRIB));
+if ( NULL == pAttrib )
+goto __ERROR;
+ZERO_MEMORY( pAttrib, sizeof(XMLATTRIB) );
+pAttrib->m_pbstrName    = BSTR_ALLOCEX( lpszTag, nLenTag );
+pAttrib->m_pbstrValue    = BSTR_ALLOCEX( lpszValue, nLenValue );
+if ( NULL == pAttrib->m_pbstrName || NULL == pAttrib->m_pbstrValue )
+goto __ERROR;
+if ( NULL == pNode->m_pFirstAttrib )
+pNode->m_pFirstAttrib = pAttrib;
+if ( NULL != pPrevAttr )
+pPrevAttr->m_pNext = pAttrib;
+pPrevAttr = pAttrib;
+pNode->m_lAttribNum++;
+lpszTag = lpszValue + nLenValue + 1;
+}
+return;
+__ERROR:
+XML_FreeNodeTree( pNode );
+pParseStat->m_eParseStat = PSTAT_ERROR;
+}
+/*********************************************************************\
+* Function: Parser_OnElemEnd
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnElemEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+pParseStat->m_lDepth--;
+if ( NULL != pParseStat->m_pLastNode )
+{
+if ( NULL != pParseStat->m_pLastNode->m_pParent )
+pParseStat->m_pLastNode->m_pParent->m_pLastChild = pParseStat->m_pLastNode;
+if ( pParseStat->m_pLastNode->m_lDepth > pParseStat->m_lDepth )
+pParseStat->m_pLastNode = pParseStat->m_pLastNode->m_pParent;
+}
+if ( 0 == pParseStat->m_lDepth )
+pParseStat->m_eParseStat = PSTAT_FINAL;
+else
+pParseStat->m_eParseStat = PSTAT_INITIAL;
+}
+/*********************************************************************\
+* Function: Parser_OnTextBegin
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnTextBegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+LPXMLNODE pNode;
+pNode = (LPXMLNODE)malloc(sizeof(XMLNODE));
+if ( NULL == pParseStat->m_pLastNode )
+goto __ERROR;
+ZERO_MEMORY( pNode, sizeof(XMLNODE) );
+pNode->m_eNodeType    = NODETYPE_TEXT;
+pNode->m_lDepth        = pParseStat->m_lDepth;
+if ( NULL != pParseStat->m_pLastNode )
+{
+assert( pNode->m_lDepth >= pParseStat->m_pLastNode->m_lDepth );
+if ( pNode->m_lDepth > pParseStat->m_pLastNode->m_lDepth )
+{
+pNode->m_pParent = pParseStat->m_pLastNode;
+pParseStat->m_pLastNode->m_pFirstChild = pNode;
+}
+else if ( pNode->m_lDepth == pParseStat->m_pLastNode->m_lDepth )
+{
+pNode->m_pParent = pParseStat->m_pLastNode->m_pParent;
+pParseStat->m_pLastNode->m_pNextSibling = pNode;
+pNode->m_pPrevSibling = pParseStat->m_pLastNode;
+}
+if ( NULL != pNode->m_pParent )
+pNode->m_pParent->m_lChildNum++;
+pNode->m_pRoot = pParseStat->m_pLastNode->m_pRoot;
+}
+pParseStat->m_pLastNode    = pNode;
+pNode->m_pbstrTag = BSTR_ALLOC(lpszTag);
+if ( NULL == pNode->m_pbstrTag )
+goto __ERROR;
+pParseStat->m_lDepth++; // Move down one layer
+pParseStat->m_eParseStat = PSTAT_TEXT_END;
+return;
+__ERROR:
+XML_FreeNodeTree( pNode );
+pParseStat->m_eParseStat = PSTAT_ERROR;
+}
+/*********************************************************************\
+* Function: Parser_OnTextEnd
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnTextEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+// Move up one layer
+pParseStat->m_lDepth--;
+if ( NULL != pParseStat->m_pLastNode &&
+pParseStat->m_pLastNode->m_lDepth > pParseStat->m_lDepth )
+pParseStat->m_pLastNode = pParseStat->m_pLastNode->m_pParent;
+pParseStat->m_eParseStat = PSTAT_INITIAL;
+}
+/*********************************************************************\
+* Function: Parser_OnCommBegin
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnCommBegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+pParseStat->m_eParseStat = PSTAT_INITIAL;
+}
+/*********************************************************************\
+* Function: Parser_OnCommEnd
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnCommEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+}
+/*********************************************************************\
+* Function: Parser_OnCDATABegin
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnCDATABegin( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+pParseStat->m_eParseStat = PSTAT_INITIAL;
+// Should convert to text here
+}
+/*********************************************************************\
+* Function: Parser_OnCDATAEnd
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void Parser_OnCDATAEnd( LPXMLPARSESTAT pParseStat, LPSTR lpszTag )
+{
+}
+/*********************************************************************\
+* Function: XML_IterateTree
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void XML_IterateTree( LPXMLNODE pTree, LPXMLITERFATOR pIterator )
+{
+register ITERSTAT eStat;
+if ( NULL != pTree )
+{
+pIterator->m_pStation = pTree;
+eStat = pIterator->m_pfnProc( pTree, pIterator->m_pvParam );
+if ( eStat == ISTAT_STOP )
+return;
+if ( eStat != ISTAT_PASS )
+pIterator->m_lCount++;
+XML_IterateTree( pTree->m_pFirstChild, pIterator );
+XML_IterateTree( pTree->m_pNextSibling, pIterator );
+}
+}
+/*********************************************************************\
+* Function: XML_ForEachNode
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+LONG XML_ForEachNode( LPXMLDOCUMENT pDoc, LPXMLNODE pStartPoint, LPFNNODEPROC pfnNodeProc, LPVOID pvParam )
+{
+XMLITERFATOR    iter;
+assert( NULL != pDoc );
+assert( NULL != pfnNodeProc );
+if ( pDoc->m_eDocStat == DSTAT_UNOPEN || (NULL != pStartPoint && pStartPoint->m_pRoot != pDoc->m_lpRootNode) )
+return 0;
+iter.m_lCount   = 0;
+iter.m_pStation = NULL;
+iter.m_pvParam  = pvParam;
+iter.m_pfnProc  = pfnNodeProc;
+pStartPoint = (NULL == pStartPoint ? pDoc->m_lpRootNode : pStartPoint);
+XML_IterateTree( pStartPoint, &iter );
+return iter.m_lCount;
+}
+/*********************************************************************\
+* Function: XMLCmpNode_EqualTag
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+ITERSTAT XMLCmpNode_EqualTag( LPCXMLNODE pNode, LPVOID pvParam )
+{
+if ( FALSE != BSTR_EQUAL(pNode->m_pbstrTag, BSTR_CAST(pvParam)) )
+return ISTAT_STOP;
+else
+return ISTAT_CONTINUE;
+}
+/*********************************************************************\
+* Function: XML_GetNode
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+LPXMLNODE XML_GetNode( LPXMLDOCUMENT pDoc, LPXMLNODE pStartPoint, LPCSTR lpszTag, LONG lLen )
+{
+BSTRING         bStr;
+XMLITERFATOR    iter;
+assert( NULL != lpszTag );
+assert( NULL != pDoc );
+if ( pDoc->m_eDocStat == DSTAT_UNOPEN || pStartPoint->m_pRoot != pDoc->m_lpRootNode )
+return NULL;
+bStr.m_lLength  = lLen;
+bStr.m_pszStr   = lpszTag;
+iter.m_lCount   = 0;
+iter.m_pfnProc  = &XMLCmpNode_EqualTag;
+iter.m_pStation = NULL;
+iter.m_pvParam  = (LPVOID)&bStr;
+pStartPoint = (NULL == pStartPoint ? pDoc->m_lpRootNode : pStartPoint);
+XML_IterateTree( pStartPoint, &iter );
+return (iter.m_pStation);
+}
+/*********************************************************************\
+* Function: XML_GetNodeAttrib
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+LPXMLATTRIB    XML_GetNodeAttrib( LPXMLNODE pNode, LPCSTR lpszAttr, LONG lLen )
+{
+BSTRING     bStr;
+LPXMLATTRIB pAttrib;
+assert( NULL != lpszAttr );
+assert( NULL != pNode );
+bStr.m_lLength  = lLen;
+bStr.m_pszStr   = lpszAttr;
+for ( pAttrib = XML_GetNodeFirstAttrib(pNode); NULL != pAttrib; pAttrib = XML_GetNodeNextAttrib(pAttrib) )
+{
+if ( FALSE != BSTR_EQUAL(pAttrib->m_pbstrName, &bStr) )
+break;
+}
+return pAttrib;
+}
+/*********************************************************************\
+* Function: XML_GetNodeSibling
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+LPXMLNODE XML_GetNodeSibling( LPXMLNODE pNode, LPCSTR lpszTag, LONG lLen, BOOL bIncludeThis )
+{
+BSTRING     bStr;
+assert( NULL != lpszTag );
+assert( NULL != pNode );
+bStr.m_lLength  = lLen;
+bStr.m_pszStr   = lpszTag;
+if ( FALSE != bIncludeThis && FALSE != BSTR_EQUAL(pNode->m_pbstrTag, &bStr) )
+return pNode;
+for ( pNode = XML_GetNodeNextSibling(pNode); NULL != pNode; pNode = XML_GetNodeNextSibling(pNode) )
+{
+if ( FALSE != BSTR_EQUAL(pNode->m_pbstrTag, &bStr) )
+break;
+}
+return pNode;
+}
+/*********************************************************************\
+* Function: XML_FreeNodeTree
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void XML_FreeNodeTree( LPXMLNODE pNode )
+{
+if ( NULL != pNode )
+{
+BSTR_FREE( pNode->m_pbstrTag );
+XML_FreeAttribList( pNode->m_pFirstAttrib );
+if ( is_FirstChild(pNode) && NULL != pNode->m_pParent )
+pNode->m_pParent->m_pFirstChild = pNode->m_pNextSibling;
+if ( NULL != pNode->m_pNextSibling )
+pNode->m_pNextSibling->m_pPrevSibling = pNode->m_pPrevSibling;
+if ( NULL != pNode->m_pPrevSibling )
+pNode->m_pPrevSibling->m_pNextSibling = pNode->m_pNextSibling;
+XML_FreeNodeTree( pNode->m_pFirstChild );
+XML_FreeNodeTree( pNode->m_pNextSibling );
+free( pNode );
+}
+}
+/*********************************************************************\
+* Function: XML_FreeAttribList
+* Purpose:
+* Params:
+* Return
+* Remarks
+**********************************************************************/
+void XML_FreeAttribList( LPXMLATTRIB pAttrib )
+{
+LPXMLATTRIB pNext;
+while ( NULL != pAttrib )
+{
+pNext = pAttrib->m_pNext;
+BSTR_FREE( pAttrib->m_pbstrName );
+BSTR_FREE( pAttrib->m_pbstrValue );
+free( pAttrib );
+pAttrib = pNext;
+}
+}
+#if defined(__cplusplus)
+}   // extern "C" {
+#endif

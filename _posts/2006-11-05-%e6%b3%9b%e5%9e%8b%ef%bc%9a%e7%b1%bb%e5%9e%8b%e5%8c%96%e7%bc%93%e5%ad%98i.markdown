@@ -1,0 +1,202 @@
+---
+layout: post
+title: 泛型：类型化缓存(I)
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0wNSAxODo1Nzo1NCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0wNSAxMDo1Nzo1NCArMDgwMA==
+---
+Andrei Alexandrescu
+ 想象本篇你正要读的“泛型<编程>”部分的开头是：“本文关于怎样用C++处理内存缓冲”。
+ 当你轻率地关掉浏览器时，如果竖起耳朵，你还会听到成千上万的鼠标在做和你一样的事情。因为谁会对处理内存缓冲这样的小事感兴趣呢？
+ 但本文确实关于怎样在C++中处理内存缓冲，但这里有两个特殊之处。首先，缓冲是泛型的，这意味着缓冲里面能放置类型化数据（相反于原始字节）。第二，我们要讨论的缓存的效率和存放在里面的类型及所在操作系统容许的最高效率相当，这种效率是指在任何方面的效率&mdash;&mdash;包括分配策略，和数据操作。
+ 你会很快看到，写一个泛型缓存是个关于模板的小小练习。写一个高效的的缓存也不是一个复杂的任务。写一个意外安全的缓存难一些，但还不是很难，特别在你读过关于意外安全的书[1]之后。但写一个同时具备泛型特征和高效率的缓存就象爬一个险峰。就象在C++中常常发生的，你在山顶欣赏到的景色使你的努力获得足够回报&mdash;&mdash;只要你能克服路上遇到困难。
+真空地带
+ 有些人总会时不时在Usenet新闻组comp.lang.c++.moderated中张贴这样的问题：为什么autp_ptr不能给你在析构函数中使用delete[]而不是delete的机会？接下去的讨论通常会这样：
+“你不应该使用C风格的数组而应该用std::vector，它高效又强大”
+“但std::vector在我要用到的地方不够高效。”
+“为什么？”等等
+ 事实是，std::vector确实是个用来处理连续对象序列的设计精良的类。当我首次看到std::vector的优良设计时，我根本没有把它扔掉而自己来写一个的需要（当我看到，比如说，某些MFC的东东时我感觉到了这种冲动）然而。std::vector是有些不够高效之处，而这可能会严重影响到某些使用者。
+* 不必要的数据初始化。通常情况，你需要创建一个大小合适的vector，带有基本类型（比如char）并把它传递给低层C函数来用一个socket或文件中读取的数据来填充它。问题在于，尽管你不需要，整个vector都会通过vector的构造函数或resize函数初始化。如果你必须和C函数打夹道，你就没办法避免这个开销。
+* 指数增长。标准vector规则要求快速的（平均为常量时间）的增长策略。这就要求std::vector以乘法来增长&mdash;&mdash;大多数vector实现当需要自动增长时分配倍增的内存。比如如果你要在一个包含一百万对象的vector后面添加一个对象，这个vector为了将来短时间内不再增长会分配能容纳三百万对象的空间，但这可能不是你想要的。
+* “强制性”内存分配策略。标准vector永远不会收缩而只会增长。如果你集中了三百万数据样本，然后你觉得做插值计算的话只需要保留一百万数据样本，你就会有能存放二百万对象的空闲空间。处理这种情况建议使用的常用手段是把你的vector拷到一个新建的vector中然后互换这两个vector
+std::vector<double> data;
+ ...处理数据...
+ //收缩数据
+ std::vector<double>(data.begin(), data.end()).swap(data);
+ 
+这个常用法不是很优化，因为你必须拷贝里面的数据。更糟的是，就是这样一个常用法也不能保证对内存百分之百的利用率。因为std::vector会总是分配比需要多的内存。如果你能够“就地”收缩vector会更好，也就是说，这需要告诉内存分配器它可以使用你的vector尾端之后的内存。许多内存分配器允许你这样做。
+* 低效的对象移动。std::vector对拷贝和移动做无差别处理。对一个std::vector来说，一个移动操作就是一个拷贝操作后面跟一个对源对象的析构操作。所以如果你有一个保存字符串的vector并且为它重新分配，你没办法写一个函数来快速地移动几个指针（译注：此处指针指的是比如指向所管理内存的开始和结尾等这些地方的指针）到新的内存来使std::vector使用它。每个单个的字符串都毫无必要地拷贝到一个新的字符串。当被移动对象不是CRC[2]成员，那这将会是个低效率的巨大来源。这也是常常说到的怎样的std::vector<std::vector<T> >会被禁止的原因。
+* 数据拷贝和移动中更多的低效之处。一些STL的实现不能区分包含旧数据类型的vector和包含用户自定类型的vector。（Metrowerks是个例外）这意味着它们使用更通用的结构来拷贝数据，比如for循环。你有权认为一个好的编译器应该把拷贝一系列整数的loop替换为更高效的memcpy调用。传说中两个能产生高效代码的编译器，Microsoft Visual C++和Metrowerks CodeWarrior，在完全速度优化方式下，使用loop来拷贝整型数据产生的代码比对应的memcpy调用明显要慢。所以你要执行效率，你需要在你自己的代码中调用memcpy。
+* 不必要的意外安全。许多std::vector实现（但不是全部）假设所存类型的构造函数，拷贝构造函数，和赋值操作符重载函数可能抛出意外。但这对基本类型和其他许多类型都不会发生。所以这些实现对这些类型产生的代码可能会不必要的更大和更慢。
+在许多应用中，这些问题的部分或全部根本没什么影响。但当你有苛刻的性能要求时
+std::vector就不那么吸引人了。你会转而寻找一个更优化也给你更多控制权的结构。问题是你无法在C++标准中的std::vector下层找到任何容器&mdash;&mdash;除了C风格数组。你要么开卡迪拉克，要么骑黄鱼车。
+ 要证据？证据就在你面前：STL在至少三处使用连续内存缓冲（除了std::vector本身以外）：std::basic_string,std::deque的内存块管理部分和std::deque的内存块本身。然而。我没看到有STL实现使用vector作为这些结构的后端。如果说std::vector是你应用中实现连续内存唯一能用的工具，那就是说STL实现有其他特别工具来作为它们的后端。
+ 有一个空隙，在std::vector和C风格数组中有一个真空地带。我们定位于这个位置。我们会开发一个包含下列特性的连续内存缓冲：
+* 泛型化的&mdash;可以存放任意类型序列
+* 亲和的&mdash;支持std::vector语法和语义的子集
+* 提供完全控制&mdash;&mdash;提供细粒度的基本操作加上高层次的函数
+* 产生的代码对基本类型和选定的用户定义类型尽最大可能优化
+* 允许用户控制的优化
+* 支持高级内存分配功能，例如就地扩展和快速重分配
+* 最最重要的，能够被用做更高层连续内存容器的后端&mdash;&mdash;特别是，你能用它实现vector,string或者deque.
+buffer：第一线曙光
+ 我们来为buffer模类定义一个接口。buffer只保存两个指针&mdash;&mdash;所控制内存块的头和尾。对一个buffer来说，尺寸和容积(size and capacity)没有区别。我们就从std::vector开始，下手去除和容积有关的函数，我们剩下下列成员函数集：
+template <class T, class Allocater = std::allocator<T> >
+class buffer
+{
+public:
+ ....所有std::vector的类型定义和函数，除了：
+ //size_type capacity() const;
+ //void reserve(size_type n);
+private:
+ T* beg_;
+ T* end_;
+};
+ 有趣的是，尽管buffer没有容积概念，但它能够实现std::vector的所有功能，除了capacity和reserve，还有buffer不能满足所有这些函数的性能要求。比如说，buffer<T>::push_back有O(N)的时间复杂度，但std::vector<T>::push_back综合于大量的调用时有O(1)的时间复杂度。（这是标准所说的“摊分常量时间（amortized constant）”）你看到后面就知道能够在某些情况下提高buffer<T>::push_back的性能而仍旧不必支持容积概念。
+ 实现buffer的接口并不很复杂，两个地方需要注意：意外安全和正确地摧毁对象。标准函数std::uninitialized_copy和std::uninitialized_fill是两个很有用的工具。
+ 为了允许用户分配一块缓存而不初始化它，我们需要一个特别的构造函数和几个辅助函数。然后，我们需要一个grow_noinit工具来扩展缓存而不调用构造函数。对应的，我们需要shrink_nodestroy函数来收缩缓存而不调用析构函数，最后，需要一个稍微有些多余的函数clear_nodestroy，它清空缓存，回收内存而不调用析构函数。
+template <class T, class Allocator = std::allocator<T> >
+class buffer
+{
+ ....同上....
+public:
+ enum noinit_t { noinit };
+ buffer(size_type n, noinit_t,
+  const Allocator& a = Allocator());
+ void grow_noinit (size_type growBy);
+ void shrink_nodestroy(size_type shrinkBy);
+ void clear_nodestroy();
+};
+ 这个扩展的接口给了你对缓存储存在内数据的完全控制。但是注意不要不假思索地直接使用这些扩展函数。比如说你象下面那样使用grow_noinit:
+void Fun()
+{
+ buffer<Widget> someWidgets;
+ ....
+ //加10个Widget的空间
+ someWidgets.grow_noinit(10);
+ //初始化这些Widget
+ ConstructWidgets(
+  SomeWidgets.end() - 10, someWidgets.end());
+ ....
+};
+ 这里的问题在于如果10个Widget的构造函数如果以任意形式失败，所有事情都会是一团糟。当Fun返回,someWidgets的析构函数会摧毁它里面包含对象&mdash;&mdash;它不会知道哪些Widget构造成功哪些没有，这也是因为buffer不象std::vector有容积的概念，如果还有buffer内还有没初始化的内存，对那些内存使用Widget的析构函数很明显会导致未定义后果。
+类型特性（Type Traits）
+ 一项优化泛型代码的关键技术是获取泛型代码操作的类型的信息。这样，泛型代码能够在编译时分配工作给指定的代码，这些代码都对专门类型执行操作。
+ 比如在我们的例子中，一个很重要的信息是buffer内的类型的拷贝构造函数是否抛出意外。对一个拷贝时不抛意外的类型，代码就会因不用处理意外安全而变得简单。此外，一些编译器如没有用try块会产生更好的代码。
+ 类型特性是一个用来推导类型信息的有名技术。Boost[4]有个库实现类型特性，Loki[5]也有（在buffer中，我们会用到的类型特性机制会和Boost和Loki的都稍有不同，这是由Kavonen通过电邮建议我的）。
+ 我们来看怎样推导一个类型的拷贝函数是否抛意外。坦白地说，C++中不可能知道所有类型的拷贝函数是否抛意外。但是，我们做一些工作并让用户当他们觉得需要优化时来帮我们做到。
+ 你不必成为歇洛克?福尔摩斯就能够知道任何一个基本类型的拷贝构造函数不会抛出意外。这样，一个保守的假设是任何除了基本类型的类型的拷贝构造函数可能抛出意外。下面是对应代码：
+namespace TypeTraits
+{
+ //列举所有基本类型
+ typedef TYPELIST_14(
+const bool,
+const char,
+        const signed char, 
+        const unsigned char,
+        const wchar_t,
+        const short int, 
+        const unsigned short int,
+        const int,
+        const unsigned int,
+        const long int, 
+        const unsigned long int,
+        const float,
+        const double,
+        const long double)
+    PrimitiveTypes;
+ 
+template <typename T> struct IsPrimitive
+{
+ enum { value =
+  Loki::TL::IndexOf<PrimitiveTypes,
+  Const T<::value >= 0};
+};
+template <typename T> struct IsPrimitive<T*>
+{
+ enum {value = true };
+};
+template <typename T> struct CopyThrows
+{
+ enum {value = !IsPrimitive<T>::value };
+};
+}
+ 为了简明，上面的代码使用了Loki提供的两个工具：typelists和indexOf。typellists让你创建和操作类型串，Loki::TL::IndexOf在类型串中查找一个单独类型并且返回它在其中的索引。如果类型串中没有找到这个类型,返回的索引为负。最终，TypeTraits::CopyThrow<T>::value包含了所需信息。
+ 通过这个机制来获取类型信息非常非常灵活，假设你在一个应用程序里定义了下列类型：
+struct Point
+{
+ int x;
+ int y;
+ ....操作函数....
+};
+上面这个Point不是基本类型，但它拷贝时也不会抛出意外。你可以用类型特性这个机制来告知这个信息。你所要做的就是再次打开TypeTraits命名空间然后在里面放入一个CopyThrows的显式实例化(explicit instantiation)版本
+//在file"Pint.h"文件中，Point的定义后
+namespace TypeTraits
+{
+ template <> struct CopyThrows<Point>
+ {
+  enum {value = false };
+ };
+}
+ 更好的是，你可以为一整个类型种类定制CopyThrows，这通过部分模板特化(partial template specialization)来实现，考虑一下标准复数类型,std::complex<T>，你可以用基本算术类型实例化std::complex，但也可以用用户定义算术类型，比如Rational或BrigInt。现在，因为拷贝一个std::complex<T>对象包括拷贝两个T对象(实数部分和虚数部分)，由此可知std::complex<T>有着和T一样的CopyThrows特性。你能够通过下面代码表示这一点：
+namespace TypeTraits
+{
+ template <class T> struct CopyThrows<std::complex<T> >
+ {
+  enum { value = CopyThrows<T>::value };
+ };
+}
+ 我们回到buffer。buffer如何使用CopyThrows的信息？通过使用Int2Type模板类[5][6]在编译时分派一个布尔值是非常简单的。回忆一下，Int2Type的定义有着简单的表象。
+Template <int v>
+Struct Int2Type
+{
+ enum { value = v };
+};
+ 下面是buffer的构造函数怎样使用Int2Type来分派调用一个意外安全或意外无关的初始化函数的例子:
+template <class T, class Allocator>
+ std::allocator<T> >
+class buffer : private Allocator
+{
+private:
+ enum { copyThrow = 
+  TypeTraits::CopyThrows<T>::value != 0 };
+ //无意外初始化
+ void Init(size_type n, const T& value, 
+Loki::Int2Type<false>)
+ {
+  ....
+ }
+ 
+ //有可能出现意外的初始化 
+ void Init(size_type n, const T& value,
+  Loki::Int2Type
+<true>)
+ {
+  ....
+ }
+public 
+ explicit buffer(size_type m,
+  const T& value = T(),
+  const Allocator& a = Allocator())
+ {
+  Init(n, value,
+   Loki::Int2Type(copyThrows>());
+ }
+};
+ 其它buffer可能会需要的信息包括:
+* 类型是否为MemCopyable，就是说，拷贝一个对象和memcpy这个对象的字节结果一样。显然，基本类型和POD结构（简单旧数据，C风格）属于这种情况。
+* 类型是否为MemMoveable，就是说，在内存中从一个地方拷贝一个对象到另一个地方并且摧毁源对象，结果和memcpy对象的字节而且没有摧毁源对象一致。再一次的，基本类型和POD属于这种情况。但是，你会很快看到，有相当多的用户定义类型是MemMoveable的。
+`` 下一部分的“泛型<编程>”会定义MemCopyable和MemMoveable并且用和CopyThrows类似的方式使用它们。关于MemCopyable和MemMoveable是否就此结束了？根本不是。它们和供下载代码中的reallocate和inplace_reallocate一样，都意味着我们面临内存分配的挑战。到那时&mdash;&mdash;会有详尽说明！
+鸣谢：
+ 对Tim Sharrock的详尽检查非常感谢。
+参考数目和注释
+[1] Herb Sutter. Exceptional C++ (Addison-Wesley, 2000).
+[2] COW 爱好者俱乐部的缩写. COW 是写时拷贝的缩写. COW是可以使std::vector所用的用拷贝实现移动原则开销较小的策略。但是，许多库的作者正在去掉基于COW的实现，因为这在多线程程序中会引起问题。
+[3] 总的来说, buffer必须和vector有同样级别的意外。参看Bjarne Stroustrup, Appendix E: Standard-Library Exception Safety 在 <<a href="http://www.research.att.com/~bs/3rd_safe0.html">www.research.att.com/~bs/3rd_safe0.html</a>>.
+[4] Boost 是尖端的C++库集， 参看 <<a href="http://www.boost.org/">www.boost.org</a>>.
+[5] Loki 是Modern C++ Design (Addison-Wesley, 2001)一书附带库，实际上是你们大家参与一起写成的.你能从 <<a href="http://www.moderncppdesign.com/">www.moderncppdesign.com</a>>下载下载Loki. 
+[6] Andrei Alexandrescu. "Generic<Programming>: Mappings between Types and Values," C/C++ Users Journal C++ Experts Forum, October 2000, <www.cuj.com/experts/1810/alexandr.htm>.
+Andrei Alexandrescu 是位于西雅图的华盛顿大学的博士生，也是受到好评的《Modern C++ Design》一书的作者。可以通过<a href="http://www.moderncppdesign.com/">www.moderncppdesign.com</a>. 来联系他。Andrei同时也是C++研讨会 (<<a href="http://www.gotw.ca/cpp_seminar">www.gotw.ca/cpp_seminar</a>>).的一名有号召力的讲师。
+你可以从CUJ网站或http://merced.go.nease.net/code/buffer.zip获得本文源代码。

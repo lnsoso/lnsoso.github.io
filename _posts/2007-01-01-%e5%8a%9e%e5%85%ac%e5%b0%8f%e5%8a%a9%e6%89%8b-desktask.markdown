@@ -1,0 +1,10 @@
+---
+layout: post
+title: 办公小助手 DeskTask
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wMS0wMSAxNDo1NTo0NCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0wMSAwNjo1NTo0NCArMDgwMA==
+---
+很好用的小软件,可以和 outlook 配合起来用,相当不错噢~!<a href="http://www.yupoo.com/photos/view?id=ff8080810fd98d8b010fdc6ee95466fa" title="做全球中文领域最大的照片发布、存储、分享及传播社区"><img src="http://photo4.yupoo.com/20070101/145313_1545932475_pjwinchq.jpg" width="394" height="214" border="0" /></a>

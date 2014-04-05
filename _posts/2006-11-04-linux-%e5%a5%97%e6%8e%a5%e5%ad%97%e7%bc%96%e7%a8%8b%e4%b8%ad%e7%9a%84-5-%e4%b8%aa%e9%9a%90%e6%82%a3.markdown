@@ -1,0 +1,144 @@
+---
+layout: post
+title: Linux 套接字编程中的 5 个隐患
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0wNCAyMTo0NjoxMyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0wNCAxMzo0NjoxMyArMDgwMA==
+---
+<blockquote>Socket API 是网络应用程序开发中实际应用的标准 API。尽管该 API 简单，但是开发新手可能会经历一些常见的问题。本文识别一些最常见的隐患并向您显示如何避免它们。</blockquote><!--START RESERVED FOR FUTURE USE INCLUDE FILES--><!-- include java script once we verify teams wants to use this and it will work on dbcs and cyrillic characters -->  <!--END RESERVED FOR FUTURE USE INCLUDE FILES-->
+在 4.2 BSD UNIX&reg; 操作系统中首次引入，Sockets API 现在是任何操作系统的标准特性。事实上，很难找到一种不支持 Sockets API 的现代语言。该 API 相当简单，但新的开发人员仍然会遇到一些常见的隐患。
+本文识别那些隐患并向您显示如何避开它们。
+第一个隐患很明显，但它是开发新手最容易犯的一个错误。如果您忽略函数的返回状态，当它们失败或部分成功的时候，您也许会迷失。反过来，这可能传播错误，使定位问题的源头变得困难。
+捕获并检查每一个返回状态，而不是忽略它们。考虑清单 1 显示的例子，一个套接字 <code>send</code> 函数。
+
+<table width="100%" cellspacing="0" cellpadding="5" border="1" bgcolor="#eeeeee">
+<tbody>
+<tr>
+<td>
+<pre><code class="section">
+int status, sock, mode;
+/* Create a new stream (TCP) socket */
+sock = <span class="boldcode">socket</span>( AF_INET, SOCK_STREAM, 0 );
+...
+status = <span class="boldcode">send</span>( sock, buffer, buflen, MSG_DONTWAIT );
+if (status == -1) {
+  /* send failed */
+  printf( "send failed: %s\n", strerror(errno) );
+} else {
+  /* send succeeded -- or did it? */
+}
+</code></pre>            </td>        </tr>    </tbody></table>
+清单 1 探究一个函数片断，它完成套接字 <code>send</code> 操作（通过套接字发送数据）。函数的错误状态被捕获并测试，但这个例子忽略了 <code>send</code> 在无阻塞模式（由 <code>MSG_DONTWAIT</code> 标志启用）下的一个特性。
+<code>send</code> API 函数有三类可能的返回值：
+<ul>
+<li>如果数据成功地排到传输队列，则返回 0。</li>
+<li>如果排队失败，则返回 -1（通过使用 <code>errno</code> 变量可以了解失败的原因）。</li>
+<li>如果不是所有的字符都能够在函数调用时排队，则最终的返回值是发送的字符数。</li></ul>
+由于 <code>send</code> 的 <code>MSG_DONTWAIT</code> 变量的无阻塞性质，函数调用在发送完所有的数据、一些数据或没有发送任何数据后返回。在这里忽略返回状态将导致不完全的发送和随后的数据丢失。UNIX 有趣的一面是您几乎可以把任何东西看成是一个文件。文件本身、目录、管道、设备和套接字都被当作文件。这是新颖的抽象，意味着一整套的 API 可以用在广泛的设备类型上。
+考虑 <code>read</code> API 函数，它从文件读取一定数量的字节。<code>read</code> 函数返回读取的字节数（最高为您指定的最大值）；或者 -1，表示错误；或者 0，如果已经到达文件末尾。
+如果在一个套接字上完成一个 <code>read</code> 操作并得到一个为 0 的返回值，这表明远程套接字端的对等层调用了 <code>close</code> API 方法。该指示与文件读取相同 &mdash;&mdash; 没有多余的数据可以通过描述符读取（参见 清单 2）。
+<table width="100%" cellspacing="0" cellpadding="5" border="1" bgcolor="#eeeeee">
+<tbody>
+<tr>
+<td>
+<pre><code class="section">
+int sock, status;
+sock = <span class="boldcode">socket</span>( AF_INET, SOCK_STREAM, 0 );
+...
+status = <span class="boldcode">read</span>( sock, buffer, buflen );
+if (status > 0) {
+  /* Data read from the socket */
+} else if (status == -1) {
+  /* Error, check errno, take action... */
+} else if (status == 0) {
+  /* Peer closed the socket, finish the close */
+  <span class="boldcode">close</span>( sock );
+  /* Further processing... */
+}
+</code></pre>            </td>        </tr>    </tbody></table>
+同样，可以用 <code>write</code> API 函数来探测对等套接字的闭包。在这种情况下，接收 <code>SIGPIPE</code> 信号，或如果该信号阻塞，<code>write</code> 函数将返回 -1 并设置 <code>errno</code> 为 <code>EPIPE</code>。您可以使用 <code>bind</code> API 函数来绑定一个地址（一个接口和一个端口）到一个套接字端点。可以在服务器设置中使用这个函数，以便限制可能有连接到来的接口。也可以在客户端设置中使用这个函数，以便限制应当供出去的连接所使用的接口。<code>bind</code> 最常见的用法是关联端口号和服务器，并使用通配符地址（<code>INADDR_ANY</code>），它允许任何接口为到来的连接所使用。
+<code>bind</code> 普遍遭遇的问题是试图绑定一个已经在使用的端口。该陷阱是也许没有活动的套接字存在，但仍然禁止绑定端口（<code>bind</code> 返回 <code>EADDRINUSE</code>），它由 TCP 套接字状态 <code>TIME_WAIT</code> 引起。该状态在套接字关闭后约保留 2 到 4 分钟。在 <code>TIME_WAIT</code> 状态退出之后，套接字被删除，该地址才能被重新绑定而不出问题。
+等待 <code>TIME_WAIT</code> 结束可能是令人恼火的一件事，特别是如果您正在开发一个套接字服务器，就需要停止服务器来做一些改动，然后重启。幸运的是，有方法可以避开 <code>TIME_WAIT</code> 状态。可以给套接字应用 <code>SO_REUSEADDR</code> 套接字选项，以便端口可以马上重用。
+考虑清单 3 的例子。在绑定地址之前，我以 <code>SO_REUSEADDR</code> 选项调用 <code>setsockopt</code>。为了允许地址重用，我设置整型参数（<code>on</code>）为 1 （不然，可以设为 0 来禁止地址重用）。 
+<table width="100%" cellspacing="0" cellpadding="5" border="1" bgcolor="#eeeeee">
+<tbody>
+<tr>
+<td>
+<pre><code class="section">
+int sock, ret, on;
+struct sockaddr_in servaddr;
+/* Create a new stream (TCP) socket */
+sock = <span class="boldcode">socket</span>( AF_INET, SOCK_STREAM, 0 ):
+/* Enable address reuse */
+<em>on = 1;
+ret = <span class="boldcode">setsockopt</span>( sock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );</em>
+/* Allow connections to port 8080 from any available interface */
+memset( &servaddr, 0, sizeof(servaddr) );
+servaddr.sin_family = AF_INET;
+servaddr.sin_addr.s_addr = <span class="boldcode">htonl</span>( INADDR_ANY );
+servaddr.sin_port = <span class="boldcode">htons</span>( 45000 );
+/* Bind to the address (interface/port) */
+ret = <span class="boldcode">bind</span>( sock, (struct sockaddr *)&servaddr, sizeof(servaddr) );
+</code></pre>            </td>        </tr>    </tbody></table>
+在应用了 <code>SO_REUSEADDR</code> 选项之后，<code>bind</code> API 函数将允许地址的立即重用。套接字是发送无结构二进制字节流或 ASCII 数据流（比如 HTTP 上的 HTTP 页面，或 SMTP 上的电子邮件）的完美工具。但是如果试图在一个套接字上发送二进制数据，事情将会变得更加复杂。
+比如说，您想要发送一个整数：您可以肯定，接收者将使用同样的方式来解释该整数吗？运行在同一架构上的应用程序可以依赖它们共同的平台来对该类型的 数据做出相同的解释。但是，如果一个运行在高位优先的 IBM PowerPC 上的客户端发送一个 32 位的整数到一个低位优先的 Intel x86，那将会发生什么呢？字节排列将引起不正确的解释。
+<table width="40%" cellspacing="0" cellpadding="0" border="0" align="right">
+<tbody>
+<tr>
+<td width="10"><img width="10" height="1" alt="" src="http://www.ibm.com/i/c.gif" /></td>
+<td>
+<table width="100%" cellspacing="0" cellpadding="5" border="1">
+<tbody>
+<tr>
+<td bgcolor="#eeeeee">
+ <em>Endianness</em> 是指内存中字节的排列顺序。<em>高位优先（big endian）</em> 按最高有效字节在前排列，然而 <em>低位优先（little endian）</em> 按照最低有效字节在前排序。
+高位优先架构（比如 PowerPC&reg;）比低位优先架构（比如 Intel&reg; Pentium&reg; 系列，其网络字节顺序是高位优先）有优势。这意味着，对高位优先的机器来说，在 TCP/IP 内控制数据是自然有序的。低位优先架构要求字节交换 &mdash;&mdash; 对网络应用程序来说，这是一个轻微的性能弱点。                        </td>                    </tr>                </tbody>            </table>            </td>        </tr>    </tbody></table>
+通过套接字发送一个 C 结构会怎么样呢？这里，也会遇到麻烦，因为不是所有的编译器都以相同的方式排列一个结构的元素。结构也可能被压缩以便使浪费的空间最少，这进一步使结构中的元素错位。
+幸好，有解决这个问题的方案，能够保证两端数据的一致解释。过去，远程过程调用（Remote Procedure Call，RPC）套装工具提供所谓的外部数据表示（External Data Representation，XDR）。XDR 为数据定义一个标准的表示来支持异构网络应用程序通信的开发。
+现在，有两个新的协议提供相似的功能。可扩展标记语言/远程过程调用（XML/RPC）以 XML 格式安排 HTTP 上的过程调用。数据和元数据用 XML 进行编码并作为字符串传输，并通过主机架构把值和它们的物理表示分开。SOAP 跟随 XML-RPC，以更好的特性和功能扩展了它的思想。参见 <a href="http://www-128.ibm.com/developerworks/cn/linux/l-sockpit/#resources">参考资料</a> 小节，获取更多关于每个协议的信息。
+
+TCP 不提供帧同步，这使得它对于面向字节流的协议是完美的。这是 TCP 与 UDP（User Datagram Protocol，用户数据报协议）的一个重要区别。UDP 是面向消息的协议，它保留发送者和接收者之间的消息边界。TCP 是一个面向流的协议，它假定正在通信的数据是无结构的，如图 1 所示。
+<img width="565" height="503" alt="帧同步能力" src="http://www-128.ibm.com/developerworks/cn/linux/l-sockpit/figure1.gif" /> 
+图 1 的上部说明一个 UDP 客户端和服务器。左边的对等层完成两个套接字的写操作，每个 100 字节。协议栈的 UDP 层追踪写的数量，并确保当右边的接收者通过套接字获取数据时，它以同样数量的字节到达。换句话说，为读者保留了写者提供的消息边界。
+现在，看图 1 的底部．它为 TCP 层演示了相同粒度的写操作。两个独立的写操作（每个 100 字节）写入流套接字。但在本例中，流套接字的读者得到的是 200 字节。协议栈的 TCP 层聚合了两次写操作。这种聚合可以发生在 TCP/IP 协议栈的发送者或接收者中任何一方。重要的是，要注意到聚合也许不会发生 &mdash;&mdash; TCP 只保证数据的有序发送。
+对大多数开发人员来说，该陷阱会引起困惑。您想要获得 TCP 的可靠性和 UDP 的帧同步。除非改用其他的传输协议，比如流传输控制协议（STCP），否则就要求应用层开发人员来实现缓冲和分段功能。
+GNU/Linux 提供几个工具，它们可以帮助您发现套接字应用程序中的一些问题。此外，使用这些工具还有教育意义，而且能够帮助解释应用程序和 TCP/IP 协议栈的行为。在这里，您将看到对几个工具的概述。查阅下面的 <a href="http://www-128.ibm.com/developerworks/cn/linux/l-sockpit/#resources">参考资料</a> 了解更多的信息。
+<code>netstat</code> 工具提供查看 GNU/Linux 网络子系统的能力。使用 <code>netstat</code>，可以查看当前活动的连接（按单个协议进行查看），查看特定状态的连接（比如处于监听状态的服务器套接字）和许多其他的信息。清单 4 显示了 <code>netstat</code> 提供的一些选项和它们启用的特性。
+<table width="100%" cellspacing="0" cellpadding="5" border="1" bgcolor="#eeeeee">
+<tbody>
+<tr>
+<td>
+<pre><code class="section">
+View all TCP sockets currently active
+$ netstat --tcp
+View all UDP sockets
+$ netstat --udp
+View all TCP sockets in the listening state
+$ netstat --listening
+View the multicast group membership information
+$ netstat --groups
+Display the list of masqueraded connections
+$ netstat --masquerade
+View statistics for each protocol
+$ netstat --statistics
+</code></pre>            </td>        </tr>    </tbody></table>
+尽管存在许多其他的实用程序，但 <code>netstat</code> 的功能很全面，它覆盖了 <code>route</code>、<code>ifconfig</code> 和其他标准 GNU/Linux 工具的功能。
+可以使用 GNU/Linux 的几个工具来检查网络上的低层流量。<code>tcpdump</code> 工具是一个比较老的工具，它从网上“嗅探”网络数据包，打印到 <code>stdout</code> 或记录在一个文件中。该功能允许查看应用程序产生的流量和 TCP 生成的低层流控制机制。一个叫做 <code>tcpflow</code> 的新工具与 <code>tcpdump</code> 相辅相成，它提供协议流分析和适当地重构数据流的方法，而不管数据包的顺序或重发。清单 5 显示 <code>tcpdump</code> 的两个用法模式。
+<table width="100%" cellspacing="0" cellpadding="5" border="1" bgcolor="#eeeeee">
+<tbody>
+<tr>
+<td>
+<pre><code class="section">
+Display all traffic on the eth0 interface for the local host
+$ tcpdump -l -i eth0
+Show all traffic on the network coming from or going to host plato
+$ tcpdump host plato
+Show all HTTP traffic for host camus
+$ tcpdump host camus and (port http)
+View traffic coming from or going to TCP port 45000 on the local host
+$ tcpdump tcp port 45000
+</code></pre>            </td>        </tr>    </tbody></table>
+<code>tcpdump</code> 和 <code>tcpflow</code> 工具有大量的选项，包括创建复杂过滤表达式的能力。查阅下面的 <a href="http://www-128.ibm.com/developerworks/cn/linux/l-sockpit/#resources">参考资料</a> 获取更多关于这些工具的信息。 
+<code>tcpdump</code> 和 <code>tcpflow</code> 都是基于文本的命令行工具。如果您更喜欢图形用户界面（GUI），有一个开放源码工具 <code>Ethereal</code> 也许适合您的需要。<code>Ethereal</code> 是一个专业的协议分析软件，它可以帮助调试应用层协议。它的插入式架构（plug-in architecture）可以分解协议，比如 HTTP 和您能想到的任何协议（写本文的时候共有 637 个协议）。套接字编程是容易而有趣的，但是您要避免引入错误或至少使它们容易被发现，这就需要考虑本文中描述的这 5 个常见的陷阱，并且采用标准的防错性程序设计实践。GNU/Linux 工具和实用程序还可以帮助发现一些程序中的小问题。记住：在查看实用程序的帮助手册时候，跟踪相关的或“请参见”工具。您也许会发现一个必要的新工具。

@@ -1,0 +1,22 @@
+---
+layout: post
+title: 加快Flex应用启动速度的5种方式
+author: Alvin
+date: !binary |-
+  MjAwOC0wOS0zMCAxMjo0MjozNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wOS0zMCAwNDo0MjozNSArMDgwMA==
+---
+Jun Heider在O&rsquo;Reilly的InsideRIA站点上发表了一篇精彩的文章，该文章就<a href="http://www.insideria.com/2008/04/flex-ria-performance-considera.html">如何加快Flex应用的启动速度提出了很多建议</a>，以帮助用户减少看见讨厌的“Loading”对话框的出现时间。他深入探讨了问题的不同方面，并对每种技术的优势和劣势进行了评判。     
+<strong>从外部加载媒体（Media）</strong>     
+Heider提到了一个常用的Flex最佳实践&mdash;&mdash;限制嵌入到应用/SWF文件中的媒体的数量，如图像、影片及mp3等资源都可以从外部的SWF文件加载。 Flex框架可以直接将图片、mp3及字体等资源编译到SWF中。当你想让最终用户获得全部资源时，这种方式确实能派上用场，但是这会导致你的应用长时间停留在“Loading”阶段。中国最大的RIA分享社区-与中国闪客一起成长和发展！
+<strong>在嵌入式字体中限制字符集</strong>     
+Heider建议在嵌入式字体中限制字符集以降低SWF文件的总下载时间： 当你在Flex中嵌入一种字体时，你就会获得该字体的全部字符的支持。尽管这可能是你想要的，但你确信你需要全部字符么？例如，在一个只面向英文的应用中，你确信你真的想花时间下载中文字符数据么？     
+<strong>缓存框架</strong>
+Heider回顾了<a href="http://labs.adobe.com/wiki/index.php/Flex_3:Feature_Introductions:Flex_3_RSLs">Flex 3 support for runtime-shared-libraries （RSL）</a>这篇文章：从Flex 3开始，你可以将Adobe签名的框架&mdash;&mdash;RSLs缓存到Flash Player的cache中。这有两个好处。首先，缓存在Flash Player cache中的签名的框架RSLs可由所有配置好的Flex应用共享。换句话说，如果某人的应用已经下载了500k的签名的框架RSL，并且该RSL仍旧 在Flash Player cache中，那么你的应用就可以使用缓存下来的RSL。其次，即使某人清空了其浏览器缓存，对Flash Player cache也没有任何影响。
+<strong>考虑模块化</strong>     
+Heider谈到了将Flex应用划分成模块的好处：减少字体加载时间的另一种方式就是将你的Flex应用划分成模块。使用模块的一个好处在于当加载和卸载模块时你能完全操控它。     
+之所以要划分成模块的最后一个原因是他们更快，而且我能即时加载它们。换句话说，在启动时唯一需要加载的模块就是 Step1.swf模块。因此，在使用模块的情况下，最终用户节省了启动时间，但是当他从一个模块切换到另一个模块时却需要花更多时间，因为每个模块都需 要以JIT形式加载。在我的应用中，只有当用户首次在steps 1-5之间切换时需要花更多时间。
+<strong>推迟实例化      
+</strong>Heider围绕着Flex组件的“creationPolicy”属性及何时实例化应用的不同部分给出了很多建议。如果你想减少从数据下载到用户真正可以使用的总时间，当务之急就是推迟实例化。这项技术背后的理念就是直到应用真正使用的时候才在内存中创建对象。尽管推迟实例化技术会在应用的整个使用过程中导致少许&mdash;&mdash;通常不那么明显&mdash;&mdash;的延迟，但与长时间的启动延迟相比，它还是可接受的。推迟实例化的另一个好处在于内存使用的优化。 Heider还谈到了一个“实验性”的条款&mdash;&mdash;“使用流”，这是他在讨论Dirk Eismann的帖子（<u>Building monolithic </u>Flex<u> SWFs that still startup quickly.”</u>）时谈及的。Eismann提出一项技术以利用Flash Player中的多个frames以在部分应用中达到流的目的。查看<a href="http://www.insideria.com/2008/04/flex-ria-performance-considera.html">所有的帖子</a>以更多地了解该技术及关于加快Flex启动速度的建议。中国最大的RIA分享社区-与中国闪客一起成长和发展！) 
+<strong>原文出处：</strong><a href="http://www.infoq.com/cn/news/2008/05/flex-startup-time">http://www.infoq.com/cn/news/2008/05/flex-startup-time</a>

@@ -1,0 +1,61 @@
+---
+layout: post
+title: For Discuz! 4.X , 5.x 紧急安全更新！
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNiAxODoyMzo1OCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNiAxMDoyMzo1OCArMDgwMA==
+---
+<div style="FONT-SIZE: 12px">请所有 使用 4.X , 5.x 论坛的用户立即修补您的论坛，避免遭受攻击。
+修补方法：修改文件  include/global.func.php
+查找下面这段代码（一般应当在global.func.php 文件的开头处）
+<a href="http://www.discuz.net/thread-436515-1-1.html###" target="_blank"><font size="2"><font color="#0000ff">[Copy to clipboard]</font></font></a>
+CODE:
+function authcode($string, $operation, $key = '') {
+        $key = $key ? $key : $GLOBALS['discuz_auth_key'];
+        $coded = '';
+        $keylength = strlen($key);
+        $string = $operation == 'DECODE' ? base64_decode($string) : $string;
+        for($i = 0; $i < strlen($string); $i += $keylength) {
+                $coded .= substr($string, $i, $keylength) ^ $key;
+        }
+        $coded = $operation == 'ENCODE' ? str_replace('=', '', base64_encode($coded)) : $coded;
+        return $coded;
+}
+替换为
+<a href="http://www.discuz.net/thread-436515-1-1.html###" target="_blank"><font size="2"><font color="#0000ff">[Copy to clipboard]</font></font></a>
+CODE:
+function authcode ($string, $operation, $key = '') {
+        
+        $key = bin2hex($key ? $key : $GLOBALS['discuz_auth_key']);
+        $key_length = strlen($key);
+        
+        $string = $operation == 'DECODE' ? base64_decode($string) : $string;
+        $string_length = strlen($string);
+                
+        $rndkey = $box = array();
+        $result = '';
+        
+        for ($i = 0; $i <= 255; $i++) {
+                $rndkey[$i] = ord($key[$i % $key_length]);
+                $box[$i] = $i;
+        }
+        for ($j = $i = 0; $i < 256; $i++) {
+                $j = ($j + $box[$i] + $rndkey[$i]) % 256;
+                $tmp = $box[$i];
+                $box[$i] = $box[$j];
+                $box[$j] = $tmp;
+        }
+        
+        for ($a = $j = $i = 0; $i < $string_length; $i++) {
+                $a = ($a + 1) % 256;
+                $j = ($j + $box[$a]) % 256;
+                $tmp = $box[$a];
+                $box[$a] = $box[$j];
+                $box[$j] = $tmp;
+                $result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+        }
+        return ($operation == 'ENCODE' ? str_replace('=', '', base64_encode($result)) : $result);
+}
+转自：<a href="http://www.discuz.net/thread-436515-1-1.html" target="_blank">http://www.discuz.net/thread-436515-1-1.html</a></div>

@@ -1,0 +1,39 @@
+---
+layout: post
+title: 挣脱Windows的枷锁：Linux屏幕录像
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0xMCAxMToyODo0OCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0xMCAwMzoyODo0OCArMDgwMA==
+---
+<div class="post-content">
+<p class="zh_p">各位这阵子是不是看了不少的XGL/AIGLX的演示视频呢，他们都是用屏幕录像软件给录制下来的，今天我们就来介绍几个Linux下的屏幕录像工具。
+<p class="zh_p">首先要给大家介绍的这个1M多小巧而免费的<a target="_blank" hreflang="en" href="http://xvidcap.sourceforge.net/">xvidcap</a>，当前最高版本为1.14rc1，它可以将屏幕操作录制为：avi、mpeg、asf、flv、dv、m1v、m2v和mov视频文件格式，安装方法如下：
+ wget http://switch.dl.sourceforge.net/sourceforge/xvidcap/xvidcap_1.1.4rc1_i386.debsudo dpkg -i xvidcap_1.1.4rc1_i386.debgedit ~/.local/share/applications/xvidcap.desktop
+ 
+<p class="zh_p">添加如下内容：
+ [Desktop Entry]Encoding=UTF-8Type=ApplicationComment=xvidcap screencastComment[zh_CN]=xvidcap screencastExec=xvidcapIcon=/usr/share/xvidcap/glade/xvidcap_logo.pngIcon[zh_CN]=/usr/share/xvidcap/glade/xvidcap_logo.pngName=xvidcapName[zh_CN]=xvidcapTerminal=false
+ 
+<p class="zh_p">安装完成后，在菜单的附件中点击xvidcap或者直接在终端中输入xvidcap直接执行xvidcap：
+<img alt="" src="http://blog.eshangrao.com/images/linux/xvidcap.jpg" />
+<p class="zh_p">点吸管图标可以选择抓取范围，点桌面就是抓取全屏，点红点按钮开始录制，方块按钮停止，右键点击可以设定选项，比如生成的文件的名字，格式等。
+<p class="zh_p">第二个要介绍的是 <a target="_blank" hreflang="en" href="http://www.debugmode.com/wink/">wink</a>，wink不只是一个屏幕录像软件，它还支持录制后的后期制作，添加／删除帧等，关于wink的<a target="_blank" hreflang="en" href="http://linuxtoy.org/archives/wink.html">这里</a>有比较详细的介绍，当前Linux版本的wink为1.5，安装方法如下：
+ wget http://yet.another.linux-nerd.com/wink/download/wink15.tar.gztar xvzf wink15.tar.gz./installer.sh
+ 
+<p class="zh_p">以上缺省会将wink安装在~/wink目录里。现在先不急着运行，wink与scim有冲突，另外还与Ubuntu缺省的LANG不兼容，需要强制wink使用XIM语言使用en_GB.UTF-8，所以我们需要自己写过wink执行shell：
+ sudo gedit /usr/local/bin/wink
+ 
+<p class="zh_p">添加如下内容：
+ export GTK_IM_MODULE=XIMexport LANG=en_GB.UTF-8~/wink/wink
+ 
+<p class="zh_p">然后添加菜单：
+ gedit ~/.local/share/applications/wink.desktop
+ 
+<p class="zh_p">添加如下内容：
+ [Desktop Entry]Encoding=UTF-8Type=ApplicationComment=wink screencastComment[zh_CN]=wink screencastExec=winkIcon=Icon[zh_CN]=Name=winkName[zh_CN]=winkTerminal=false
+ 
+<p class="zh_p"><img alt="" src="http://blog.eshangrao.com/images/linux/wink.jpg" />
+<p class="zh_p">除了以上提到的两款免费的录像工具，这里还有一个剑走偏锋的<a target="_blank" hreflang="en" href="http://sourceforge.net/projects/vnc2swf/">VNC2SWF</a>，vnc2swf是将vnc的屏幕录制为swf的工具，所以如果您要使用这个的话，还得安装几个vnc服务器才行,这里有详细的安装步骤。
+<p class="zh_p">最后附上我用xvidcap录制的一段Aiglx+Beryl的视频：<a target="_blank" href="http://labs.eshangrao.com/files/AIGLX_Beryl.swf">AIGLX_Beryl.swf</a>
+<p class="zh_p">原文地址：<a href="http://blog.eshangrao.com/index.php/2006/10/09/288-windowslinux">http://blog.eshangrao.com/index.php/2006/10/09/288-windowslinux</a></div>

@@ -1,0 +1,60 @@
+---
+layout: post
+title: Nanoweb
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0yNyAxMzoxNDoxMyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0yNyAwNToxNDoxMyArMDgwMA==
+---
+自是没想到, PHP 还能再写出 HTTP Server 来......看来我们的思维被局限住了......只有想不到,没有做不到.....     :)
+<img height="17" alt="" width="67" src="http://nanoweb.si.kz/txt_what.gif" />
+<font face="Verdana" size="2">Nanoweb is an HTTP server written in PHP, designed to be small, secure, and extensible. 
+It is distributed under the terms of the </font><a href="http://www.gnu.org/copyleft/gpl.html"><font face="Verdana" size="2">GNU General Public License</font></a><font face="Verdana" size="2">.
+Nanoweb's main features are :
+- HTTP/1.1 compliance
+- Powerful and easy configuration
+- Modular architecture
+- FastCGI, CGI and Server side includes support
+- Name and port based virtual hosts
+- Access control lists
+- htpasswd, MySQL, PostgreSQL and LDAP authentication support
+- Themes for server generated content
+- Apache compatible log format, MySQL logging
+- Directory browsing
+- inetd support and SSL via external helpers
+- Denial of Service protection
+- Proxy Server extension
+- Filters and gzip support
+- RBL support (mail-abuse.org)
+- Extension Protocols (request methods) support
+- ... and a lot more
+
+<img height="23" alt="" width="56" src="http://nanoweb.si.kz/txt_why.gif" />
+Why should you use it ? 
+It's light, </font><a href="http://nanoweb.si.kz/?p=perf"><strong><font face="Verdana" size="2">fast</font></strong></a><font face="Verdana" size="2"> and </font><a href="http://nanoweb.si.kz/?p=robust"><strong><font face="Verdana" size="2">robust</font></strong></a><font face="Verdana" size="2">.
+Also being written in PHP makes it very easily extensible with custom modules, and secure because - running inside the Zend scripting engine - it's immune to a number of common security threats (format strings, buffer overflows, ...).
+Thanks to its very modular architecture, Nanoweb can also be used as a framework to develop your own standalone web based applications.
+
+<img height="18" alt="" width="52" src="http://nanoweb.si.kz/txt_how.gif" />
+</font><a href="http://nanoweb.si.kz/downloads/dist/"><strong><font face="Verdana" size="2">Download</font></strong></a><font face="Verdana" size="2">, then extract it. Read INSTALL, run install-sh.
+For more, read the <strong><a href="http://nanoweb.si.kz/manual/">manual</a></strong> or mail the <strong><a href="http://nanoweb.si.kz/ProtectedEmail/?encoded_email=JXRxXmlwcV0pemk%3D">author</a></strong> ...</font>
+Nanoweb 是一个用 PHP 编写的足够安全、精简、可扩展的 HTTP 服务器软件,他是基于 GNU 协议的.因为是用 PHP 语言编写的,所以他很容易通过自定义模块扩展,并且因为是运行在 Zend 脚本引擎内部所以他很安全.它避免了因为一些诸如字符串格式化、缓冲区溢出等普遍的安全问题而造成的系统假死.我们应该感谢这种模块化的结构,使 Nanoweb 也可以做为一个框架来开发你独立的 WEB 应用.
+<strong>Nanoweb 的主要特性是:</strong>
+- 兼容 HTTP/1.1 协议
+- 简单、强大的配置方法
+- 模块化结构
+- 支持 FastCGI、CGI 和 SSI
+- 支持虚拟主机
+- 支持访问控制列表
+- 支持 htpasswd、MySql、PostgreSQL 和 LDAP 认证
+- 服务器端生成文件的主题
+- 兼容 Apache 日志格式、MySQL 日志
+- 支持目录浏览
+- 支持 inetd 和 SSL
+- 拒绝服务保护系统
+- 代理服务器扩展
+- 过滤和 gzip 压缩支持
+- RBL 支持(mail-abuse.org)
+- 支持扩展协议
+- 等等 

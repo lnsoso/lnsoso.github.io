@@ -1,0 +1,11 @@
+---
+layout: post
+title: 今天开张, 好歹也要报个到吧.
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0wOC0xNyAwMDoxMjozOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0xNiAxNjoxMjozOCArMDgwMA==
+---
+现在是2006年8月17日, 0点20分.
+最近有种想做游戏的冲动, 周未先研究研究 Python 引擎封装. 

@@ -1,0 +1,14 @@
+---
+layout: post
+title: Savage 2
+author: Alvin
+date: !binary |-
+  MjAwOC0xMi0xNiAxMzozMjoxNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMi0xNiAwNTozMjoxNiArMDgwMA==
+---
+这个游戏太棒了，RTS + FPS ，并且还是跨 win , linux , mac 三个平台，并且还免费。爽～～～～
+<a href="http://www.flickr.com/photos/31744939@N06/3100858787"><img src="http://farm4.static.flickr.com/3077/3100858787_2127dec25d.jpg" /></a>
+RTS 模式
+<a href="http://www.flickr.com/photos/31744939@N06/3100857533"><img src="http://farm4.static.flickr.com/3140/3100857533_17df91cee0.jpg" /></a>
+FPS 模式

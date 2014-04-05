@@ -1,0 +1,226 @@
+---
+layout: post
+title: ! '命令行编译工具NMAKE '
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wNi0wNyAxNTo1NDowNCArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNi0wNyAwNzo1NDowNCArMDgwMA==
+---
+<h4 class="dtH1">简介</h4>
+大家已经习惯于微软提供的功能强大的IDE，已经很少考虑手动编连项目了，所谓技多不压身，有空的时候还是随我一块了解一下命令行编译。
+C/C++/VC++程序员或有Unix/Linux编程经验应该很熟悉，以前我曾写过一篇文章描述用csc/vbc来进行命令行编译，今天再介绍一下MS提供的更加快捷有效的编译工具NMake。
+MSDN的描述: Microsoft 程序维护实用工具 (NMAKE.EXE) 是一个 32 位，基于说明文件中包含的命令生成项目的工具。
+NMake具有丰富的选项，可以完成复杂编译操作。它可以辨别源代码的改动，并选择性的编译，为你节省大量不必要的编译时间。
+<h4 class="dtH1">使用NMAKE</h4>
+语法：NMAKE [options] [macros] [targets] [@commandfile]
+说明：其中，<a href="ms-help://MS.VSCC.2003/MS.MSDNQTR.2003FEB.2052/vccore/html/_asug_nmake_options.htm" target="_blank"><span style="color: #4371a6;">options</span></a>是NMAKE的选项，<a href="ms-help://MS.VSCC.2003/MS.MSDNQTR.2003FEB.2052/vccore/html/_asug_macros_and_nmake.htm" target="_blank"><span style="color: #4371a6;">macros</span></a>是在命令行中的宏定义，targets是NMAKE的目标文件列表，commandfile是包含命令行输入的文本文件（或响应文件）。
+NMAKE 使用指定 /F 选项的Makefile(生成文件,通常名字是makefile)；如果未指定 /F 选项，则使用当前目录下的Makefile。如果未指定Makefile，则 NMAKE 使用推理规则生成命令行 targets。
+NMake本身很简单，与NMAKE配合的是Makefile。Makefile的语法比较复杂，通常需要开发者自己手动编写Makefile，下一节我们详细讲解Makefile。
+上面的options和macros做了MSDN的链接，内容较多，请自己查询相关页，可以从<a href="ms-help://MS.VSCC.2003/MS.MSDNQTR.2003FEB.2052/vccore/html/_asug_overview.3a_.nmake_reference.htm" target="_blank"><span style="color: #4371a6;">这里</span></a>进入NMake的MSDN帮助页面，在线帮助点<a href="http://msdn.microsoft.com/library/chs/default.asp?url=/library/chs/vccore/html/_asug_overview.3a_.nmake_reference.asp" target="_blank"><span style="color: #4371a6;">这里</span></a>。
+<h4 class="dtH1">编写MAKEFILE</h4>
+注：本节内容来自MSDN，熟悉此节的朋友可以直接跳过
+Makefile的组成部分包括：成文件包含：
+<ul type="disc">
+<li><a href="http://www.donevii.com/wp-admin/#_asug_description_blocks"><span style="color: #4371a6;">描述块 (description block)</span></a></li>
+<li><a href="http://www.donevii.com/wp-admin/#_asug_commands_in_a_makefile"><span style="color: #4371a6;">命令</span></a></li>
+<li><a href="http://www.donevii.com/wp-admin/#_asug_macros_and_nmake"><span style="color: #4371a6;">宏</span></a></li>
+<li><a href="http://www.donevii.com/wp-admin/#_asug_inference_rules"><span style="color: #4371a6;">推理规则 (inference rules)</span></a></li>
+<li><a href="http://www.donevii.com/wp-admin/#_asug_dot_directives"><span style="color: #4371a6;">点指令</span></a></li>
+<li><a href="http://www.donevii.com/wp-admin/#_asug_makefile_preprocessing"><span style="color: #4371a6;">预处理指令</span></a></li>
+</ul>
+<a name="_asug_description_blocks"></a>
+<strong>a.描述块</strong>
+描述块是后面可跟有命令块的依赖项行：
+<pre class="code">    targets... : dependents...
+            commands...</pre>
+依赖项行指定一或多个目标以及零或多个依赖项。目标必须位于行首。用冒号 (:) 将目标和依赖项分开；允许使用空格或制表符。若要拆分行，请在目标或依赖项后面使用反斜杠 (\ )。如果目标不存在、目标的时间戳比依赖项早或者目标是伪目标，则 NMAKE 执行命令。如果某依赖项是其他地方的目标，并且不存在或对于自己的依赖项已过期，则 NMAKE 在更新当前依赖项之前更新该依赖项。
+<a name="_asug_commands_in_a_makefile"></a><strong>b.命令</strong>
+如果依赖项已过期，则描述块或推理规则指定要运行的命令块。NMAKE 在运行命令之前显示每个命令，除非使用了 /S 选项、<strong>.SILENT</strong>、<strong>!CMDSWITCHES</strong> 或 @。如果描述块后面没有紧跟命令块，NMAKE 将查找匹配的推理规则。
+命令块包含一个或多个命令，每个命令位于各自的命令行上。在依赖项（或规则）和命令块之间不能出现空行。但是可以出现只包含空格或制表符的行；该行被解释为空命令，并且不出现错误。命令行之间允许有空行。
+命令行以一个或多个空格或制表符开始。后面紧跟着换行符的反斜杠 ( \ ) 在命令中被解释为空格；在行尾使用反斜杠继续下一行命令。如果反斜杠后紧跟有其他任何字符（包括空格或制表符），则 NMAKE 按原义解释反斜杠。
+无论后面是否紧跟有命令块，前面带分号 (;) 的命令可以出现在依赖项行上或推理规则中：
+<pre class="code">project.obj : project.c project.h ; cl /c project.c</pre>
+<a name="_asug_macros_and_nmake"></a>
+<strong>c.宏</strong>
+宏用另一个字符串替换生成文件中的特定字符串。使用宏可以：
+<ul type="disc">
+<li>创建可生成不同项目的生成文件。</li>
+<li>指定命令选项。</li>
+<li>设置环境变量。</li>
+</ul>
+可以定义您<strong>自己的宏</strong>或使用 NMAKE 的<strong>预定义宏</strong>。
+<a name="_asug_inference_rules"></a>
+<strong>d.推理规则</strong>
+推理规则提供命令来更新目标并推理目标的依赖项。推理规则中的扩展名与具有相同基名称的单个目标和依赖项匹配。推理规则是用户定义的，或预定义的；预定义的规则可以重新定义。
+如果过期的依赖项没有命令，并且如果 <strong>.SUFFIXES</strong> 包含依赖项的扩展名，则 NMAKE 使用其扩展名与当前或指定目录中的目标和现有文件匹配的规则。如果有多个规则与现有文件匹配，<strong>.SUFFIXES</strong> 列表将确定使用哪一个规则；列表优先级从左向右按降序排列。如果依赖文件不存在，并且未在另一个描述块中作为目标列出，则推理规则可以从具有相同基名称的另一个文件创建缺少的依赖项。如果描述块的目标没有依赖项或命令，推理规则可以更新目标。即使不存在描述块，推理规则也可以生成命令行目标。即使指定了显式依赖项，NMAKE 也可以调用推理依赖项的规则。
+<a name="_asug_dot_directives"></a>
+<strong>e.点指令</strong>
+在描述块之外的行首指定点指令。点指令以句点 ( . ) 开始，后面跟一个冒号 (:)。允许使用空格或制表符。点指令名区分大小写并且应为大写。
+<div class="tablediv">
+<table id="Table1" class="dtTABLE" border="0" cellspacing="0">
+<tbody>
+<tr valign="top">
+<th width="31%">指令</th>
+<th width="69%">作用</th>
+</tr>
+<tr valign="top">
+<td width="31%"><strong>.IGNORE :</strong></td>
+<td width="69%">忽略从指定该指令的位置到生成文件末尾之间，由命令返回的非零退出代码。默认情况下，如果命令返回非零退出代码，NMAKE 将暂停。若要还原错误检查，请使用 <strong>!CMDSWITCHES</strong>。若要忽略单个命令的退出代码，请使用短划线 (-) 修饰符。若要忽略整个文件的退出代码，请使用 /I 选项。</td>
+</tr>
+<tr valign="top">
+<td width="31%"><strong>.PRECIOUS :</strong> <em>targets</em></td>
+<td width="69%">若更新 <em>targets</em> 的命令暂停，则将 <em>targets</em> 保留在磁盘上；若命令通过删除文件处理中断，则该指令无效。用一或多个空格或制表符分隔目标名称。默认情况下，如果通过使用 CTRL+C 或 CTRL+BREAK 组合键中断生成，NMAKE 将删除目标。<strong>.PRECIOUS</strong> 的每一次使用都应用于整个生成文件；多次指定是累计的。</td>
+</tr>
+<tr valign="top">
+<td width="31%"><strong>.SILENT :</strong></td>
+<td width="69%">取消从指定该指令的位置到生成文件末尾之间的已执行命令的显示。默认情况下，NMAKE 显示它调用的命令。若要还原回显，请使用 <strong>!CMDSWITCHES</strong>。若要取消单个命令的回显，请使用 <strong>@</strong> 修饰符。若要取消整个文件的回显，请使用 /S 选项。</td>
+</tr>
+<tr valign="top">
+<td width="31%"><strong>.SUFFIXES :</strong> <em>list</em></td>
+<td width="69%">列出推理规则匹配的扩展名；预定义为：.exe .obj .asm .c .cpp .cxx .bas .cbl .for .pas .res .rc。</td>
+</tr>
+</tbody></table>
+</div>
+若要更改 <strong>.SUFFIXES</strong> 列表顺序或指定新列表，请清除此列表并指定新的设置。若要清除此列表，请不要在冒号后指定扩展名：
+<pre class="code">.SUFFIXES :</pre>
+若要将其他后缀添加到列表的末尾，请指定
+<pre class="code">.SUFFIXES : suffixlist</pre>
+其中 <em>suffixlist</em> 是附加后缀的列表，由一或多个空格或制表符分隔。若要查看 <strong>.SUFFIXES</strong> 的当前设置，请运行选项为 /P 的 NMAKE。
+<a name="_asug_makefile_preprocessing"></a>
+<strong>f.预处理指令</strong>
+可以通过使用预处理指令和表达式控制 NMAKE 会话。预处理指令可以放置在生成文件或 Tools.ini 文件中。使用指令可以有条件地处理生成文件，显示错误信息，包括其他生成文件，取消定义宏以及打开或关闭某些选项。
+<h4 class="dtH1">Makefile示例</h4>
+看了一堆理论，很累了吧？下面看一段简单的MakeFile
+<table id="Table3" border="0" cellspacing="0" cellpadding="0" width="95%">
+<tbody>
+<tr>
+<td class="code">
+<pre class="code"># 宏定义
+                            SOURCES=AssemblyInfo.cs \
+                            Form1.cs \
+                            Form2.cs \
+                            Form3.cs \
+                            HelloWorld.cs
+                            # 引用规则
+                            # 目标:
+                            CLRProfiler.exe : $(SOURCES) #<-－依赖项
+                            # 标志
+                            # 下面是命令
+                            csc /t:winexe /out:HelloWorld.exe /r:System.Windows.Forms.dll $(SOURCES)
+                            clean:
+                            del HelloWorld.exe</pre>
+</td>
+</tr>
+<tr>
+<td class="space" style="border-left: 0px;"> </td>
+</tr>
+</tbody></table>
+将上述代码保存为Makefile(没有后缀)放在你的项目文件夹下, 然后打开VS2003.NET命令行窗口，进入项目夹所在路径，打入NMake回车, ok
+<strong>示例2</strong>
+下面演示一下多个项目时的编译，每个单独的项目创建单独的makefile，解决方案下放一个总的makefile
+<table border="0" cellspacing="0" cellpadding="0" width="95%">
+<tbody>
+<tr>
+<td class="code">
+<pre class="code">all:
+                            # 分别对项目进行编译
+                            cd project1
+                            nmake
+                            cd ..
+                            cd project2
+                            nmake
+                            cd ..
+                            cd project3
+                            nmake
+                            cd ..
+                            # 将编译结果汇总到当前路径
+                            copy project1\project1.dll
+                            copy project2\project2.dll
+                            copy project3\project3.exe
+                            clean:
+                            # 清除编译结果
+                            del project1.dll
+                            del project2.dll
+                            del project3.exe
+                            cd project1
+                            nmake clean
+                            cd ..
+                            cd project2
+                            nmake clean
+                            cd ..
+                            cd project3
+                            nmake clean
+                            cd ..</pre>
+</td>
+</tr>
+<tr>
+<td class="space" style="border-left: 0px;"> </td>
+</tr>
+</tbody></table>
+<h4 class="dtH1">小节</h4>
+本文简单介绍了NMAKE的用法，并对Makefile的语法做了介绍。篇幅所限，既不能面面俱到，又不能深入剖析，只希望能够让更多人了解此工具。笔者也是刚刚接触，经验不多，还请各位网友多多拍砖！
+<h4 class="dtH1">附表（makefile中常用的几个符号）</h4>
+<table id="Table2" class="dtTABLE" border="0" cellspacing="0">
+<tbody>
+<tr valign="top">
+<th width="25%">符合</th>
+<th width="75%">作用</th>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>^</strong> (caret)</td>
+<td width="75%">用于关闭某些字符所具有的特殊意义，使其只表示字面上的意义。例如：^#abc表示#abc这个字符串，而#abc则用于在makefile中加入注释，#在这里为注释标志，就像C++中的//。另外，在一行的末尾加上^，可以使行尾的回车换行符成为字串的一部分。</td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>#</strong> (number sign)</td>
+<td width="75%">注释标志，NMAKE会忽略所有从#开始到下一个换行符之间的所有文本。这里要注意的是：在command lines中不能存在注释。因为对于command lines，NMAKE是将其整行传递给OS的。通常对于command lines的注释都是放在行与行之间。</td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>\</strong> (backslash)</td>
+<td width="75%">用于将两行合并为一行。将其放在行尾，NMAKE就会将行尾的回车换行符解释为空格（space）。</td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>%</strong> (percent symbol)</td>
+<td width="75%">表示其后的字符串为一文件名。</td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>(</strong> (left parentheses)</td>
+<td width="75%"> </td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>)</strong> (right parentheses)</td>
+<td width="75%"> </td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>{</strong></td>
+<td width="75%"> </td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>}</strong></td>
+<td width="75%"> </td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>!</strong> (exclamation symbol)</td>
+<td width="75%">命令修饰符</td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>@</strong> (at sign)</td>
+<td width="75%">命令修饰符</td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>-</strong> (hyphen)</td>
+<td width="75%"> </td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>:</strong> (colon)</td>
+<td width="75%">用于dependent lines和inference rules中，用于分隔target和dependent。</td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>;</strong> (semicolon)</td>
+<td width="75%">如果对于一个dependent line只有一条命令，则可以将该命令放在dependent line的后面，二者之间用“；”分隔。</td>
+</tr>
+<tr valign="top">
+<td width="25%"><strong>$</strong> (dolor sign)</td>
+<td width="75%">用于调用宏</td>
+</tr>
+</tbody></table>

@@ -1,0 +1,10 @@
+---
+layout: post
+title: ! '电波怒汉&mdash;&mdash;不爽 '
+author: Alvin
+date: !binary |-
+  MjAwOS0wNy0yMSAxMjowMjo0NSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNy0yMSAwNDowMjo0NSArMDgwMA==
+---
+<embed src="http://player.youku.com/player.php/sid/XOTYxNzg4NTY=/v.swf" quality="high" width="480" height="400" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash"></embed>

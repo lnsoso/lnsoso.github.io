@@ -1,0 +1,10 @@
+---
+layout: post
+title: 世界军人自由搏击
+author: Alvin
+date: !binary |-
+  MjAwNy0wMy0xMCAyMzoyNjo0OCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMy0xMCAxNToyNjo0OCArMDgwMA==
+---
+<embed src="http://v.blog.sina.com.cn/b/vblog_player.swf?vid=810049&uid=1266340405&initfull=0&cursound=null" width="474" height="461" type="application/x-shockwave-flash" wmode="transparent"></embed>

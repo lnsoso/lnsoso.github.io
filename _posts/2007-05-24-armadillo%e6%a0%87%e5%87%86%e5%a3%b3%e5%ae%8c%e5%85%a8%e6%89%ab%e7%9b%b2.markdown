@@ -1,0 +1,107 @@
+---
+layout: post
+title: Armadillo标准壳完全扫盲
+author: Alvin
+date: !binary |-
+  MjAwNy0wNS0yNCAwOTozMTozMSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wNS0yNCAwMTozMTozMSArMDgwMA==
+---
+转至: <a href="http://hi.baidu.com/%CC%EC%CD%E2%C3%AB%B3%E6/blog">http://hi.baidu.com/%CC%EC%CD%E2%C3%AB%B3%E6/blog</a>
+【前言】
+本人初学脱壳，以前只会用自动脱壳器，手动只脱过upx的壳，实在是菜鸟一个。日前有幸拿到一个共享软件，用peid一查，Armadillo 1.xx - 2.xx -> Silicon Realms Toolworks [Overlay]，俺出生牛犊不怕虎，见壳就有脱的冲动，用od载入一看，傻了眼，这壳和upx的完全不同，入口点和一般程序差不多嘛。遂知道自己水平不济，驱猫上看雪拜读各位前辈的文章。无奈本人水平实在有限，看了大半天还是没理清楚过程。想起马gg曾经说过，实践是检验真理的唯一标准，于是操起工具对该软件大卸七块。经过2天的仔细研习，终于悟得精要，成功把壳干掉了。鉴于感觉入门门槛确实有点高，因此特写此文以帮助菜鸟们迈过刀山火海，飞向光明之巅:D
+【术语解释】
+为什么我要写这一段呢？因为我发现看高手们的脱文，最难逾越的一关是术语。高手们脱文中的各种说法，并不能马上就明白过来究竟是什么东西。因此，希望在这里把Armadillo脱文经常遇到的几个术语稍作解释。本人水平有限，如果解释有误请指出。
+[OEP] 这个是Original Entry Point的缩写，中文字面意思就是程序的原入口地址。为什么叫“原”呢？通常加壳软件会把原来的程序编码存放，以防止静态反汇编分析，并在执行前先运行一段解码的程序。所以，加壳后的程序，其入口地址是直接指向解码部分的代码，而非原来的程序入口。我们脱壳所要做的工作，就是还原出原来的程序，并且每次执行时直接从原入口地址开始执行（而不需要再运行用于解码的“壳”），因此需要得知原入口地址是什么，即OEP。
+[Armadillo] 传说中的猛壳，因为拼写太长，也有人缩写为arm壳。它使用多种加密手段以防止脱壳，比如检测debugger、修改IAT、还有高级版本的stolen byte和双线程解码。
+[IAT] Import Address Table的缩写，也有叫输入表，引入表。它用来保存程序用到的API函数的入口地址。
+[RVA] Relative Virtual Address，相对虚拟地址。win32系统会把进程读入到内存中执行，所以存在着内存地址和文件偏移的转换关系。PE文件头里面会有一个内存基址base，原来在文件中偏移为x的内容，在内存里面的偏移就变成base+x。为了区分这两种地址偏移，通常叫文件中的偏移为RVA
+[magic jump]（一般破文是按10多次或者20多次F9，就来到magicjump。我根本不知道怎么去判断一个新软件的magicjump在哪里，也不知道那个次数是怎么得来的，不怕，下面我会教一种我认为比较好的方法）其实所谓magic jump，是指跳过改写IAT的代码段。Armadillo的解壳过程有一个特点，就是会改写IAT。（这里我用的是“改写”而不是某些文章中的“破坏”是有原因的。曾经我在这里也困惑过，破坏带有不可恢复的意思，事实上IAT对应的地址并没有完全破坏，只是被改写成更难辨认的形式。这里举一个具体例子）
+00E6E0E1     mov edx,[EA01B8]     // ~= kernel32.dll/00D4/FindNextFileA
+00E6E0E7     add edx,64
+00E6E0EA     call edx
+00E6E0EC     mov edx,[EA0144]     // ~= kernel32.dll/016F/GetModuleFileNameW
+00E6E0F2     add edx,64
+00E6E0F5     mov ecx,5
+这个是被改写后的IAT指向的一端程序段。里面实际工作是作还原工作。先取出edx(这里对应一个假API)，然后加上64偏移才得到真正的API，再进行函数调用。FindNextFileA后面的偏移64是GetTickCount，GetModuleFileNameW后面是GetModuleHandleA，所以上面的代码相当于
+call kernel32.GetTickCount
+nop
+…
+call kernel32.GetModuleHandleA
+这样可以使得手动脱壳过程中把IAT表弄坏（因为无法识别出正确的API），但是加壳程序却可以正常运行。是不是很狡猾？解决办法也简单，在脱壳的过程中避开执行改写IAT表的代码段，只需要修改一条指令，这条指令，正是magic jump！
+能够坚持看到这里是否已经有点烦闷了？基本理论就这么多了。准备好工具了吗？让我们马上开始。
+【工具】OD、LordPE、ImportREC
+【过程】
+【Action 1】 明察暗访OEP
+OD载入程序，用插件隐藏OD，忽略所有异常，alt_m查看内存映射，在00401000处下内存读取断点，F9
+程序停下来了，看到没有，熟悉的开头。没有看到？肯定你遇到异常了，shift_F9试试？
+005E14E4      55               push ebp
+005E14E5      8BEC             mov ebp,esp
+005E14E7      83C4 E4          add esp,-1C
+我们找到OEP了，马上记下吧。Action 1目标完成：OEP=001E14E4
+等等，是不是打错字了？不是005E14E4吗？还记得RVA吗？通常来说，windows会把程序读到从00400000开始的连续内存空间（当然也不是一成不变，只是通常碰到的情况都是这样），也就是说你看到的OEP 005E14E4是内存的地址，它的RVA是001E14E4。明白了吗？
+【Action 2】攻下桥头堡
+运行到OEP预示着解码阶段的完成了。所以理论上现在内存中的是已解码的程序。先不要动OD，保持在OEP入口。运行LordPE，选刚刚运行的程序的线程，full dump，Action 2完成！
+先别对着dump出来的exe笑啊，如果现在那个是最终的脱壳结果，Armadillo就不叫猛壳了，我刚刚写的一堆理论也就白费劲。喝口水再继续吧。下面才到重点。
+【Action 3】扫清地雷阵
+OD没有关掉吧？恩，别动它，继续保持。运行ImportREC，选择程序进程，在下面的IAT Infos needed填入刚才拿到的OEP。AutoSearch，看到RVA框变了，那个就是IAT的地址和大小了。我这里找到的数值是001ED240
+回到OD，d 5ed240（还记得刚刚说过的内存偏移的换算关系吗？），看到什么了？那个就是IAT呀。记下它的样子。然后分别在第一个项目和最后一个项目下硬件写入断点。（为什么用硬件捏？因为它不影响速度，而且重新运行的时候不会没掉，呵呵）
+下面重新运行吧。F9，碰到硬件断点了。还记得IAT的样子吗？继续F9，直到第一个条目和你刚刚记下的一样。现在按page up，一直向上找GetModuleHandleA
+00E86AB1      6A 00            push 0
+00E86AB3      FF15 D400E900    call dword ptr ds:[E900D4]                ; kernel32.GetModuleHandleA
+00E86AB9      3985 90C4FFFF    cmp dword ptr ss:[ebp-3B70],eax
+00E86ABF      75 0F            jnz short 00E86AD0
+00E86AC1      C785 8CC4FFFF 8>mov dword ptr ss:[ebp-3B74],0E95180
+00E86ACB      E9 C4000000      jmp 00E86B94
+00E86AD0      83A5 68C2FFFF 0>and dword ptr ss:[ebp-3D98],0
+00E86AD7      C785 64C2FFFF C>mov dword ptr ss:[ebp-3D9C],0E957C0
+00E86AE1      EB 1C            jmp short 00E86AFF
+00E86AE3      8B85 64C2FFFF    mov eax,dword ptr ss:[ebp-3D9C]
+00E86AE9      83C0 0C          add eax,0C
+00E86AEC      8985 64C2FFFF    mov dword ptr ss:[ebp-3D9C],eax
+00E86AF2      8B85 68C2FFFF    mov eax,dword ptr ss:[ebp-3D98]
+00E86AF8      40               inc eax
+00E86AF9      8985 68C2FFFF    mov dword ptr ss:[ebp-3D98],eax
+00E86AFF      8B85 64C2FFFF    mov eax,dword ptr ss:[ebp-3D9C]
+00E86B05      8338 00          cmp dword ptr ds:[eax],0
+00E86B08      0F84 86000000    je 00E86B94
+00E86B0E      8B85 64C2FFFF    mov eax,dword ptr ss:[ebp-3D9C]
+00E86B14      8B40 08          mov eax,dword ptr ds:[eax+8]
+00E86B17      83E0 01          and eax,1
+00E86B1A      85C0             test eax,eax
+00E86B1C      74 25            je short 00E86B43
+00E86B1E      A1 2800EA00      mov eax,dword ptr ds:[EA0028]
+00E86B23      8B0D 2800EA00    mov ecx,dword ptr ds:[EA0028]
+00E86B29      8B40 20          mov eax,dword ptr ds:[eax+20]
+00E86B2C      3341 40          xor eax,dword ptr ds:[ecx+40]
+00E86B2F      8B0D 2800EA00    mov ecx,dword ptr ds:[EA0028]
+00E86B35      3341 28          xor eax,dword ptr ds:[ecx+28]
+00E86B38      25 80000000      and eax,80
+00E86B3D      85C0             test eax,eax
+00E86B3F      74 02            je short 00E86B43
+00E86B41    ^ EB A0            jmp short 00E86AE3
+00E86B43      8B85 68C2FFFF    mov eax,dword ptr ss:[ebp-3D98]
+00E86B49      8B0D 74B7E900    mov ecx,dword ptr ds:[E9B774]
+00E86B4F      8B15 2800EA00    mov edx,dword ptr ds:[EA0028]
+00E86B55      8B0481           mov eax,dword ptr ds:[ecx+eax*4]
+00E86B58      3342 24          xor eax,dword ptr ds:[edx+24]
+00E86B5B      8B0D 2800EA00    mov ecx,dword ptr ds:[EA0028]
+00E86B61      3341 28          xor eax,dword ptr ds:[ecx+28]
+00E86B64      8B0D 2800EA00    mov ecx,dword ptr ds:[EA0028]
+00E86B6A      3341 44          xor eax,dword ptr ds:[ecx+44]
+00E86B6D      8B0D 2800EA00    mov ecx,dword ptr ds:[EA0028]
+00E86B73      3341 6C          xor eax,dword ptr ds:[ecx+6C]
+00E86B76      3985 90C4FFFF    cmp dword ptr ss:[ebp-3B70],eax
+你看到的这段可能会跟我给出的有点差异，不过很好认，会有一段mov和xor交错出现的地方，并且mov语句是完全相同的。这里是00E86B1E-00E86B76
+向上找可以跳过这段代码的转跳语句，这里是
+00E86B08      0F84 86000000    je 00E86B94     ;magic jump!!!!!!!!
+我看到其他教程，这句是je short的，所以可能是Armadillo版本不同。不过道理都是一样，避开对IAT表的改写。
+把这句改成jmp，再按F9，遇到第二个硬件断点，这时IAT转换完成。这个可是没有被做过手脚的完整IAT啊～
+哦，这里别忘了，回到刚刚修改的jmp那里，改回je啊。不然后面的解码会出错导致程序异常终止了。（至少我脱的这个壳会这样。好像只有很少的脱文提到要恢复指令，反正恢复也没坏，多做一步吧，不然异常了可能还要重新来过）
+再bp 005e14e4，在OEP处下断，F9，运行到OEP
+【Action 4】长驱直入，胜利会师
+拿出ImportREC出来吧，重新选一下进程，autosearch，步骤应该都熟悉了。这次可以点Get Imports了。如果还有unresolved pointer，就点Show Invalid，Trace Level1试试，剩下的用Cut thunk全部干掉。然后fix dump，选择Action 2 dump出来的exe，应该就多出来一个文件名后面多带一个_的exe文件。这个是脱壳后独立运行的exe啊。试试能不能运行，不行的话，调整一下ImportREC的参数再试试，有些软件不能用Add new section的。把auto search的结果填到New Import Infos，去掉Add new section再试一遍。
+【Action 5】清除残余势力
+脱壳出来的程序很大，因为里面包含了很多已经没用的解码程序段。为了做到完美脱壳，我们可以把没用的代码清理掉。主要过程可以参考《脱壳后软件减肥大法》http://www.pediy.com/bbshtml/BBS6/pediy6313.htm，这里就不赘述了。不过调整.idata保证VA连续的那一步我不是按它的，不需要手动调整，直接用LordPE的rebuild PE就可以了，有现成工具干吗还要造轮子了？
+【后记】
+当我看到脱壳出来的程序正常运行时，有一种兴奋的感觉。也许我是脱壳菜鸟，这些对高手们确实不值得一提。可是正如fly斑竹所说，我知道自己进阶了。把过程和大家共享，希望大家可以跨过入门的门槛，共同进步。

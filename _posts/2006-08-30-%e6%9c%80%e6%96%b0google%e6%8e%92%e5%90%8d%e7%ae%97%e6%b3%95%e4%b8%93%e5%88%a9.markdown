@@ -1,0 +1,27 @@
+---
+layout: post
+title: 最新Google排名算法专利
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0zMCAxNjozNToxNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0zMCAwODozNToxNyArMDgwMA==
+---
+原文：<a target="_blank" title="http://www.chinamyhosting.com/seoblog/2006/08/28/editorial-opinion/" href="http://www.chinamyhosting.com/seoblog/2006/08/28/editorial-opinion/">http://www.chinamyhosting.com/seoblog/2006/08/28/editorial-opinion/</a>
+8月22号，美国专利局刚刚批准了一份有关Google排名算法的专利，标题是”搜索结果排名中引入支持性编辑意见的系统和方法(System and method for supporting editorial opinion in the ranking of search results)“。
+简单的说，这个专利提出了用人工编辑修正搜索结果的方法，大致程序是:
+把搜索词按不同的话题分组，分组方法有可能类似于开放目录等目录结构。
+编辑在不同搜索词分组下进行搜索，找出好的网站和坏的网站，编辑所做的评级被量化为某种参数。
+如果某个搜索属于已经有人工编辑评级的范围，那么Google会查看自动算法排列出的结果与编辑给的评级有什么关系，尤其是自动排名结果中的网站与那些所谓好的网站(favored)和不好的网站(non-favored)有没有什么关系。
+某一个关键词的搜索排名如果自动算法与编辑意见不一样的时候，把排名转换到已经引入编辑意见的结果，然后把已经改正的搜索结果返回给用户。
+经过比较改正后的参数也会被记录在这个网站下，也就是这个网站将会获得某种程度的评级（好的或坏的）。
+这只是我大概看一下的个人理解，请以Google专利原文为准。
+有几个可以思考的地方。
+这个专利是2000年12月递交的申请，今年8月22号才得到批准。专利申请和批准时间与Google是否已经开始使用这个系统，什么时间开始使用并没有太大的关系。也许早就在用，也许永远也不用。
+所谓好的网站和坏的网站，好的网站(favored)是指有用的，包含某个话题下权威性的内容，坏网站(non-favored)是指有误导性或者过度自我表现宣传。这些好的网站和坏的网站的选择非常像TrustRank，选择一些网站然后延伸到其他网站。
+Google提到一个例子，比如说针对关键词”免费下载(free download)”，那些真正提供免费下载的网站会被当作好的网站。而只是提到”免费”和”下载”这些词，但实际上并不提供免费下载的网站，会被当作不好的网站。
+这个专利也提到资源性网站将具有更高的权威性，所以不必害怕导出链接，资源性网站的实质一般都是大量导出链接。
+人工编辑所给出的评级是针对整个网站的，网页的排名也会被整个网站评级影响。编辑不可能看网站的某一个网页，也不可能知道每个网页的质量怎么样，所以网站总体质量变得越来越重要。 
+作者: Zac
+原载: 搜索引擎优化每天一贴
+版权所有。转载时必须以链接形式注明作者和原始出处及本声明。

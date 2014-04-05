@@ -1,0 +1,261 @@
+---
+layout: post
+title: 深入Native应用程序
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wMS0wMyAxMDo1NDoyNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0wMyAwMjo1NDoyNiArMDgwMA==
+---
+版权所有 1998 Mark Russinovich
+ 
+翻译:MJ0011
+最后更新:1998年2月8日
+<font color="#0000ff" size="3"><strong>导言</strong></font>
+如果你对WindowsNt结构有一定的了解，你可能会知道，Win32应用程序所使用的API,并非是"真正"的NT API
+。POSIX,OS/2和Win32，这些WindowsNT操作系统环境，使用他们自己的API同他们的客户应用程序进行交流,
+但却使用NT "native" API同 WindowsNT进行交流.这些native API大部分都是未公开的(undocumented)。大
+约只有25个API（包含250种功能）在WindowsNT设备驱动开发工具包(Device Driver Kit)里有所描述。
+尽管绝大多数人都不知道，但"native"应用程序的确存在与WindowsNT上,他们在操作环境上没有任何客户程
+序. 这些程序交流着native nt API并且不能使用任何操作环境API比如 Win32. 为什么这样一种程序是必须
+的呢?因为在Win32子系统启动之前(大约在登陆对话框出现时)只可以运行native应用程序.最常见的native
+应用程序的例子是"autochk"程序，他在初始化兰色登陆屏幕前运行 chkdsk(程序在屏幕上打印一串".")。
+当然，Win32应用程序环境服务程序:CSRSS.exe(客户-服务运行时间子系统),也是一个native应用程序
+在这篇文章里，我将会讲述如何构造一个native应用程序以及它们是如何工作的，同时我也会提供一个
+native应用程序的示例源代码。这个示例很容易安装，它会在启动时的兰色屏幕打印一段你指定的字符串
+<font color="#0000ff" size="3"><strong>Autochk是如何被执行的</strong></font>
+Autochk在当内存分页被打开,Windows启动和系统开始驱动被载入之间的时间内运行。在这个时间点 启动顺
+序会话管理器(smss.exe)进入windowsNT用户模式，并且没有任何程序被启动
+注册表中:HKLM\System\CurrentControlSet\Control\Session Manager\BootExecute
+一个MULTI_SZ类型的键值
+这里存放着将被会话管理器所执行的程序名称和参数
+通常Autochk后加*号作为其参数"
+Autocheck Autochk *
+;名称 程序名 参数
+会话管理器在<winnt>\system32目录下查找该值列出的可执行程序.当Autochk运行时，没有任何文件被打开
+，所以Autochk可以用raw模式打开任何一个驱动器卷(包括根驱动器)，并操作其磁盘数据结构.之后的任何
+时间点都无法进行类似这样的操作
+<font color="#0000ff" size="3"><strong>编译Native应用程序</strong></font>
+微软没有提供相应的文档，但是NT DDK构建器知道如何去生成一个native应用程序，而且它可以被用来编译
+autochk程序.和编写设备驱动程序一样，你必须指定SOURCE文件中的信息来定义应用程序。然而和编写驱动
+不同的时，你在SOURCE文件中要求生成一个native应用程序需要这样定义:
+TARGETTYPE=PROGRAM
+构建器使用一个标准的makefile来进行向导:\ddk\inc\makefile.def 在编译native应用程序时会查找名为
+nt.lib的运行库。不幸的是，微软并没在DDK上装载这个文件(在windows Server 2003 DDK里包括了这个文
+件，但是我怀疑你用这个版本来连接你的native应用程序是无法运行在WindowsXP或win2000上的）
+不管怎样，你可以忽略这个错误，方法是加入一行不考虑nt.lib,而指定visual c++的运行库msvcrt.lib到
+makefile.lib中
+如果你在DDK的"Checked Build"环境下进行编译，将会在%BASEDIR%\lib\%CPU%\Checked(例如
+c:\ddk\lib\i386\checked\native.exe)产生一个包含了全部调试信息的native应用程序。如果你在"Free 
+Build"环境中编译，你会在%BASEDIR%\lib\%CPU%\Free得到一个释出版本的程序.这些和构造设备驱动程序
+放置的位置是一样的。
+Native应用程序有着".exe"的扩展名，但是你不能象 win32的.exe文件那样去运行它，如果你在WIN32环境
+下运行下，将会得到如下提示:
+"<应用程序名> 应用程序无法在Win32模式中运行。"
+<font color="#0000ff" size="3"><strong>深入学习一个native应用程序</strong></font>
+native应用程序的入口点是NtProcessStartup,类似winmain或main.不同于其他的 Win32入口点的是，
+native应用程序提供一个数据结构来存放它的唯一的参数来定位命令行参数
+大多数的native应用程序的运行环境是由WindowsNt的native API输出库---NTDLL.DLL提供的。native应用
+程序必须使用RtlCreateHeap（一个ntdll函数）来创建他们自己的堆来分配存储,使用RtlAllocateHeap来分
+配内存以及用RtlFreeHeap来释放内存。native应用程序需要使用NtDisplayString 函数才可以打印想要的
+内容到屏幕上（将被输出到初始化时的兰色屏幕上）
+Native应用程序不象win32程序那样简单地从他们的启动函数返回，你需要调用NtProcessTerminate函数来
+结束它的进程
+NTDLL运行包含了数百个函数允许native应用程序执行文件I/O，与设备驱动进行相连，并执行进程间通讯。
+不幸的是，他们大部分都是未公开的。
+一个native应用程序的例子
+我创建一个“玩具”native 应用程序用来演示native应用程序是如何构建的以及他们是如何工作的。运行
+install.bat来安装native程序。批处理程序复制native.exe到你的<winnt>\system32目录并在注册表中增
+加一个BootExecute的入口点:
+native Hello World!
+当你重新启动时，会话管理器运行完autochk后就会执行native。native分配一些堆，定位它的命令行参数
+并打印参数("Hello world!")到兰色屏幕上，它所使用的函数上面已说过了。如果你想要打印其他的简单内
+容，可以编辑BootExecute值使用regedit或regedit32，修改"Hello world"为你想要的信息
+运行uinstall.bat可以卸载这个native执行程序。它从<winnt>\system32目录删除native.exe，并修改
+BootExecute值为通常的值
+如果你想要构建native程序你必须要用Windows设备驱动工具包(DDK),复制makefile.def到 \ddk\inc然后你
+可以运行构建
+ 
+=========================================================
+Native.H
+//======================================================================
+//
+// Native.h
+//
+// Mark Russinovich
+// <a href="http://www.ntinternals.com/">http://www.ntinternals.com</a>
+//
+// This file includes the definitions required by the Native.exe sample
+// NT native program to do what it does. 
+//
+//======================================================================
+//
+// Environment information, which includes command line and
+// image file name
+//
+typedef struct {
+       ULONG            Unknown[21];     
+       UNICODE_STRING   CommandLine;
+       UNICODE_STRING   ImageFile;
+} ENVIRONMENT_INFORMATION, *PENVIRONMENT_INFORMATION;
+//
+// This structure is passed as NtProcessStartup's parameter
+//
+typedef struct {
+       ULONG                     Unknown[3];
+       PENVIRONMENT_INFORMATION  Environment;
+} STARTUP_ARGUMENT, *PSTARTUP_ARGUMENT;
+//
+// Data structure for heap definition. This includes various
+// sizing parameters and callback routines, which, if left NULL,
+// result in default behavior
+//
+typedef struct {
+ ULONG     Length;
+ ULONG     Unknown[11];
+} RTL_HEAP_DEFINITION, *PRTL_HEAP_DEFINITION;
+//
+// Native NT api function to write something to the boot-time
+// blue screen
+//
+NTSTATUS 
+NTAPI 
+NtDisplayString(
+  PUNICODE_STRING String 
+  );
+//
+// Native applications must kill themselves when done - the job
+// of this native API
+//
+NTSTATUS 
+NTAPI 
+NtTerminateProcess(
+     HANDLE ProcessHandle, 
+     LONG ExitStatus 
+     );
+//
+// Definition to represent current process
+//
+#define NtCurrentProcess() ( (HANDLE) -1 )
+//
+// Heap creation routine
+//
+HANDLE 
+NTAPI 
+RtlCreateHeap(
+       ULONG Flags, 
+       PVOID BaseAddress, 
+       ULONG SizeToReserve, 
+       ULONG SizeToCommit, 
+       PVOID Unknown,
+       PRTL_HEAP_DEFINITION Definition
+       );
+//
+// Heap allocation function (ala "malloc")
+//
+PVOID 
+NTAPI 
+RtlAllocateHeap(
+  HANDLE Heap, 
+  ULONG Flags, 
+  ULONG Size 
+  );
+//
+// Heap free function (ala "free")
+//
+BOOLEAN 
+NTAPI 
+RtlFreeHeap(
+     HANDLE Heap, 
+     ULONG Flags, 
+     PVOID Address 
+     );
+=========================================================================
+Native.C
+//======================================================================
+//
+// Native.c
+//
+// Mark Russinovich
+// <a href="http://www.ntinternals.com/">http://www.ntinternals.com</a>
+//
+// This is a demonstration of a Native NT program. These programs
+// run outside of the Win32 environment and must rely on the raw
+// services provided by NTDLL.DLL. AUTOCHK (the program that executes
+// a chkdsk activity during the system boot) is an example of a
+// native NT application.
+//
+// This example is a native 'hello world' program. When installed with
+// the regedit file associated with it, you will see it print 
+// "hello world" on the initialization blue screen during the system
+// boot. This program cannot be run from inside the Win32 environment.
+//
+//======================================================================
+#include "ntddk.h" // include this for its native functions and defn's
+#include "stdio.h"
+#include "native.h"
+//
+// Our heap
+//
+HANDLE Heap;
+//----------------------------------------------------------------------
+//
+// NtProcessStartup
+//
+// Instead of a 'main' or 'winmain', NT applications are entered via
+// this entry point.  
+//
+//----------------------------------------------------------------------
+void NtProcessStartup( PSTARTUP_ARGUMENT Argument )
+{
+    PUNICODE_STRING commandLine;
+    PWCHAR stringBuffer, argPtr;
+    UNICODE_STRING helloWorld;
+    RTL_HEAP_DEFINITION  heapParams;
+    //
+    // Initialize some heap
+    //
+    memset( &heapParams, 0, sizeof( RTL_HEAP_DEFINITION ));
+    heapParams.Length = sizeof( RTL_HEAP_DEFINITION );
+    Heap = RtlCreateHeap( 2, 0, 0x100000, 0x1000, 0, &heapParams );
+    //
+    // Point at command line
+    //
+    commandLine = &Argument->Environment->CommandLine;
+    //
+    // Locate the argument
+    //
+    argPtr = commandLine->Buffer;
+    while( *argPtr != L' ' ) argPtr++;
+    argPtr++;
+    //
+    // Print out the argument
+    //
+    stringBuffer = RtlAllocateHeap( Heap, 0, 256 );
+    swprintf( stringBuffer, L"\n%s", argPtr );
+    helloWorld.Buffer = stringBuffer;
+    helloWorld.Length = wcslen( stringBuffer ) * sizeof(WCHAR);
+    helloWorld.MaximumLength = helloWorld.Length + sizeof(WCHAR);
+    NtDisplayString( &helloWorld );
+    //
+    // Free heap
+    //
+    RtlFreeHeap( Heap, 0, stringBuffer );
+    //
+    // Terminate
+    //
+    NtTerminateProcess( NtCurrentProcess(), 0 );
+}
+===========================================================================
+Install.bat
+@echo off
+copy native.exe %systemroot%\system32\.
+regedit /s add.reg
+echo Native Example Installed
+=============================================================================
+uinstall.bat
+@echo off
+del %systemroot%\system32\native.exe
+regedit /s remove.reg
+echo Native Example Uninstalled
+转自：<a href="http://hi.baidu.com/mj0011/blog/item/85c0b50f80b1baedab6457de.html">http://hi.baidu.com/mj0011/blog/item/85c0b50f80b1baedab6457de.html</a>

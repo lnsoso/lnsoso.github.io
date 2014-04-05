@@ -1,0 +1,198 @@
+---
+layout: post
+title: PHP5 效率优化
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wMS0xMyAxODo1Mzo0NCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0xMyAxMDo1Mzo0NCArMDgwMA==
+---
+<strong><font color="#0000ff" size="2">静态调用的成员一定要定义成 static  (PHP5 ONLY)</font></strong>
+PHP 5 引入了静态成员的概念，作用和 PHP 4 的函数内部静态变量一致，但前者是作为类的成员来使用。静态变量和 Ruby 的类变量(class variable)差不多，所有类的实例共享同一个静态变量。
+<font face="Courier New"><font color="#008080"><?php
+</font><font color="#0000ff">class </font><font color="#008080">foo </font></font><font face="Courier New"><font color="#0000ff">{
+    function </font><font color="#008080">bar</font></font><font face="Courier New"><font color="#0000ff">() {
+        echo </font><font color="#008000">'foobar'</font></font><font face="Courier New"><font color="#0000ff">;
+    }
+}
+</font><font color="#008080">$foo </font><font color="#0000ff">= new </font><font color="#008080">foo</font></font><font face="Courier New" color="#0000ff">;
+</font><font face="Courier New"><font color="#808080">// instance way
+</font><font color="#008080">$foo</font><font color="#0000ff">-></font><font color="#008080">bar</font></font><font face="Courier New" color="#0000ff">();
+</font><font face="Courier New"><font color="#808080">// static way
+</font><font color="#008080">foo</font><font color="#0000ff">::</font><font color="#008080">bar</font></font><font face="Courier New"><font color="#0000ff">();
+</font><font color="#008080">?></font>
+</font>静态地调用非 static 成员，效率会比静态地调用 static 成员慢 50-60%。主要是因为前者会产生 E_STRICT 警告，内部也需要做转换。
+<strong><font color="#0000ff">使用类常量 (PHP5 ONLY)</font></strong>
+PHP 5 新功能，类似于 C++ 的 const。
+使用类常量的好处是：
+- 编译时解析，没有额外开销
+- 杂凑表更小，所以内部查找更快
+- 类常量仅存在于特定「命名空间」，所以杂凑名更短
+- 代码更干净，使除错更方便
+<strong><font color="#0000ff">(暂时)不要使用 require/include_once</font></strong>
+require/include_once 每次被调用的时候都会打开目标文件！
+- 如果用绝对路径的话，PHP 5.2/6.0 不存在这个问题
+- 新版的 APC 缓存系统已经解决这个问题
+文件 I/O 增加 => 效率降低
+如果需要，可以自行检查文件是否已被 require/include。
+<strong><font color="#0000ff">不要调用毫无意义的函数</font></strong>
+有对应的常量的时候，不要使用函数。
+<font face="Courier New"><font color="#008080"><?php
+php_uname</font><font color="#0000ff">(</font><font color="#008000">'s'</font><font color="#0000ff">) == </font><font color="#008080">PHP_OS</font></font><font face="Courier New"><font color="#0000ff">;
+</font><font color="#008080">php_version</font><font color="#0000ff">() == </font><font color="#008080">PHP_VERSION</font></font><font face="Courier New"><font color="#0000ff">;
+</font><font color="#008080">php_sapi_name</font><font color="#0000ff">() == </font><font color="#008080">PHP_SAPI</font></font><font face="Courier New"><font color="#0000ff">;
+</font><font color="#008080">?></font>
+</font>虽然使用不多，但是效率提升大概在 3500% 左右。
+<strong><font color="#0000ff">最快的 Win32 检查</font></strong>
+<font face="Courier New"><font color="#008080"><?php
+$is_win </font><font color="#0000ff">= </font><font color="#008080">DIRECTORY_SEPARATOR </font><font color="#0000ff">== '\\'</font></font><font face="Courier New"><font color="#008080">;
+?></font>
+</font>- 不用函数
+- Win98/NT/2000/XP/Vista/Longhorn/Shorthorn/Whistler...通用
+- 一直可用
+<strong><font color="#ffa500">时间问题 (PHP>5.1.0 ONLY)</font></strong>
+你如何在你的软件中得知现在的时间？简单，「time() time() again, you ask me...」。
+不过总归会调用函数，慢。
+现在好了，用 $_SERVER['REQUEST_TIME']，不用调用函数，又省了。
+<strong><font color="#0000ff">加速 PCRE</font></strong>
+ 对于不用保存的结果，不用 ()，一律用 (?:)
+这样 PHP 不用为符合的内容分配内存，省。效率提升 15% 左右。
+- 能不用正则，就不用正则，在分析的时候仔细阅读手册「字符串函数」部分。有没有你漏掉的好用的函数？
+<strong><font color="#0000ff">加速 strtr</font></strong>
+如果需要转换的全是单个字符的时候，用字符串而不是数组来做 strtr：
+<font face="Courier New"><font color="#008080"><?php
+$addr </font><font color="#0000ff">= </font><font color="#008080">strtr</font><font color="#0000ff">(</font><font color="#008080">$addr</font><font color="#0000ff">, </font><font color="#008000">"abcd"</font><font color="#0000ff">, </font><font color="#008000">"efgh"</font><font color="#0000ff">); </font></font><font face="Courier New"><font color="#808080">// good
+</font><font color="#008080">$addr </font><font color="#0000ff">= </font><font color="#008080">strtr</font><font color="#0000ff">(</font><font color="#008080">$addr</font><font color="#0000ff">, array(</font><font color="#008000">'a' </font><font color="#0000ff">=> </font><font color="#008000">'e'</font></font><font face="Courier New" color="#0000ff">,
+                           </font><font face="Courier New"><font color="#808080">// ...
+                           </font><font color="#0000ff">)); </font></font><font face="Courier New"><font color="#808080">// bad
+</font><font color="#008080">?></font></font>
+效率提升：10 倍。
+<strong><font color="#ffa500">不要做无谓的替换</font></strong>
+即使没有替换，str_replace 也会为其参数分配内存。很慢！解决办法：
+- 用 strpos 先查找(非常快)，看是否需要替换，如果需要，再替换
+效率：
+- 如果需要替换：效率几乎相等，差别在 0.1% 左右。
+- 如果不需要替换：用 strpos 快 200%。
+<strong><font color="#0000ff">邪恶的 @ 操作符</font></strong>
+不要滥用 @ 操作符。虽然 @ 看上去很简单，但是实际上后台有很多操作。用 @ 比起不用 @，效率差距：3 倍。
+特别不要在循环中使用 @，在 5 次循环的测试中，即使是先用 error_reporting(0) 关掉错误，在循环完成后再打开，都比用 @ 快。
+<strong><font color="#0000ff">善用 strncmp</font></strong>
+当需要对比「前 n 个字符」是否一样的时候，用 strncmp/strncasecmp，而不是 substr/strtolower，更不是 PCRE，更千万别提 ereg。strncmp/strncasecmp 效率最高(虽然高得不多)。
+<strong><font color="#0000ff">慎用 substr_compare (PHP5 ONLY)</font></strong>
+按照上面的道理，substr_compare 应该比先 substr 再比较快咯。答案是否定的，除非：
+- 无视大小写的比较
+- 比较较大的字符串
+<strong><font color="#0000ff">不要用常量代替字符串</font></strong>
+为什么：
+- 需要查询杂凑表两次
+- 需要把常量名转换为小写(进行第二次查询的时候)
+- 生成 E_NOTICE 警告
+- 会建立临时字符串
+效率差别：700%。
+<strong><font color="#0000ff">不要把 count/strlen/sizeof 放到 for 循环的条件语句中</font></strong>
+贴士：我的个人做法
+<font face="Courier New"><font color="#008080"><?php
+</font><font color="#0000ff">for (</font><font color="#008080">$i </font><font color="#0000ff">= </font><font color="#008080">0</font><font color="#0000ff">, </font><font color="#008080">$max </font><font color="#0000ff">= </font><font color="#008080">count</font><font color="#0000ff">(</font><font color="#008080">$array</font><font color="#0000ff">);</font><font color="#008080">$i </font><font color="#0000ff">< </font><font color="#008080">$max</font><font color="#0000ff">; ++</font><font color="#008080">$i</font></font><font face="Courier New"><font color="#0000ff">);
+</font><font color="#008080">?></font></font>
+效率提升相对于：
+- count 50%
+- strlen 75%
+<strong><font color="#ffa500">短的代码不一定快</font></strong>
+<font face="Courier New" color="#008080"><?php
+</font><font face="Courier New"><font color="#808080">// longest
+</font><font color="#0000ff">if (</font><font color="#008080">$a </font><font color="#0000ff">== </font><font color="#008080">$b</font></font><font face="Courier New"><font color="#0000ff">) {
+    </font><font color="#008080">$str </font><font color="#0000ff">.= </font><font color="#008080">$a</font></font><font face="Courier New"><font color="#0000ff">;
+} else {
+    </font><font color="#008080">$str </font><font color="#0000ff">.= </font><font color="#008080">$b</font></font><font color="#0000ff"><font face="Courier New">;
+}</font>
+</font><font face="Courier New"><font color="#808080">// longer
+</font><font color="#0000ff">if (</font><font color="#008080">$a </font><font color="#0000ff">== </font><font color="#008080">$b</font></font><font face="Courier New"><font color="#0000ff">) {
+    </font><font color="#008080">$str </font><font color="#0000ff">.= </font><font color="#008080">$a</font></font><font face="Courier New"><font color="#0000ff">;
+}
+</font><font color="#008080">$str </font><font color="#0000ff">.= </font><font color="#008080">$b</font></font><font face="Courier New" color="#0000ff">;
+</font><font face="Courier New"><font color="#808080">// short
+</font><font color="#008080">$str </font><font color="#0000ff">.= (</font><font color="#008080">$a </font><font color="#0000ff">== </font><font color="#008080">$b </font><font color="#0000ff">? </font><font color="#008080">$a </font><font color="#0000ff">: </font><font color="#008080">$b</font></font><font face="Courier New"><font color="#0000ff">);
+</font><font color="#008080">?></font></font>
+你觉得哪个快？
+效率比较：
+- longest: 4.27
+- longer: 4.43
+- short: 4.76
+不可思议？再来一个：
+<font face="Courier New" color="#008080"><?php
+</font><font face="Courier New"><font color="#808080">// original
+</font><font color="#008080">$d </font><font color="#0000ff">= </font><font color="#008080">dir</font><font color="#0000ff">(</font><font color="#008000">'.'</font></font><font face="Courier New"><font color="#0000ff">);
+while ((</font><font color="#008080">$entry </font><font color="#0000ff">= </font><font color="#008080">$d</font><font color="#0000ff">-></font><font color="#008080">read</font><font color="#0000ff">()) !== </font><font color="#008080">false</font></font><font face="Courier New"><font color="#0000ff">) {
+    if (</font><font color="#008080">$entry </font><font color="#0000ff">== </font><font color="#008000">'.' </font><font color="#0000ff">|| </font><font color="#008080">$entry </font><font color="#0000ff">== </font><font color="#008000">'..'</font></font><font face="Courier New" color="#0000ff">) {
+        continue;
+    }
+}
+</font><font face="Courier New"><font color="#808080">// versus
+</font><font color="#008080">glob</font><font color="#0000ff">(</font><font color="#008000">'./*'</font></font><font face="Courier New" color="#0000ff">);
+</font><font face="Courier New"><font color="#808080">// versus (include . and ..)
+</font><font color="#008080">scandir</font><font color="#0000ff">(</font><font color="#008000">'.'</font></font><font face="Courier New"><font color="#0000ff">);
+</font><font color="#008080">?></font></font>
+哪个快？
+效率比较：
+- original: 3.37
+- glob: 6.28
+- scandir: 3.42
+- original without OO: 3.14
+- SPL (PHP5): 3.95
+画外音：从此也可以看出来 PHP5 的面向对象效率提高了很多，效率已经和纯函数差得不太多了。
+<strong><font color="#0000ff">提高 PHP 文件访问效率</font></strong>
+需要包含其他 PHP 文件的时候，使用完整路径，或者容易转换的相对路径。
+<font face="Courier New"><font color="#008080"><?php
+</font><font color="#0000ff">include </font><font color="#008000">'file.php'</font><font color="#0000ff">; </font></font><font face="Courier New"><font color="#808080">// bad approach
+</font><font color="#008080">incldue </font><font color="#008000">'./file.php'</font><font color="#0000ff">; </font></font><font face="Courier New"><font color="#808080">// good
+</font><font color="#0000ff">include </font><font color="#008000">'/path/to/file.php'</font><font color="#0000ff">; </font></font><font face="Courier New"><font color="#808080">// ideal
+</font><font color="#008080">?></font></font>
+<strong><font color="#0000ff">物尽其用</font></strong>
+PHP 有很多扩展和函数可用，在实现一个功能的之前，应该看看 PHP 是否有了这个功能？是否有更简单的实现？
+<font face="Courier New"><font color="#008080"><?php
+$filename </font><font color="#0000ff">= </font><font color="#008000">"./somepic.gif"</font></font><font face="Courier New"><font color="#0000ff">;
+</font><font color="#008080">$handle </font><font color="#0000ff">= </font><font color="#008080">fopen</font><font color="#0000ff">(</font><font color="#008080">$filename</font><font color="#0000ff">, </font><font color="#008000">"rb"</font></font><font face="Courier New"><font color="#0000ff">);
+</font><font color="#008080">$contents </font><font color="#0000ff">= </font><font color="#008080">fread</font><font color="#0000ff">(</font><font color="#008080">$handle</font><font color="#0000ff">, </font><font color="#008080">filesize</font><font color="#0000ff">(</font><font color="#008080">$filename</font></font><font face="Courier New"><font color="#0000ff">));
+</font><font color="#008080">fclose</font><font color="#0000ff">(</font><font color="#008080">$handle</font></font><font face="Courier New" color="#0000ff">);
+</font><font face="Courier New"><font color="#808080">// vs. much simpler
+</font><font color="#008080">file_get_contents</font><font color="#0000ff">(</font><font color="#008000">'./somepic.gif'</font></font><font face="Courier New"><font color="#0000ff">);
+</font><font color="#008080">?></font></font>
+<strong><font color="#ffa500">关于引用的技巧</font></strong>
+引用可以：
+- 简化对复杂结构数据的访问
+- 优化内存使用
+<font face="Courier New"><font color="#008080"><?php
+$a</font><font color="#0000ff">[</font><font color="#008000">'b'</font><font color="#0000ff">][</font><font color="#008000">'c'</font></font><font face="Courier New" color="#0000ff">] = array();
+</font><font face="Courier New"><font color="#808080">// slow 2 extra hash lookups per access
+</font><font color="#0000ff">for (</font><font color="#008080">$i </font><font color="#0000ff">= </font><font color="#008080">0</font><font color="#0000ff">; </font><font color="#008080">$i </font><font color="#0000ff">< </font><font color="#008080">5</font><font color="#0000ff">; ++</font><font color="#008080">$i</font></font><font face="Courier New"><font color="#0000ff">)
+    </font><font color="#008080">$a</font><font color="#0000ff">[</font><font color="#008000">'b'</font><font color="#0000ff">][</font><font color="#008000">'c'</font><font color="#0000ff">][</font><font color="#008080">$i</font><font color="#0000ff">] = </font><font color="#008080">$i</font></font><font face="Courier New" color="#0000ff">;
+</font><font face="Courier New"><font color="#808080">// much faster reference based approach
+</font><font color="#008080">$ref </font><font color="#0000ff">=& </font><font color="#008080">$a</font><font color="#0000ff">[</font><font color="#008000">'b'</font><font color="#0000ff">][</font><font color="#008000">'c'</font></font><font face="Courier New"><font color="#0000ff">];
+for (</font><font color="#008080">$i </font><font color="#0000ff">= </font><font color="#008080">0</font><font color="#0000ff">; </font><font color="#008080">$i </font><font color="#0000ff">< </font><font color="#008080">5</font><font color="#0000ff">; ++</font><font color="#008080">$i</font></font><font face="Courier New"><font color="#0000ff">)
+    </font><font color="#008080">$ref</font><font color="#0000ff">[</font><font color="#008080">$i</font><font color="#0000ff">] = </font><font color="#008080">$i</font></font><font face="Courier New"><font color="#0000ff">;
+</font><font color="#008080">?></font></font>
+<font face="Courier New"><font color="#008080"><?php
+$a </font><font color="#0000ff">= </font><font color="#008000">'large string'</font></font><font face="Courier New" color="#0000ff">;
+</font><font face="Courier New"><font color="#808080">// memory intensive approach
+</font><font color="#0000ff">function </font><font color="#008080">a</font><font color="#0000ff">(</font><font color="#008080">$str</font></font><font face="Courier New"><font color="#0000ff">)
+{
+    return </font><font color="#008080">$str</font><font color="#0000ff">.</font><font color="#008000">'something'</font></font><font face="Courier New" color="#0000ff">;
+}
+</font><font face="Courier New"><font color="#808080">// more efficient solution
+</font><font color="#0000ff">function </font><font color="#008080">a</font><font color="#0000ff">(&</font><font color="#008080">$str</font></font><font face="Courier New"><font color="#0000ff">)
+{
+    </font><font color="#008080">$str </font><font color="#0000ff">.= </font><font color="#008000">'something'</font></font><font face="Courier New"><font color="#0000ff">;
+}
+</font><font color="#008080">?></font></font>
+==============================================
+参考资料
+<a href="http://ilia.ws/" target="_blank" snap_preview_added="spa">http://ilia.ws</a>
+Ilia 的个人网站，Blog，他参与的开发以及出版的一些稿物链接等等。
+<a href="http://ez.no/" target="_blank" snap_preview_added="spa">http://ez.no</a>
+eZ components 官方网站，eZ comp 是针对 PHP5 的开源通用库，以效率为己任，Ilia 也参与了开发。
+<a href="http://phparch.com/" target="_blank" snap_preview_added="spa">http://phparch.com</a>
+php|architect，不错的 php 出版商/培训组织。买不起或者买不到的话，网上可以下到很多经典的盗版。
+<a href="http://talks.php.net/" target="_blank" snap_preview_added="spa">http://talks.php.net</a>
+
+
+

@@ -1,0 +1,117 @@
+---
+layout: post
+title: 大学排名
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0yNiAxNjo0NToyMCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0yNiAwODo0NToyMCArMDgwMA==
+---
+根据“校友获诺贝尔奖和菲尔兹奖人数”、“员工获诺贝尔奖和菲尔兹奖人数”、“高引用率研究人员人数”、“《自然》和《科学》论文数”、“SCI论文数”、“教职人员平均学术表现”等指标排名。
+1 Harvard Univ USA 美国哈佛大学
+2 Stanford Univ USA 美国斯坦福大学
+3 Univ Cambridge UK 英国剑桥大学
+4 Univ California - Berkeley 美国加州大学伯克利分校
+5 Massachusetts Inst Tech (MIT) USA 美国麻省理工学院
+6 California Inst Tech USA 美国加州理工学院
+7 Princeton Univ USA 美国普林斯顿大学
+8 Univ Oxford UK 英国牛津大学
+9 Columbia Univ USA 美国哥伦比亚大学
+10 Univ Chicago USA 美国芝加哥大学
+11 Yale Univ USA 美国耶鲁大学
+12 Cornell Univ USA 美国康奈尔大学
+13 Univ California - San Diego USA 美国加州大学圣地亚哥分校
+14 Tokyo Univ Japan 日本东京大学
+15 Univ Pennsylvania USA 美国宾夕法尼亚大学
+16 Univ California - Los Angeles USA 美国加州大学洛杉矶分校
+17 Univ California - San Francisco USA 美国加州大学旧金山分校
+18 Univ Wisconsin - Madison USA 美国威斯康星大学
+19 Univ Michigan - Ann Arbor USA 美国密歇根大学
+20 Univ Washington - Seattle USA 美国华盛顿大学(西雅图)
+21 Kyoto Univ Japan 日本京都大学
+22 Johns Hopkins Univ USA 美国约翰&middot;霍普金斯大学
+23 Imperial Coll London UK 英国伦敦帝国学院
+24 Univ Toronto Canada 4加拿大多伦多大学
+25 Univ Coll London UK 英国伦敦学院大学
+26 Univ Illinois - Urbana Champaign USA 美国伊利诺大学UC分校
+27 Swiss Fed Inst Tech - Zurich Switzerland 瑞士联邦理工学院
+28 Washington Univ - St. Louis USA 美国华盛顿大学(圣路易斯)
+29 Rockefeller Univ USA 美国洛克菲勒大学
+30 Northwestern Univ USA 美国西北大学
+31 Duke Univ USA 美国杜克大学
+32 New York Univ USA 美国纽约大学
+33 Univ Minnesota - Twin Cities USA 美国明尼苏达大学
+34 Univ Colorado - Boulder USA 美国科罗拉多大学
+35 Univ California - Santa Barbara USA 美国加州大学桑塔巴巴拉分校
+36 Univ British Columbia Canada 加拿大不列颠哥伦比亚大学
+37 Univ Texas Southwestern Med Center USA 美国德州大学西南医学中心
+38 Vanderbilt Univ USA 美国范德比尔特大学
+39 Univ Utrecht Netherlands 荷兰乌得勒支大学
+40 Univ Texas - Austin USA 美国德州大学奥斯丁分校
+41 Univ Paris 06 France 法国巴黎第六大学
+42 Univ California - Davis USA 美国加州大学戴维斯分校
+43 Pennsylvania State Univ - Univ Park USA 美国宾夕法尼亚州立大学
+44 Rutgers State Univ - New Brunswick USA 美国罗特格斯州立大学新布朗思维克分校
+45 Tech Univ Munich Germany 德国慕尼黑理工大学
+46 Karolinska Inst Stockholm Sweden 瑞典卡罗林斯卡学院
+47 Univ Edinburgh UK 英国爱丁堡大学
+48 Univ Paris 11 France 法国巴黎第11大学
+49 Univ Pittsburgh - Pittsburgh USA 美国匹兹堡大学
+50 Univ Southern California USA 美国南加州大学
+51 Univ Munich Germany 德国慕尼黑大学
+52 Univ Rochester USA 美国罗切斯特大学
+53 Australian Natl Univ Australia 澳大利亚国立大学
+54 Osaka Univ Japan 日本大阪大学
+55 Univ California - Irvine USA 美国加州大学厄文分校
+56 Univ North Carolina - Chapel Hill USA 美国北卡罗来那大学
+57 Univ Maryland - Coll Park USA 美国马里兰大学
+58 Univ Zurich Switzerland 瑞士苏黎世大学
+59 Univ Copenhagen Denmark 丹麦哥本哈根大学
+60 Univ Bristol UK 英国布里斯托尔大学
+61 McGill Univ Canada 加拿大麦克吉尔大学
+62 Carnegie Mellon Univ USA 美国卡耐基梅隆大学
+63 Univ Leiden Netherlands 荷兰莱顿大学
+64 Univ Heidelberg Germany 德国海德堡大学
+65 Case Western Reserve Univ USA 美国凯斯西保留地大学
+66 Moscow State Univ Russia 俄国莫斯科国立大学
+67 Univ Florida USA 美国佛罗里达大学
+68 Univ Oslo Norway 挪威奥斯陆大学
+69 Tohoku Univ Japan 日本东北大学
+70 Univ Sheffield UK 英国谢菲尔德大学
+71 Purdue Univ - West Lafayette USA 美国普渡大学
+72 Univ Helsinki Finland 芬兰赫尔辛基大学
+73 Ohio State Univ - Columbus USA 美国俄亥俄州立大学
+74 Uppsala Univ Sweden 瑞典乌普萨拉大学
+75 Rice Univ USA 美国莱斯大学
+76 Univ Arizona USA 美国亚利桑那大学
+77 King's Coll London UK 英国伦敦国王学院
+78 Univ Manchester UK 英国曼彻斯特大学
+79 Univ Goettingen Germany 德国古腾堡大学
+80 Michigan State Univ USA 美国密歇根州立大学
+81 Univ Nottingham UK 英国诺丁汉大学
+82 Brown Univ USA 美国布朗大学
+83 Univ Melbourne Australia 澳大利亚墨尔本大学
+84 Univ Strasbourg 1 France 法国斯特拉斯堡第一大学
+85 Ecole Normale Super Paris France 法国巴黎高等师范学院
+86 Boston Univ USA 美国波士顿大学
+87 Univ Vienna Austria 奥地利维也纳大学
+88 McMaster Univ Canada 加拿大麦克马斯特大学
+89 Univ Freiburg Germany 德国佛雷堡大学
+90 Hebrew Univ Jerusalem Israel 以色列希伯莱大学
+91 Univ Basel Switzerland 瑞士巴塞尔大学
+92 Lund Univ Sweden 瑞典兰德大学
+93 Univ Birmingham UK 英国伯明翰大学
+94 Univ Roma - La Sapienza Italy 意大利罗马大学
+95 Humboldt Univ Berlin Germany 德国柏林洪堡大学
+96 Univ Utah USA 美国犹他大学
+97 Nagoya Univ Japan 日本名古屋大学
+98 Stockholm Univ Sweden 瑞典斯德哥尔摩大学
+99 Tufts Univ USA 美国塔夫茨大学
+100 Univ Bonn Germany 德国波恩大学
+附中国名校排名：
+153-201 台湾大学
+202-301 香港中文大学、香港科技大学、北京大学、清华大学、香港大学
+302-403 香港城市大学、复旦大学、香港理工大学、南京大学、台湾清华大学、
+中国科技大学、浙江大学
+404-502 吉林大学、台湾成功大学、上海交通大学
+

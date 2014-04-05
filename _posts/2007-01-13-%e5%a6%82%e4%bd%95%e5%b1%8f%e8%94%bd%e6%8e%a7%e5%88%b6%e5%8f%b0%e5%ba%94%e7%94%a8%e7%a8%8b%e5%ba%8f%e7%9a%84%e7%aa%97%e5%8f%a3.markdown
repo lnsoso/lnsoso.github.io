@@ -1,0 +1,13 @@
+---
+layout: post
+title: 如何屏蔽控制台应用程序的窗口?
+author: Alvin
+date: !binary |-
+  MjAwNy0wMS0xMyAxODowMDoxMSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0xMyAxMDowMDoxMSArMDgwMA==
+---
+Step1. Create a console application.
+Step2. Add following segment before main() entry function:
+            #pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )
+Step3. Try to build it. 

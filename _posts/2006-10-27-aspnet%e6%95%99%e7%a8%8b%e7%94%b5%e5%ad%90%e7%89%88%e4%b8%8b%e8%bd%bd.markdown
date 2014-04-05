@@ -1,0 +1,47 @@
+---
+layout: post
+title: ASP.NET教程电子版下载
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNyAxMDo1NDowOSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNyAwMjo1NDowOSArMDgwMA==
+---
+ASP.NET 程序设计基础篇
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/125.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/125.html</a>
+《亲密接触ASP.NET》全书
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/127.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/127.html</a>
+程序员大本营.Net版
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/129.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/129.html</a>
+构建安全的ASP.NET应用(CHM)
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/133.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/133.html</a>
+ASP.NET/XML深入编程技术
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/137.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/137.html</a>
+ADO.NET 本质论
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/141.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/141.html</a>
+ASP.NET 实用全书
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/142.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/142.html</a>
+ASP.NET 实用案例教程
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/143.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/143.html</a>
+ASP.NET 技术参考
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/145.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/145.html</a>
+ASP.NET 领先研究
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/146.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/146.html</a>
+Microsoft.NET 精髓
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/147.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/147.html</a>
+ASP.NET 行家入门实务
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/148.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/148.html</a>
+ASP.NET 深入解析
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/149.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/149.html</a>
+ASP.NET完全入门(DOC)
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/151.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/151.html</a>
+ASP.NET编程百例
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/155.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/155.html</a>
+ASP.NET 简明教程
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/157.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/157.html</a>
+ASP.NET 开发人员指南
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/160.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/160.html</a>
+ASP.NET完全手册
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/161.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/161.html</a>
+ADO.NET 高级编程
+<a href="http://www.bc-cn.net/Soft/net/aspx/edu/200602/162.html" target="_blank">http://www.bc-cn.net/Soft/net/aspx/edu/200602/162.html</a>

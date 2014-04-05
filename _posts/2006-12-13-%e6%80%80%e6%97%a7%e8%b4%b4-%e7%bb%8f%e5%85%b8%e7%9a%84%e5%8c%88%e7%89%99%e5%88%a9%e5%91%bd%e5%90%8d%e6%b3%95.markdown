@@ -1,0 +1,181 @@
+---
+layout: post
+title: ! '怀旧贴: 经典的匈牙利命名法'
+author: Alvin
+date: !binary |-
+  MjAwNi0xMi0xMyAyMzowMDo1MSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMi0xMyAxNTowMDo1MSArMDgwMA==
+---
+虽然在.NET时代这种命名法不再适用, 但作为C/C++开发人员来说, 还是非常有用的.
+就MFC应用开发中, 这种命名法足够了. 除非你的风格另类.
+转至<a href="http://www.kaoiki.com">http://www.kaoiki.com</a>
+匈牙利命名法是一种编程时的命名规范。基本原则是：变量名＝属性＋类型＋对象描述，其中每一对象的名称都要求有明确含义，可以取对象名字全称或名字的一部分。命名要基于容易记忆容易理解的原则。保证名字的连贯性是非常重要的。
+举例来说，表单的名称为form，那么在匈牙利命名法中可以简写为frm，则当表单变量名称为Switchboard时，变量全称应该为 frmSwitchboard。这样可以很容易从变量名看出Switchboard是一个表单，同样，如果此变量类型为标签，那么就应命名成 lblSwitchboard。可以看出，匈牙利命名法非常便于记忆，而且使变量名非常清晰易懂，这样，增强了代码的可读性，方便各程序员之间相互交流代码。
+这种命名技术是由一位能干的Microsoft程序员查尔斯&middot;西蒙尼(Charles Simonyi) 提出的，他出生在匈牙利。在 Microsoft 公司中和他一起工作的人被教会使用这种约定。这对他们来说一切都很正常。但对那些 Simonyi 领导的项目组之外的人来说却感到很奇特，他们认为这是死板的表达方式，甚至说带有这样奇怪的外观是因为它是用匈牙利文写的。从此这种命名方式就被叫做匈牙利命名法。
+据说这种命名法是一位叫 Charles Simonyi 的匈牙利程序员发明的，后来他在微软呆了几年，于是
+这种命名法就通过微软的各种产品和文档资料向世界传播开了。现在，大部分程序员不管自己使用
+什么软件进行开发，或多或少都使用了这种命名法。这种命名法的出发点是把量名变按：属性+类型
++对象 描述的顺序组合起来，以使程序员作变量时对变量的类型和其它属性有直观的了解，下面
+是HN变量命名规范，其中也有一些是我个人的偏向：
+属性部分
+全局变量
+g_
+常量
+c_
+c++类成员变量
+m_
+静态变量
+s_
+类型部分
+指针
+p
+函数
+fn
+无效
+v
+句柄
+h
+长整型
+l
+布尔
+b
+浮点型（有时也指文件）
+f
+双字
+dw
+字符串
+sz
+短整型
+n
+双精度浮点
+d
+计数
+c（通常用cnt）
+字符
+ch（通常用c）
+整型
+i（通常用n）
+字节
+by
+字
+w
+实型
+r
+无符号
+u
+描述部分
+最大
+Max
+最小
+Min
+初始化
+Init
+临时变量
+T（或Temp）
+源对象
+Src
+目的对象
+Dest
+
+这里顺便写几个例子：
+hwnd ： h 是类型描述，表示句柄， wnd 是变量对象描述，表示窗口，所以 hwnd 表示窗口句柄；
+pfnEatApple ： pfn 是类型描述，表示指向函数的指针， EatApple 是变量对象描述，所以它表示
+指向 EatApple 函数的函数指针变量。
+g_cch ： g_ 是属性描述，表示全局变量，c 和 ch 分别是计数类型和字符类型，一起表示变量类
+型，这里忽略了对象描述，所以它表示一个对字符进行计数的全局变量。
+上面就是HN命名法的一般规则。
+
+小结:匈牙利命名法
+匈牙利命名法
+
+MFC、句柄、控件及结构的命名规范 Windows类型 样本变量 MFC类 样本变量
+HWND hWnd； CWnd* pWnd；
+HDLG hDlg； CDialog* pDlg；
+HDC hDC； CDC* pDC；
+HGDIOBJ hGdiObj； CGdiObject* pGdiObj；
+HPEN hPen； CPen* pPen；
+HBRUSH hBrush； CBrush* pBrush；
+HFONT hFont； CFont* pFont；
+HBITMAP hBitmap； CBitmap* pBitmap；
+HPALETTE hPaltte； CPalette* pPalette；
+HRGN hRgn； CRgn* pRgn；
+HMENU hMenu； CMenu* pMenu；
+HWND hCtl； CState* pState；
+HWND hCtl； CButton* pButton；
+HWND hCtl； CEdit* pEdit；
+HWND hCtl； CListBox* pListBox；
+HWND hCtl； CComboBox* pComboBox；
+HWND hCtl； CScrollBar* pScrollBar；
+HSZ hszStr； CString pStr；
+POINT pt； CPoint pt；
+SIZE size； CSize size；
+RECT rect； CRect rect；
+
+一般前缀命名规范 前缀 类型 实例
+C 类或结构 CDocument，CPrintInfo
+m_ 成员变量 m_pDoc，m_nCustomers
+
+变量命名规范 前缀 类型 描述 实例
+ch char 8位字符 chGrade
+ch TCHAR 如果_UNICODE定义，则为16位字符 chName
+b BOOL 布尔值 bEnable
+n int 整型（其大小依赖于操作系统） nLength
+n UINT 无符号值（其大小依赖于操作系统） nHeight
+w WORD 16位无符号值 wPos
+l LONG 32位有符号整型 lOffset
+dw DWORD 32位无符号整型 dwRange
+p * 指针 pDoc
+lp FAR* 远指针 lpszName
+lpsz LPSTR 32位字符串指针 lpszName
+lpsz LPCSTR 32位常量字符串指针 lpszName
+lpsz LPCTSTR 如果_UNICODE定义，则为32位常量字符串指针 lpszName
+h handle Windows对象句柄 hWnd
+lpfn callback 指向CALLBACK函数的远指针
+
+前缀 符号类型 实例 范围
+IDR_ 不同类型的多个资源共享标识 IDR_MAIINFRAME 1～0x6FFF
+IDD_ 对话框资源 IDD_SPELL_CHECK 1～0x6FFF
+HIDD_ 对话框资源的Help上下文 HIDD_SPELL_CHECK 0x20001～0x26FF
+IDB_ 位图资源 IDB_COMPANY_LOGO 1～0x6FFF
+IDC_ 光标资源 IDC_PENCIL 1～0x6FFF
+IDI_ 图标资源 IDI_NOTEPAD 1～0x6FFF
+ID_ 来自菜单项或工具栏的命令 ID_TOOLS_SPELLING 0x8000～0xDFFF
+HID_ 命令Help上下文 HID_TOOLS_SPELLING 0x18000～0x1DFFF
+IDP_ 消息框提示 IDP_INVALID_PARTNO 8～0xDEEF
+HIDP_ 消息框Help上下文 HIDP_INVALID_PARTNO 0x30008～0x3DEFF
+IDS_ 串资源 IDS_COPYRIGHT 1～0x7EEF
+IDC_ 对话框内的控件 IDC_RECALC 8～0xDEEF
+
+Microsoft MFC宏命名规范 名称 类型
+_AFXDLL 唯一的动态连接库（Dynamic Link Library，DLL）版本
+_ALPHA 仅编译DEC Alpha处理器
+_DEBUG 包括诊断的调试版本
+_MBCS 编译多字节字符集
+_UNICODE 在一个应用程序中打开Unicode
+AFXAPI MFC提供的函数
+CALLBACK 通过指针回调的函数
+
+库标识符命名法 标识符 值和含义
+u ANSI（N）或Unicode（U）
+d 调试或发行：D = 调试；忽略标识符为发行。
+
+静态库版本命名规范 库 描述
+NAFXCWD.LIB 调试版本：MFC静态连接库
+NAFXCW.LIB 发行版本：MFC静态连接库
+UAFXCWD.LIB 调试版本：具有Unicode支持的MFC静态连接库
+UAFXCW.LIB 发行版本：具有Unicode支持的MFC静态连接库
+
+动态连接库命名规范 名称 类型
+_AFXDLL 唯一的动态连接库（DLL）版本
+WINAPI Windows所提供的函数
+
+Windows.h中新的命名规范 类型 定义描述
+WINAPI 使用在API声明中的FAR PASCAL位置，如果正在编写一个具有导出API人口点的DLL，则可以在自己的API中使用该类型
+CALLBACK 使用在应用程序回叫例程，如窗口和对话框过程中的FAR PASCAL的位置
+LPCSTR 与LPSTR相同，只是LPCSTR用于只读串指针，其定义类似（const char FAR*）
+UINT 可移植的无符号整型类型，其大小由主机环境决定（对于Windows NT和Windows 9x为32位）；它是unsigned int的同义词
+LRESULT 窗口程序返回值的类型
+LPARAM 声明lParam所使用的类型，lParam是窗口程序的第四个参数
+WPARAM 声明wParam所使用的类型，wParam是窗口程序的第三个参数
+LPVOID 一般指针类型，与（void *）相同，可以用来代替LPSTR

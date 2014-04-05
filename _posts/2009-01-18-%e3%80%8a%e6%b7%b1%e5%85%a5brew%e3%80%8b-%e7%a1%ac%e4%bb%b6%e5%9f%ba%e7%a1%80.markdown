@@ -1,0 +1,308 @@
+---
+layout: post
+title: 《深入BREW》 - 硬件基础
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wMS0xOCAwMjoxNzozNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wMS0xNyAxODoxNzozNyArMDgwMA==
+---
+转至Gemsea大人的BLOG：<a href="http://blog.csdn.net/Gemsea">http://blog.csdn.net/Gemsea</a>
+ 硬件是软件的运行平台，没有硬件的支撑软件也将不复存在。您能想象没有显示器软件将如何显示图形，没有CPU软件将如何运行吗？反正我想象不到！但是如果把问题反过来问就问到本质了，软件运行需要哪些硬件支持呢？看图1.1：
+<span>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>CPU</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>RAM</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>ROM</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>输出设备</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>输入设备</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>存储设备</div>
+</div></td>
+</tr>
+</tbody></table>
+</span>
+<div>图1.1 系统结构框图</div>
+<div><span>       </span>我们抛开硬件的什么电器特性等等，去芜存菁，就是上面的这个图了。如果程序要运行没有CPU是不行的，CPU要快速的交换数据，没有RAM也是不行的。因此无论任何系统，CPU和RAM都是必不可少的。您一定会提醒我ROM不也是不变的吗？这种说法不完全对，因为在PC系统和嵌入式系统之间ROM的作用是不一样的。在PC系统中ROM就是那个BIOS芯片，是用来提供系统的启动代码和基本的输入输出功能的；而在嵌入式系统中，ROM存储了全部的代码，它已经将PC中的BIOS和硬盘的与代码相关的功能混合在一起了。</div>
+<table style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="padding-right: 5.4pt; padding-left: 5.4pt; padding-bottom: 0cm; width: 77.4pt; padding-top: 0cm; border: windowtext 1pt solid;" width="103" valign="top">
+<div>设备</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: windowtext 1pt solid; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>PC系统典型硬件设备</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: windowtext 1pt solid; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>嵌入式系统典型硬件设备</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 77.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="103" valign="top">
+<div>CPU</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>任何CPU</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>任何CPU</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 77.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="103" valign="top">
+<div>RAM</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>任何RAM</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>任何RAM</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 77.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="103" valign="top">
+<div>ROM</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>BIOS芯片</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>Flash芯片</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 77.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="103" valign="top">
+<div>存储设备</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>硬盘</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>Flash芯片</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 77.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="103" valign="top">
+<div>输入设备</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>键盘</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>键盘</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 77.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="103" valign="top">
+<div>输出设备</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>显示卡+显示器</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 174.35pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="232" valign="top">
+<div>LCD显示屏</div></td>
+</tr>
+</tbody></table>
+<div><span>       PC</span>的ROM &mdash;&mdash;BIOS芯片可以采用Flash芯片，在这里之所以不写成Flash芯片是因为BIOS的作用和嵌入式系统的Flash作用不大一样，使用BIOS以示区分。</div>
+<div><strong><span style="font-size: medium;"><a name="_Toc137296135">1.1 CPU</a><span>和RAM</span></span></strong></div>
+<div style="TEXT-INDENT: 21pt">从软件观点来讲，任何CPU和RAM都可以应用于各种系统中，不存在明显的区别，只要CPU可以执行指令控制设备就可以了。但是考虑到耗电以及体积（嵌入式设备通常要求耗电低、体积小）等问题，嵌入式系统就发展出了专用的CPU芯片。当前应用最广泛的是ARM CPU。ARM CPU是由英国的ARM公司设计的，由于其执行效率高，体积小，耗电少等特点被广泛应用于嵌入式系统。由于嵌入式系统要求高集成度，通常不会存在单独的CPU芯片，而是将CPU和很多的外围电路集成到一起，做成一块芯片，因此ARM采用授权的方式提供内核芯片设计，以便于使用者进行芯片的集成。</div>
+<div style="TEXT-INDENT: 21pt">CPU按照次执行指令的数据带宽可以分为16位、32位、64位等。32位CPU一次只能处理32位，也就是4个字节的数据；而64位CPU一次就能处理64位即8个字节的数据。如果我们将总长128位的指令分别按照16位、32位、64位为单位进行编辑的话：旧的16位CPU（如Intel 80286 CPU）需要8个指令，32位的CPU需要4个指令，而64位CPU则只要两个指令。显然，在工作频率相同的情况下，64位CPU的处理速度比16位、32位的更快。</div>
+<div style="TEXT-INDENT: 21pt">除了运算能力之外，与32位CPU相比，64位CPU的优势还体现在系统对内存的控制上。由于地址使用的是特殊的整数，而64位CPU的一个ALU（算术逻辑运算器）和寄存器可以处理更大的整数，也就是更大的地址。传统32位CPU的寻址空间最大为4GB，使得很多需要大容量内存的大规模的数据处理程序在这时都会显得捉襟见肘，形成了运行效率的瓶颈。而64位的处理器在理论上则可以达到1800万个TB（1TB=1024GB），将能够彻底解决32位计算系统所遇到的瓶颈现象。当然64位寻址空间也有一定的缺点：内存地址值随着位数的增加而变为原来的两倍，这样内存地址将在缓存中占用更多的空间，其他有用的数据就无法载入缓存，从而引起了整体性能一定程度的下降。</div>
+<div style="TEXT-INDENT: 21pt">在进行系统设计时，会根据不同寻址能力的CPU来进行寻址空间的分配。由于CPU都是通过设备的寄存器（这个寄存器可以理解为设备本身带的RAM）来控制设备的，因此地址空间的划分就显得十分重要。例如，一个具有32位寻址能力的CPU不可能讲全部的地址空间都分配给RAM，好比PC系统需要为BIOS分配存储空间等。也就是说只要是需要CPU直接控制的外部设备都需要为其分配CPU地址空间。</div>
+<div style="TEXT-INDENT: 21pt">RAM就是可以随机访问，快速读写的存储器。CPU可以直接从RAM中取得数据（CPU可以从所有分配了地址空间的设备寄存器中取得数据）或代码指令，因此RAM的访问速度将直接影响系统的性能。</div>
+<div><strong><span style="font-size: medium;"><a name="_Toc137296136">1.2 ROM</a><span>存储芯片</span></span></strong></div>
+<div><span>       ROM</span>是每个计算机系统必不可少的，但是其实现的方式却不尽相同。在我们熟悉的PC系统中，ROM是一个称作BIOS（Base Input & Output System）的芯片。CPU上电时会从ROM中读取指令，因此没有ROM的系统是不能够运行的，因为如果没有ROM，CPU将无法获得起始的执行指令。在PC系统中BIOS的作用除了提供起始指令以外，还会扫描硬件设备并初始化主板（Main Board）上的硬件接口。由于PC上的接口都遵循着一组通用的协议，因此BIOS就可以实现所有硬件接口的驱动（如USB接口、显示卡、键盘和鼠标等）和硬件的数据输入输出功能，这也是BIOS（基本输入输出系统）名称的由来了。在BIOS控制的硬件接口中也包含了硬盘的控制接口，在BIOS初始化完成后就会到硬盘主分区上查找启动文件（<em>注</em><em>3</em>），后面的事情就交给PC的操作系统了。这个过程请看图1.2。</div>
+<div><span>       </span>通常，在硬盘内有一个主引导记录区，在安装操作系统的时候由操作系统写入Boot程序，BIOS就是取出这段程序然后执行。由于Boot程序是由操作系统写入的，因此从这个Boot程序开始，系统的运行权限就交由操作系统来控制了。以Windows2000操作系统为例，这段代码区域执行时会搜索名叫“NTLDR”的系统文件。之所以分成Boot程序和NTLDR文件的原因是硬盘的Boot Sector很小（只有466Bytes），不可能容纳全部的启动程序。</div>
+<div><span>       </span>图1.2只是一个启动的示意图，在这里我并没有详细的列出每一个必须的步骤，因为我的目的只是让我们能够了解BIOS硬件芯片在系统中的作用。</div>
+<div><span>       </span>对比PC的BIOS，嵌入式系统由于软件规模小，因此将引导代码和操作系统代码全部放到了系统的Flash芯片中了。正如我们所知道的，PC机上大部分的操作系统代码全部放在硬盘上，然后从硬盘上将程序载入内存执行。而嵌入式系统中目前大多数采用直接寻址的方式从Nor Flash芯片中读取代码并执行。因此，实际上嵌入式系统简化了PC系统的设计，将PC系统中的BIOS和硬盘代码全部集中到了一个Flash芯片上。因此BIOS虽然也可以使用Flash芯片，但是相对于嵌入式系统来说，他们的含义和作用却不同。</div>
+<span>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>BIOS自检</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>显卡BIOS检测</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>CPU型号检测、内存测试</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>读取硬盘启动扇区</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>获取操作系统启动文件</div>
+</div></td>
+</tr>
+</tbody></table>
+</span>
+<div>图1.2 PC开机流程</div>
+<div style="TEXT-INDENT: 21pt">Flash芯片对于我们来说并不陌生，那些可以更新BIOS程序的BIOS芯片也是使用Flash芯片实现的，还有MP3用的SD卡等等也是Flash芯片。Flash芯片是一种可以多次擦写的存储芯片，广泛的应用于嵌入式系统。Flash的特点是耗电低，容量大（相对于嵌入式系统而言），写入之前需要先擦除（因为Flash芯片的存储单元只允许从1变到0）。当前流行的分为NOR Flash和NAND Flash。</div>
+<div style="TEXT-INDENT: 21pt">NAND与NOR Flash的区别主要有：</div>
+<div style="TEXT-INDENT: 21pt">1、NAND Flash的空间比Nor Flash大</div>
+<div style="TEXT-INDENT: 21pt">2、NAND Flash的访问速度比Nor Flash快</div>
+<div style="TEXT-INDENT: 21pt">3、NAND Flash只有Page访问模式，Nor Flash可以进行Page和直接地址访问（直接地址访问也就是CPU可以直接寻址，或者叫做随机访问）</div>
+<div style="TEXT-INDENT: 21pt">4、NAND Flash允许有坏块，但是Nor Flash不能有坏块</div>
+<div style="TEXT-INDENT: 21pt">5、NAND Flash比NOR Flash更加便宜</div>
+<div style="TEXT-INDENT: 21pt">在嵌入式系统中，NOR 和NAND都可以做为代码区和文件系统区来使用。通常情况下NOR和NAND做为嵌入式文件系统区的时候都使用Page模式。Page模式允许一次读取多个字节，就像硬盘的最小读写单位是扇区一样，只不过Flash的最小读写单位叫做Page。Page模式下可以加快Flash的读写速度。由于NAND Flash只支持Page读写模式，因此使用NAND Flash做为代码区的时候需要外加控制电路。当前使用NAND做为代码区正在成为一种流行的趋势（因为NAND Flash成本更低），主要的实现方式有两种：一是添加仿真电路使得NAND Flash可以支持随机访问；二是增加一个类似硬盘的引导区（通常是第一个Page），系统启动的时候使用引导区的代码将全部NAND中的代码复制到RAM中执行。</div>
+<div style="TEXT-INDENT: 21pt">当然，可以设想随着将来嵌入式操作系统的发展，动态载入内存的形式也许就会出现了，但是目前嵌入式系统仍然没有发展到这个地步。更进一步，当前应用于嵌入式系统的微型硬盘也已经出现了，或许更为复杂的操作系统也可以应用在嵌入式系统上了。</div>
+<div style="TEXT-INDENT: 21pt">在这里我们主要介绍的ROM存储芯片是Flash，严格意义上说Flash并不能称作ROM，因为ROM是只读存储器（Read Only Memory），而Flash是一种可读可写的芯片。但是由于ROM“一次成型、终生不变”的特点，不便于升级换代，现在正逐渐的被Flash芯片所取代，但是其功能性的称谓“ROM”还在为大家所用。</div>
+<div style="TEXT-INDENT: 21pt">在计算机系统中主要存在用户数据、程序数据和代码三种二进制内容。用户数据指用户文件，程序数据是指程序运行时需要修改或使用的非代码内容。下面将就PC系统和嵌入式系统中的这三种二进制内容做一个比较，请看下表：</div>
+<table style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="padding-right: 5.4pt; padding-left: 5.4pt; padding-bottom: 0cm; width: 68.4pt; padding-top: 0cm; border: windowtext 1pt solid;" width="91" valign="top">
+<div>二进制形态</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: windowtext 1pt solid; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 178.85pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="238" valign="top">
+<div>PC系统</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: windowtext 1pt solid; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 178.85pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="238" valign="top">
+<div>嵌入式系统</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 68.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="91" valign="top">
+<div>用户数据</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 178.85pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="238" valign="top">
+<div>存储在文件系统中，典型的设备是硬盘</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 178.85pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="238" valign="top">
+<div>存储在文件系统中，典型的设备是Flash存储芯片</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 68.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="91" valign="top">
+<div>程序数据</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 178.85pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="238" valign="top">
+<div>可读可写的数据存放在RAM中；只读数据存放在硬盘中，运行时与代码一起读入RAM</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 178.85pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="238" valign="top">
+<div>可读可写的数据存放在RAM中；只读数据存放在Flash中，与代码存储在同一个区域</div></td>
+</tr>
+<tr>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: windowtext 1pt solid; width: 68.4pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="91" valign="top">
+<div>代码</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 178.85pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="238" valign="top">
+<div>存储在文件系统中的文件里，运行时读入RAM由CPU执行</div></td>
+<td style="border-right: windowtext 1pt solid; padding-right: 5.4pt; border-top: medium none; padding-left: 5.4pt; padding-bottom: 0cm; border-left: medium none; width: 178.85pt; padding-top: 0cm; border-bottom: windowtext 1pt solid;" width="238" valign="top">
+<div>如果存储在NOR Flash等可随机访问的空间中则CPU直接在芯片中取指令运行；如果存储在NAND Flash等不能随机访问的空间中则需要读入RAM中运行</div></td>
+</tr>
+</tbody></table>
+<div style="TEXT-INDENT: 21pt">关于程序数据的详细情况将在编译器基础一节详细介绍。</div>
+<div><strong><span style="font-size: medium;"><a name="_Toc137296137">1.3 </a><span>输出设备</span></span></strong></div>
+<div><span>       </span>输出设备有很多种，例如显示器、打印机，在这里我们主要讲一下显示设备。</div>
+<div style="TEXT-INDENT: 21pt">任何显示设备都是点阵式的，至少目前是这样。还记得初次看见电视里显示的人物时内心的惊异，这个世界竟是如此神奇！后来知道了，如果我愿意，我可以买640*480个灯泡，组成一个640*480的方阵，然后控制每个灯泡的亮灭，我也可以显示一个人物。终于懂了，原来任何的显示设备都是基于这个原理实现的。我想关于这一点我没有必要再多说什么了，毕竟万变不离其宗嘛。</div>
+<div><span>       </span>当前流行的显示设备有CRT显示器（也就是电脑上很大个头的那种显示器），LCD（液晶）等（虽然我在大学实验室里用的可以显示数字的LED灯也是显示设备，但是他太简单了）。CRT显示器经历了从球形到纯平的物理演变，LCD则经历了从黑白到彩色的变化。按照显示器每个点能够显示的颜色数目可以分为黑白两色、灰度、8位色、16位色、24位真彩色等显示设备。这个颜色数目就是所谓的色深（Color Depth），色深越大，每个点能够表达的颜色数就越多，这个点就是“象素”。</div>
+<div><span>       </span>在嵌入式系统中主要使用LCD的显示设备，LCD会集成一个显示的存储空间，在这个空间中存储了对应的每个象素的值。例如16位色的LCD每个象素需要由2个字节来表示，如果显示屏幕的大小是100*100，那么就需要2*100*100 = 20000个字节的存储空间。程序正是通过更新这个存储空间中的内容来控制LCD的显示。</div>
+<div style="TEXT-INDENT: 21pt">衡量LCD显示效果的还有象素间距，象素间距越小，画面就越细腻，显示效果越好。举个极端的例子，如果一个象素是整个LCD那么大，那就只能看见一个象素点的“灯泡”了，也就没法显示图像了。通过像素个数和每个点的大小就可以换算出显示屏的大小了，例如常用的xx英寸大小的屏幕等等。</div>
+<div><strong><span style="font-size: medium;"><a name="_Toc137296138">1.4 </a><span>输入设备</span></span></strong></div>
+<div><span>       </span>输入设备也有很多种，最典型的是键盘和触摸屏。在这一节里，我将简单的介绍一下它们的实现原理。</div>
+<div><span>       </span>键盘通常是一个矩阵式的电路，当按键按下的时候，接通电路产生信号，如图1.3：</div>
+<span>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>1</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>2</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>3</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>A</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>B</div>
+</div></td>
+</tr>
+</tbody></table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div>
+<div>C</div>
+</div></td>
+</tr>
+</tbody></table>
+</span>
+<div>图1.3 键盘原理</div>
+<div><span>       </span>图1.3是一个简版的键盘原理图，图中任何交叉点的横向和纵向都未连通，并假设只要交叉点连通，则相应的行和列就可以连通并发生状态改变。其中1、2、3和A、B、C连接在控制芯片上，通过扫描行和列，确定行的A、B、C是否连通，再扫描列1、2、3是否连通，这样就可以唯一确定一个点是否按下。千万注意，这只是一个示意图，并不是真正的键盘原理图。</div>
+<div><span>       </span>触摸屏是近来应用越来越多的输入器件。典型触摸屏的工作部分一般由三部分组成：两层透明的阻性导体层、两层导体之间的隔离层、电极。阻性导体层选用阻性材料，如铟锡氧化物（ITO）涂在衬底上构成，上层衬底用塑料，下层衬底用玻璃。隔离层为粘性绝缘液体材料，如聚脂薄膜。电极选用导电性能极好的材料（如银粉墨）构成。</div>
+<div><span>       </span>触摸屏在工作时，上下导体层相当于电阻网络。当某一层电极加上电压时，会在该网络上形成电压梯度。如有外力使得上下两层在某一点接触，则在电极未加电压的另一层可以测得接触点处的电压，从而知道接触点处的坐标。比如，在顶层的电极(X+,X－)上加上电压，则在顶层导体层上形成电压梯度，当有外力使得上下两层在某一点接触，在底层就可以测得接触点处的电压，再根据该电压与电极(X+)之间的距离关系，知道该处的X坐标。然后，将电压切换到底层电极（Y+,Y－）上，并在顶层测量接触点处的电压，从而知道Y坐标。通常有专门的控制芯片。很显然，触摸屏的控制芯片要完成两件事情：一是完成电极电压的切换；二是采集接触点处的电压值（即A/D）。虽然还有其他的实现方法，我就不赘述了，因为本书的目的不是讲解硬件的原理，而仅仅是让我们能够基本了解它们。</div>
+<div><strong><span style="font-size: medium;"><a name="_Toc137296139">1.5 </a><span>小结</span></span></strong></div>
+<div><span>       </span>在这一章里介绍了各种硬件的特性和原理，其中包括了最小系统各种组件的介绍，为的是防止我们见到这些东西的时候会一头雾水，不知来由。只要我们见到这些硬件不再感到神秘，那么这个基础就算打好了。</div>
+<div><strong><span style="font-size: medium;"><a name="_Toc137296140">思考题</a></span></strong></div>
+<div><span>       </span>在PC计算机系统中硬盘、BIOS、RAM和嵌入式系统中的文件Flash、程序Flash、RAM之间有什么区别？它们在系统中的作用分别是什么？</div>

@@ -1,0 +1,10 @@
+---
+layout: post
+title: About us
+author: admin
+date: !binary |-
+  MjAwNy0wOC0wNSAyMzoxNzoxOSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wOC0wNSAxNToxNzoxOSArMDgwMA==
+---
+Hey, 这里是 Deng Wei 和 Gavin Kwoe 合作发布 BLOG 的站点，我们会常来记录一些生活和工作中遇到的事，如果你感兴趣可以一起参与。

@@ -1,0 +1,11 @@
+---
+layout: post
+title: MP4 改版
+author: Alvin
+date: !binary |-
+  MjAwNi0xMS0wNyAxMjo1MzoxNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0wNyAwNDo1MzoxNyArMDgwMA==
+---
+我们组之前做的 MP4 要改版了,自己赶紧抓了张图.
+<img src="http://static.flickr.com/115/291179794_c1ab720f73_b.jpg" />

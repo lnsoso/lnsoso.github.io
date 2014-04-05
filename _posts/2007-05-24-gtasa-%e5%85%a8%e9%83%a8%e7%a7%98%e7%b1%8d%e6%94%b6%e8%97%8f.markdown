@@ -1,0 +1,76 @@
+---
+layout: post
+title: GTA:SA 全部秘籍收藏
+author: Alvin
+date: !binary |-
+  MjAwNy0wNS0yNCAyMDoxOTo1MSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wNS0yNCAxMjoxOTo1MSArMDgwMA==
+---
+LXGIWYL = 暴徒武器
+KJKSZPJ = 专业武器
+UZUMYMW = 疯狂武器
+HESOYAM = 生命、护甲满，加25万美圆
+OSRBLHH = 增加两星通缉度
+ASNAEB = 清除通缉程度
+AFZLLQLL = 万里无云
+ICIKPYH = 阳光明媚
+ALNSFMZO = 阴云密布
+AUIFRVQS = 阴雨绵绵
+CFVFGMJ = 大雾弥漫
+YSOHNUL = 时钟加快
+PPGWJHT = 操控加快
+LIYOAAY = 操控减慢
+AJLOJYQY = 行人互相攻击，得到高尔夫球杆
+BAGOWPG = 得到一大笔奖励
+FOOOXFT = 行人全副武装
+AIWPRTON = 刷新一辆坦克
+CQZIJMB = 刷新一辆Bloodring Banger
+JQNTDMH = 刷新一辆Rancher
+PDNEJOH = 刷新一辆Racecar
+VPJTQWV = 刷新一辆Racecar
+AQTBCODX = 刷新一辆Romero
+KRIJEBR = 刷新一辆Stretch
+UBHYZHQ = 刷新一辆Trashmaster
+RZHSUEW = 刷新一辆Caddy
+CPKTNWT = Cars所有车辆爆炸
+XICWMD = 隐行车辆
+PGGOMOY = 完美操控
+SZCMAWO = 自杀
+ZEIIVG = 交通信号灯变绿
+YLTEICZ = 司机有攻击性
+LLQPFBN = 所有车辆变粉色
+IOWDLAC = 所有车辆变黑色
+AFSNMSMW = 船只飞行
+BTCDBCB = 主角变胖
+JYSDSOD = 主角肌肉值最大
+KVGYZQK = 主角变得皮包骨
+ASBHGRB = 行人变成猫王
+BGLUAWML = 行人用武器攻击你，得到火箭发射器
+CIKGCGX = 海滩聚会
+MROEMZH = 到处都是黑帮
+BIFBUZZ = 黑帮控制街道
+AFPHULTL = 忍者模式
+BEKKNQV = 吸引女
+BGKGTJH = 通工具慢速
+GUSNHDE = 交通工具快速
+RIPAZHA = 汽车飞行
+JHJOECW = 超级兔子跳
+JUMPJET = 刷新一辆Hydra
+KGGGDKP = 刷新一辆Vortex Hovercraft
+JCNRUAD = 汽车一击必炸
+COXEFGU = 所有车辆得到一氧化二氮加速剂
+BSXSGGC = 车辆被撞击时会漂浮
+XJVSNAJ = 永远是午夜
+OFVIAC = 永远是晚上9点
+MGHXYRM = 雷暴天气
+CWJXUOC = 沙尘暴天气
+LFGMHAL = 超级跳跃
+BAGUVIX = 无限生命
+CVWKXAM = 无限氧气
+AIYPWZQP = 得到降落伞
+BAGUVIX = 无限生命
+AEZAKMI = 永远不会被通缉
+WANRLTW = 无限弹药，不用换弹夹
+IAVENJQ = 超级攻击
+JCNRUAD = 汽车一击必炸 

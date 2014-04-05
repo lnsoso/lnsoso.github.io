@@ -1,0 +1,12 @@
+---
+layout: post
+title: spore 心得
+author: Alvin
+date: !binary |-
+  MjAwOC0xMC0wNiAxMzo1Mzo0NCArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMC0wNiAwNTo1Mzo0NCArMDgwMA==
+---
+在文明阶段，如果自己没有时间去设计海、陆、空载具的样式，那么可以用系统默认的，但是自己设计的载具的一些性能会比系统提供的好，比如陆地载具系统最大攻击是34，而我们设计就可以设计出 38 的。
+<img src="http://farm4.static.flickr.com/3283/2916662935_c67e6b2d60.jpg" />
+spore

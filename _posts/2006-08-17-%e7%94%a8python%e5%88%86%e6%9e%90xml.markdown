@@ -1,0 +1,16 @@
+---
+layout: post
+title: 用 Python 分析 XML
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0wOC0xNyAxOTozNzo0MCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0xNyAxMTozNzo0MCArMDgwMA==
+---
+Working with XML Documents and Python - Organizing a Book Collectio
+Hello world级的xml分析教程(基于pyhton)
+
+<http://www.devshed.com/c/a/Python/Working-with-XML-Documents-and-Python/1/>
+有时间的话, 给大家翻译过来.
+
+转至 <http://www.devshed.com>

@@ -1,0 +1,61 @@
+---
+layout: post
+title: pligg安装步骤
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0yMyAxODozNDo1MSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0yMyAxMDozNDo1MSArMDgwMA==
+---
+<strong><span class="tpc_title">[转]pligg安装步骤</span></strong>
+<span class="tpc_content">原文地址：<a href="http://blog.manboo.info/305.htm" target="_blank">http://blog.manboo.info/305.htm</a></span>
+pligg安装步骤
+Posted by topcool on 08/16/06 in Web2.0
+1.下载安装的文件，现在的版本是Beta 7.2 Nightly 138。
+2. 解压缩文件，找到pligg/libs/dbconnect.php.default，重命名为dbconnet.php
+config.default.php 重命名为 config.php并用记事本打开找到下面几行：
+$trackbackURL = “pligg.com”;
+// in this example, pligg is install in http://ashtest1.pligg.com/
+//define(&rsquo;my_base_url&rsquo;, &lsquo;http://ashtest1.pligg.com&rsquo;); // the base url to your site.
+//define(&rsquo;my_pligg_base&rsquo;, &lsquo;&rsquo;); // if installed in a subfolder. leave blank if installed in root.
+去掉//，改成相应的链接，最后不要带/
+3. 将所有的文件上传到FTP空间相应的目录
+4. 修改下列文件的属性为777，注意是修改文件夹及文件夹下所有的文件。
+/configs
+/templates_c
+/templates
+config.php
+/libs/dbconnect.php
+/libs/options.php
+5. 打开浏览器, http://yoururl/install/ 按照说明，一路next就好。当然前提是
+你已经先建立了数据库。
+6. 安全起见，删除/install 目录，把libs/dbconnect.php文件属性改为655。
+现在可以访问http://yourpligg/
+登录帐户为god
+密码12345
+到 god profile , personal data , personal information 旁边的modify修改帐号信息及修改密码
+如果想修改god为admin或者其他名字，可以用phpmyadmin到相应数据库，
+修改users表的内容。
+7.关于提交链接乱码的修改
+这个应该是模板编码的问题，还没有想好怎么解决，可以将模板文件都用utf-8编码。先试试这个：
+将模板的head.tpl文件中
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+改成：
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+8.更换模板
+更改config.php文件里
+$thetemp = “mollio-beat”;这行代码，修改为$thetemp = “模板的名字”;
+模板的名字是指templates目录下的文件夹，原始程序里是三个，觉得默认的mollio-beat
+好看一些，你可以复制该文件夹并重命名，修改$thetemp = “mollio-beat”;
+然后，就可以根据需要来修改你的模板了。
+9. 新发现提交以后必须顶的次数超过5才能在首页显示，
+这个可以在config.php文件中下面这几行改
+// Publishing
+define(&rsquo;votes_to_publish&rsquo;, 5); // 改这个5为其他数字就可以了。
+define(&rsquo;days_to_publish&rsquo;, 10); // After this many days posts will not get published
+10的意思是10天后，提交的这个新发现就不会被发布到首页了，除非已经
+被顶了5次提交到首页了。
+关于config.php的详细修改见这里
+10. 关于pligg的汉化
+可以直接修改libs/lang.conf文件(记事本就可以打开)
+也可以登录到后台Admin Panel &raquo; Modify Language修改，其实也就是修改lang.conf文件。

@@ -1,0 +1,10 @@
+---
+layout: post
+title: FASHION
+author: Alvin
+date: !binary |-
+  MjAwOC0wNi0xOCAxNjoxMDowNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wNi0xOCAwODoxMDowNSArMDgwMA==
+---
+<a href="http://www.douban.com/photos/photo/102975384/"><img src="http://otho.douban.com/view/photo/photo/public/p102078134.jpg" /> </a>

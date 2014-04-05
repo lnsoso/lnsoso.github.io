@@ -1,0 +1,42 @@
+---
+layout: post
+title: Linux 常用快捷键
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0zMSAxMTo0NDo1NSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0zMSAwMzo0NDo1NSArMDgwMA==
+---
+<h3>Console/terminal</h3>
+<ul class="ivim">
+<li>-- - shuts down computer </li>
+<li>- (, , ,…) - switch to <em>n</em>-th console </li>
+<li>- or - - switch to next/previous virtual terminal </li>
+<li>- - clears command line from cursor position to end of line.
+<div align="center"></div>    </li>
+<li>- - clears command line from cursor position to beginning of line. </li>
+<li>- - will paste in anything that was deleted by - or - </li>
+<li>- - clears word to the left </li>
+<li>- - moves cursor to beginning of command line. </li>
+<li> - <strong>command-line autocompletion</strong>. Automatically completes current command line.
+<div align="center"></div>
+If autocompletion script is enabled, then also options and applications parameters are autocompleted.     </li>
+<li> - locks terminal input/output - allows to read console contents when output is going too fast. To unlock, press <strong>Scroll Lock</strong> once again.
+Alternatively, <strong>Scroll Lock</strong> can be enabled using - and disabled with -. <strong>Try last shortcut if your console hangs for unknown reason</strong> - it happened to me many times that I&rsquo;ve locked it accidentaly by pressing <strong>CTRL</strong>-<strong>S</strong>.     </li>
+<li>- and - - scrolls console buffer up/down. Works also when  is enabled. After changing the terminal (-) buffer contents is erased and it is impossible to scroll it. </li>
+<li>- - screen refresh </li>
+<li>- or - - kills current task </li></ul>
+<h3>Kernel shortcuts</h3>
+Following shortcuts must be enabled in kernel, they also must be enabled using proc interface (<em>echo 1 > /proc/sys/kernel/sysrq</em>).
+<ul class="ivim">
+<li>-- - sync all mounted filesystem. Data in buffers is immediately written to disks. </li>
+<li>-- - remounts mounted filesystems read-only </li>
+<li>-- - performs immediate reboot. Don&rsquo;t do it without syncing and unmounting as it can cause massive filesystem corruption </li>
+<li>--, then --, then -- - attempts to sync all mounted filesystems, remounts them read-only and immediately reboots computer. <strong>Fastest way to reboot Linux</strong>. </li></ul>
+<h3>X-Windows shortcuts</h3>
+<ul class="ivim">
+<li>-- or ---
+    changes screen resolution (higher/lower). Only if X-Windows server is configured for multiple resolutions. </li>
+<li>-- - kill X-server. Running applications will be terminated. </li>
+<li>-- - <strong>xkill<strong> - click an application to kill it. </strong></strong></li>
+<li>-- (, , ,…) - switches to <em>n</em>-th text console.</li></ul>

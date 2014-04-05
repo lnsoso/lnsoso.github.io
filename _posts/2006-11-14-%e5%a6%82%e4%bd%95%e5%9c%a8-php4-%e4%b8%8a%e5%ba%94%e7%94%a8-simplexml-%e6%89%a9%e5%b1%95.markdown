@@ -1,0 +1,10 @@
+---
+layout: post
+title: 如何在 PHP4 上应用 SimpleXML 扩展
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0xNCAxNzozMzoxOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0xNCAwOTozMzoxOCArMDgwMA==
+---
+因为工作需要,对 XML 操作采用了 PHP5 里面的 SimpleXML 扩展,但是在准备上线前了解到前端服务器暂时无法升级到 PHP5 那因就需要在小范围内修改,以便程序支持 PHP4 所以在 GG 上搜到了这个 Parser 类,很不错,和 SimpleXML 很像,只做少量修改就可以使原程序支持 PHP4.看一下他的 Demo 大家就应该会使用了. http://www.phppal.com/xml/doc.php

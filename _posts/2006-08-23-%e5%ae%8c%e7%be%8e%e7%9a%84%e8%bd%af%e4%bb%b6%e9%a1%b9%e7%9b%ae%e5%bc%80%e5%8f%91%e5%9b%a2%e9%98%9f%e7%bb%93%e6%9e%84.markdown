@@ -1,0 +1,31 @@
+---
+layout: post
+title: 完美的软件项目开发团队结构
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0yMyAxMzo0NDo0NSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0yMyAwNTo0NDo0NSArMDgwMA==
+---
+<font color="#000080"><strong>项目经理团队(Program Management Team):</strong></font>
+    <strong>设计项目经理(Feature Design PM):</strong> 负责具体的产品设计，写Design Spec。PM 队伍中，80%的PM是做这个。 
+    <strong>发行项目经理(Release PM):</strong> 负责整个项目的流程和进度管理，制定进度表等，协调整个团队的工作。大的PM 队伍中有一人专门做这个。这是整个项目的领头人。大型的项目的成功与否，常常靠得力的发行经理的领导。 
+    <strong>协助项目经理(Supporting PM):</strong> 负责其它产品发行需要照顾到的事情，如客户交流、和市场开发人员交流、负责beta program (初版试行)、等等。大的PM 队伍中少不了这样的人。20%的PM是做这个。 
+<font color="#000080"><strong>开发团队(Development Team):</strong></font> 
+    <strong>开发团队领导(Development Manager):</strong> 负责管理各个开发小组，并对开发编程的工作做总体的规划。 
+    <strong>开发组长(Development Lead):</strong> 负责管理开发工程师，也参加对开发编程的工作做总体的规划。 
+    <strong>开发工程师(Develop Engineer, or Developer):</strong> 负责具体的编程开发。 
+    <strong>构架师(Architect):</strong> 大的产品团队有一两个资深工程师专门做整体系统的设计规划。 
+<strong><font color="#000080">测试团队(Quality Assurance or Test Team):</font></strong>
+    <strong>测试团队领导(QA Manager):</strong> 负责管理测试小组 
+    <strong>测试组长(Test Lead):</strong> 负责管理测试工程师, 制定测试计划等 
+    <strong>测试工程师(Tester or Test Engineer):</strong> 负责具体的测试工作 
+    <strong>测试开发工程师(Developer in Test, or STED):</strong> 负责测试工具的开发 
+<strong><font color="#000080">产品可用性团队(Usability Team):</font></strong>
+    <strong>产品可用性工程师 (Usability Engineer):</strong> 做使用性能的调查和测试，采访客户或将客户邀请来做调查 
+    <strong>界面设计师(UI Designer):</strong> 负责具体的界面设计 
+    <strong>产品设计师(Product Designer):</strong> 负责产品的总体设计， 特别是硬件产品。 
+以上这个团队并不是所有的产品队伍都有。比较小的队伍就没有这些专人，有的时候向别的队伍借用，或雇佣临时工。 
+<font color="#000080"><strong>客户教育或文档团队(User Education, or UE Team):</strong></font> 
+    <strong>文档组长(UE Lead):</strong> 负责管理文档小组 
+    <strong>文档编辑(UE Editor):</strong> 负责具体的文档编辑和撰写 

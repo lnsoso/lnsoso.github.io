@@ -1,0 +1,20 @@
+---
+layout: post
+title: 新奇好玩的电话号计算公式！
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMC0yMSAxODozNDo0NSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yMSAxMDozNDo0NSArMDgwMA==
+---
+<div><font size="3">1.请将电话号码的【前】4位数字输入计算器     
+(若你家电话号码不足8位时,就输入【前】3位   
+2.将它乘以80     
+3.+1     
+4.乘以250     
+5.+电话号码的【后】4位数字     
+6.+再加一次电话号码【后】4位     
+7.将总数-250     
+8.最后将屏幕上的数字【&divide;】2     </font></div>
+<div><font size="3"></font></div>
+<div><font size="3">看看是不是你家的电话</font></div>

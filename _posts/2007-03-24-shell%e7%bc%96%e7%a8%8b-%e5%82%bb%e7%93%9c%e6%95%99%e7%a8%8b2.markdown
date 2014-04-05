@@ -1,0 +1,93 @@
+---
+layout: post
+title: Shell编程 - 傻瓜教程2
+author: Alvin
+date: !binary |-
+  MjAwNy0wMy0yNCAyMTo0MToyOSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMy0yNCAxMzo0MToyOSArMDgwMA==
+---
+ 本文例子代码下载(19K)(codeproject.com)
+    在这篇指南的第一部分，我给了大家一个编写外壳扩展的介绍，并且演示了一个一次操作一个简单文件的上下文菜单扩展。在第二部分中，我将要演示如何在一个操作中操作多个文件。这个扩展是一个注册和卸载COM服务器的实用工具。它还演示了如何使用ATL对话框类<code>CDialogImpl</code>。我将通过解释一些特殊的注册表键来讲第二部分，通过这些键你可以使你的扩展被<em>任何</em>文件调用，而不是那些预先选择的类型(.TXT)。
+    第二部分假设你已经阅读了第一部分，所以你知道了上下文菜单扩展的基本知识。除此之外，你还必须理解COM，ATL和STL的基本知识。
+<h2>上下文菜单扩展的开始-它能做什么？</h2>
+    这个外壳扩展将使你注册和卸载那些在EXE,DLL和OCX里的COM服务器。不像我们在第一部分所做的那样，这个扩展将对所有你右键点击事件发生时所有选中的文件进行操作。
+<h2><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">使用</span><span lang="EN-US">AppWizard </span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">开始</span></h2>
+<p style="TEXT-INDENT: 21pt"><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">运行</span><span lang="EN-US">AppWizard </span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">，做一个新的</span><span lang="EN-US">ATL COM wizard app</span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">。我们叫它</span><code>DllReg</code><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">。在向导中保持所有默认选项，单击完成。我们现在就有了一个空的将会生成</span><span lang="EN-US">DLL</span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">的</span><span lang="EN-US">ATL</span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">项目，但是我们必须添加自己的外壳扩展</span><span lang="EN-US">COM</span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">对象。在</span><span lang="EN-US">ClassView</span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">树中，右键单击</span> <code>DllReg classes</code><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">项，选择</span><code><span lang="EN-US" style="FONT-FAMILY: 'Courier New'">New ATL Object</span></code><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">。</span>
+<p style="TEXT-INDENT: 21pt"><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">在</span><span lang="EN-US">ATL Object </span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">向导，第一面板已经选择了</span><code><span lang="EN-US" style="FONT-FAMILY: 'Courier New'">Simple Object</span></code><span lang="EN-US"> </span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">，只要单击下一步就行了。在第二面板中，在</span><code><span lang="EN-US" style="FONT-FAMILY: 'Courier New'">Short Name</span></code><span lang="EN-US"> </span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">编辑控件中输入</span><code>DllRegShlExt</code> <span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">，然后单击确定（面板中的其它的编辑框将会自动完成）。这就创建了一个类名为</span><code>CDllRegShlExt</code> <span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">的类，它包含了实现一个</span><span lang="EN-US">COM</span><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">对象的基本代码。我们将向这个类添加我们的代码。</span>
+<h2><span style="FONT-FAMILY: 宋体; mso-ascii-font-family: Verdana; mso-hansi-font-family: Verdana">初始化接口</span></h2>
+    在这个扩展中，我们的<code>IShellExtInit::Initialize()</code>实现将会相当不同。有两个原因，第一我们将列举所有选中的文件；第二，我们将测试我们选中的文件是否有注册(register)和卸载(unregister)函数的出口。我们将仅仅考虑那些同时有<code>DllRegisterServer()</code>和<code>DllUnregisterServer()</code>出口的文件。其他的都将被忽略掉。
+    我们将使用列表控件和STL的字符串与列表类，所以你必须首先在<code>stdafx.h</code> 文件中添加如下行：
+<pre>#include <commctrl.h>#include <string>#include
+<list>#include <atlwin.h>typedef std::list<std::basic_string<TCHAR> > string_list;</pre>
+    我们的<code>CDllRegShlExt</code>类也将需要一些成员变量：
+<pre>protected:    HBITMAP     m_hRegBmp;    HBITMAP     m_hUnregBmp;    string_list m_lsFiles;    TCHAR       m_szDir[MAX_PATH];</pre>
+<code>   </code> <code>CDllRegShlExt</code>的构造函数中将加载两幅上下文菜单中使用的位图：
+<pre>CDLLRegShlExt::CDLLRegShlExt(){    m_hRegBmp = LoadBitmap ( _Module.GetModuleInstance(),                             MAKEINTRESOURCE(IDB_REGISTERBMP) );    m_hUnregBmp = LoadBitmap ( _Module.GetModuleInstance(),                               MAKEINTRESOURCE(IDB_UNREGISTERBMP) );}</pre>
+    在你将<code>IShellExtInit</code>添加到了被<code>CDllRegShlExt</code>实现的接口列表中之后(关于这个操作请参见第一部分)，我们开始写<code>Initialize()</code>函数。
+<code>  Initialize()</code>将执行如下步骤：
+<ol>
+<li>改变当前目录为在资源浏览器窗口中正在被查看的目录； </li>
+<li>列举所有被选中的文件； </li>
+<li>对每一个文件，试图使用<code>LoadLibrary()</code>加载它； </li>
+<li>如果<code>LoadLibrary()</code>成功，看该文件是否有<code>DllRegisterServer()</code>和<code>DllUnregisterServer()</code>的函数出口； </li>
+<li>如果两个出口都被找到了，添加该文件的的文件名到我们能操作的文件列表中，<code>m_lsFiles</code>。 </li></ol>
+<pre>HRESULT CDllRegShlExt::Initialize (     LPCITEMIDLIST pidlFolder,    LPDATAOBJECT pDataObj,    HKEY hProgID ){TCHAR     szFile    [MAX_PATH];TCHAR     szFolder  [MAX_PATH];TCHAR     szCurrDir [MAX_PATH];TCHAR*    pszLastBackslash;UINT      uNumFiles;HDROP     hdrop;FORMATETC etc = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };STGMEDIUM stg = { TYMED_HGLOBAL };HINSTANCE hinst;bool      bChangedDir = false;HRESULT (STDAPICALLTYPE* pfn)();</pre>
+    非常多的局部变量！第一步是从传进去的<code>pDataObj</code>参数中获得一个HDROP。这和第一部分的扩展有些相似。
+<pre>    // Read the list of folders from the data object.  They're stored in HDROP    // format, so just get the HDROP handle and then use the drag 'n' drop APIs    // on it.    if ( FAILED( pDO->GetData ( &etc, &stg )))        return E_INVALIDARG;    // Get an HDROP handle.    hdrop = (HDROP) GlobalLock ( stg.hGlobal );    if ( NULL == hdrop )        {        ReleaseStgMedium ( &stg );        return E_INVALIDARG;        }    // Determine how many files are involved in this operation.    uNumFiles = DragQueryFile ( hdrop, 0xFFFFFFFF, NULL, 0 );</pre>
+    接下来要做的就是一个获取下一个文件名的for循环(使用<code>DragQueryFile()</code>)并试图用<code>LoadLibrary()</code>装载它。在该文的实际例子工程当中预先做了一些目录改变的工作。在这儿我把它忽略了，因为它有点儿太长了。
+<pre>    for ( UINT uFile = 0; uFile < uNumFiles; uFile++ )        {        // Get the next filename.        if ( 0 == DragQueryFile ( hdrop, uFile, szFile, MAX_PATH ))            continue;        // Try & load the DLL.        hinst = LoadLibrary ( szFile );                if ( NULL == hinst )            continue;</pre>
+    下一步，我们将看看它是否有两个必要函数的出口。
+<pre>        // Get the address of DllRegisterServer();        (FARPROC&) pfn = GetProcAddress ( hinst, "DllRegisterServer" );        // If it wasn't found, skip the file.        if ( NULL == pfn )            {            FreeLibrary ( hinst );            continue;            }        // Get the address of DllUnregisterServer();        (FARPROC&) pfn = GetProcAddress ( hinst, "DllUnregisterServer" );        // If it was found, we can operate on the file, so add it to        // our list of files (m_lsFiles).        if ( NULL != pfn )            {            m_lsFiles.push_back ( szFile );            }        FreeLibrary ( hinst );        }   // end for</pre>
+    最后一步就是(在最后一个if块中)添加文件名到<code>m_lsFiles</code>中。<code>m_lsFiles</code>是一个保存字符串的STL列表集。这个列表在稍后，就是当我们遍历所有文件注册和卸载的时候将被用到。
+    在<code>Initialize()</code>的最后要做的就是释放资源并返回恰当的值给Explorer。
+<pre>    // Release resources.    GlobalUnlock ( stg.hGlobal );    ReleaseStgMedium ( &stg );    // If we found any files we can work with, return S_OK.  Otherwise,    // return E_INVALIDARG so we don't get called again for this right-click    // operation.    return ( m_lsFiles.size() > 0 ) ? S_OK : E_INVALIDARG;}</pre>
+    如果你看一眼例子项目代码的话，你会发现我不得不都过查看文件的文件名来计算出哪个目录正在被查看。你也许会纳闷为什么我不用<code>pidlFolder</code>参数。虽然在<code>pidlFolder</code>的文档中，它被解释为“包含正在显示上下文菜单的项目的文件夹的项目标志列表(the item identifier list for the folder that contains the item whose context menu is being displayed)(很抱歉我不能把这句话翻译好，贴出原文供参考)”。可是，我在Windows 98 上测试的时候，这个参数总是为NULL，所以它毫无用处。
+<h2>添加我们的菜单项</h2>
+    接下来的是<code>IContextMenu</code>方法。和以前一样，你需要添加<code>IContextMenu</code>到<code>CDllRegShlExt</code>实现的接口列表中。再一次的，做这些的步骤在第一部分中。
+    我们将添加两个菜单项到菜单中，一个为注册选中的文件，一个是卸载它们。这些项看起来如下：
+    我们的<code>QueryContextMenu()</code>实现和第一部分一样开始。我们检查<code>uFlags</code>，如果<code>CMF_DEFAULTONLY</code>标志存在的话立即返回。 
+<pre>HRESULT CDLLRegShlExt::QueryContextMenu (    HMENU hmenu,    UINT  uMenuIndex,    UINT  uidFirstCmd,    UINT  uidLastCmd,    UINT  uFlags ){UINT uCmdID = uidFirstCmd;    // If the flags include CMF_DEFAULTONLY then we shouldn't do anything.    if ( uFlags & CMF_DEFAULTONLY )        {        return MAKE_HRESULT ( SEVERITY_SUCCESS, FACILITY_NULL, 0 );        }</pre>
+    下面，我们添加"Register servers"菜单项。这儿有些新东西：我们给菜单项设置了位图。这和WinZip的菜单有点儿相似，也在菜单命令旁边显示一个小图标。
+<pre>    // Add our register/unregister items.    InsertMenu ( hmenu, uMenuIndex, MF_STRING | MF_BYPOSITION, uCmdID++,                 _T("Register server(s)") );    // Set the bitmap for the register item.    if ( NULL != m_hRegBmp )        {        SetMenuItemBitmaps ( hmenu, uMenuIndex, MF_BYPOSITION, m_hRegBmp, NULL );        }    uMenuIndex++;</pre>
+    <code>SetMenuItemBitmaps()</code>API函数我们宰菜单旁显示一个小齿轮的方法。注意<code>uCmdID</code>是自增加的，这样下一次我们调用<code>InsertMenu()</code>，它的命令ID将会比前一个大1。在这步骤的最后，<code>uMenuIndex</code> 被增加是因为我们的第二个菜单项将被显示在第一个之后。
+    接着说第二个菜单项。它和第一个非常相似。
+<pre>    InsertMenu ( hmenu, uMenuIndex, MF_STRING | MF_BYPOSITION, uCmdID++,                 _T("Unregister server(s)") );    // Set the bitmap for the unregister item.    if ( NULL != m_hUnregBmp )        {        SetMenuItemBitmaps ( hmenu, uMenuIndex, MF_BYPOSITION, m_hUnregBmp, NULL );        }</pre>
+    最后，我们告诉Explorer我们添加了几个菜单项。
+<pre>    return MAKE_HRESULT ( SEVERITY_SUCCESS, FACILITY_NULL, 2 );</pre>
+<h2>提供敏感帮助和动词</h2>
+    和前面的一样，当Explorer需要显示敏感帮助或者获得动词的时候，<code>GetCommandString()</code>方法被调用。和前一个稍稍不同的是我们添加了2个菜单项，所以我们必须首先检查<code>uCmdID</code>参数来知道Explorer正在呼叫哪个菜单项。
+<pre>#include <atlconv.h>HRESULT CDLLRegShlExt::GetCommandString (     UINT  uCmdID,    UINT  uFlags,     UINT* puReserved,    LPSTR szName,    UINT  cchMax ){LPCTSTR szPrompt;    USES_CONVERSION;    if ( uFlags & GCS_HELPTEXT )        {        switch ( uCmdID )            {            case 0:                szPrompt = _T("Register all selected COM servers");            break;            case 1:                szPrompt = _T("Unregister all selected COM servers");            break;            default:                return E_INVALIDARG;            break;            }</pre>
+    如果<code>uCmdID</code>为0，那么我们正在调用第一个(register)。如果为1，则在调用第二个(unregister)。在确定帮助字符串之后，我们将它拷贝到提供的缓存当中，必要的话，先将它转换成Unicode形式。
+<pre>        // Copy the help text into the supplied buffer.  If the shell wants        // a Unicode string, we need to case szName to an LPCWSTR.        if ( uFlags & GCS_UNICODE )            {            lstrcpynW ( (LPWSTR) szName, T2CW(szPrompt), cchMax );            }        else            {            lstrcpynA ( szName, T2CA(szPrompt), cchMax );            }        }</pre>
+    在这个扩展中，我同样也写了代码提供一个动词。然而，我在Windows 98下测试的时候，Explorer从来不调用<code>GetCommandString()</code>来获取一个动词。我甚至写了一个在DLL中调用<code>ShellExecute()</code>的测试程序然后试图使用动词，但是它还是不工作。我不知道这个情况在Windows NT下是否会有不同。这儿，我忽略了那些动词相关的代码，如果你感兴趣的话，你可以在例子项目中找到。
+<h2>执行用户的选择</h2>
+    当用户点击我们菜单中的一个时，Explorer调用我们的<code>InvokeCommand()</code>方法。<code>InvokeCommand()</code>首先检查了<code>lpVerb</code>的高位字(high word)。如果它是非零的，则它是被调用的动词的名称，因为我们知道动词不能正常工作(至少在Win 98下)，我们将它忽略了。否则，如果它的低位字(low word)是0或1，那么我们知道其中有一个菜单项目被点击了。
+<pre>HRESULT CDllRegShlExt::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo ){    // If lpVerb really points to a string, ignore this function call and bail out.    if ( 0 != HIWORD( pInfo->lpVerb ))        return E_INVALIDARG;    // Check that lpVerb is one of our commands (0 or 1)    switch ( LOWORD( pInfo->lpVerb ))        {        case 0:        case 1:            {            CProgressDlg dlg ( &m_lsFiles, pInfo );            dlg.DoModal();            return S_OK;            }        break;        default:            return E_INVALIDARG;        break;        }}</pre>
+    如果<code>lpVerb</code>是0或1，我们创建一个对话框（从ATL类CDialogImpl继承），然后向它传递文件名列表。
+    所有实际的工作都在<code>CProgressDlg</code>类中完成。它的<code>OnInitDialog()</code>函数初始化列表控件，然后调用<code>CProgressDlg::DoWork()</code>。<code>DoWork()</code>遍历在<code>CDllRegShlExt::Initialize()</code>中生成的文件名列表，然后调用文件中的合适的函数。基本代码如下；并不完全，因为我删掉了错误检查和填充列表控件的部分。不过这已经足够向大家演示如何遍历一个文件列表并执行每一个。
+<pre>void CProgressDlg::DoWork(){HRESULT (STDAPICALLTYPE* pfn)();string_list::const_iterator it, itEnd;HINSTANCE hinst;LPCSTR    pszFnName;HRESULT   hr;WORD      wCmd;    wCmd = LOWORD ( m_pCmdInfo->lpVerb );    // We only support 2 commands, so check the value passed in lpVerb.    if ( wCmd > 1 )        return;    // Determine which function we'll be calling.  Note that these strings are    // not enclosed in the _T macro, since GetProcAddress() only takes an    // ANSI string for the function name.    pszFnName = wCmd ? "DllUnregisterServer" : "DllRegisterServer";    for ( it = m_pFileList->begin(), itEnd = m_pFileList->end();          it != itEnd;          it++ )        {        // Try to load the next file.        hinst = LoadLibrary ( it->c_str() );        if ( NULL == hinst )            continue;        // Get the address of the register/unregister function.        (FARPROC&) pfn = GetProcAddress ( hinst, pszFnName );        // If it wasn't found, go on to the next file.        if ( NULL == pfn )            continue;        // Call the function!        hr = pfn();</pre>
+    我需要解释一下那个<code>for</code>循环，因为STL集合类是有点令人胆战心惊的，如果你不习惯使用它的话。<code>m_pFileList</code>是一个指向在<code>CDllRegShlExt</code>类中的<code>m_lsFiles</code>列表的指针。（这个指针被传递给了<code>CProgressDlg</code>的构造器。）STL<code>列表</code>集有一个类型叫做<code>const_iterator</code>，这是一个相似于MFC中<code>POSITION</code>类型的抽象实体。一个<code>const_iterator</code>变量像一个列表中常量对象的指针，所以这个遍历器(iterator)可以使用<code>-></code>访问它本身。遍历器可以使用<code>++</code> 来自增实现在列表中前进。
+    所以，这个<code>for</code>循环的初始化表达式调用<code>list::begin()</code>来获取一个遍历器“指向”列表中的第一个字符串，然后调用<code>list::end()</code>来获取一个遍历器“指向”列表的“末尾”，最后一个字符串的位置。 (我把这些词语放在引号里是为了强调指向，开始，和末尾的概念都是被<code>const_iterator</code>类型抽象了的，而且必须通过<code>const_iterator</code>的方法[像<code>begin()</code>]或者操作符[像<code>++</code>]。)这些遍历器被分别地赋给<code>it</code>和<code>itEnd</code>。 这个循环一直进行着，直到<code>it</code>等于<code>itEnd</code>；意思是，当<code>it</code>还没有到达列表的“末尾”时。这个遍历器<code>it</code>将会在循环过程每次自增加，这样它可以每次到达一个列表中的字符串。
+    在遍历其中，表达式<code>it->c_str()</code> 使用<code>-></code>操作符。因为<code>it</code>像一个指向<code>string</code>的指针(记住，<code>m_pFileList</code>是一个STL <code>string</code>的列表)，<code>it->c_str()</code>在<code>it</code>当前所指向的<code>string</code>中调用<code>c_str()</code>函数。<code>c_str()</code>返回一个C类型的字符串指针，既然这样，就是一个<code>LPCTSTR</code>。
+    <code>DoWork()</code>的余下部分是释放内存和错误检查。你可以从例子项目的<code>ProgressDlg.cpp</code>文件中获取所有代码。
+    (我刚刚意识到叫一个变量为"it"，是多么的奇怪。很抱歉！) :)
+<h2>注册外壳扩展</h2>
+    这个<code>DllReg</code>扩展对可执行文件进行操作，所以我们注册它被EXE,DLL和OCX文件调用。和第一部分中一样，我们可以在RGS脚本中做这些事，<code>DllRegShlExt.rgs</code>。下面是注册我们的扩展为一个对于上述扩展名文件的上下文菜单扩展必需的脚本。
+<pre>HKCR{    NoRemove dllfile    {        NoRemove shellex        {            NoRemove ContextMenuHandlers            {                ForceRemove DLLRegSvr = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'            }        }    }    NoRemove exefile    {        NoRemove shellex        {            NoRemove ContextMenuHandlers            {                ForceRemove DLLRegSvr = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'            }        }    }    NoRemove ocxfile    {        NoRemove shellex        {            NoRemove ContextMenuHandlers            {                ForceRemove DLLRegSvr = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'            }        }    }}</pre>
+    RGS文件的格式，以及关键词<code>NoRemove</code>和<code>ForceRemove</code>在第一部分已经解释过了，如果你忘了他们的意思的话。 
+    正如我们前一个扩展一样，在NT/2000下，我们需要添加我们的扩展到“认证的(approved)”扩展列表当中。实现这个过程的代码在 <code>DllRegisterServer()</code>和<code>DllUnregisterServer()</code>函数中。我不想展示这些代码，因为它仅仅是一些简单的注册表访问，但是你可以从例子项目中中到这些代码。
+<h2>看起来应该什么样呢？</h2>
+    当你点击我们其中的一个菜单的时候，对话框就会出现，显示操作的结果：
+    列表控件显示了每个文件的文件名和操作是否成功。当你选中一个项时，一个更详细的消息将被显示在下方。如果失败的话，将有调用失败的描述。
+<h2>注册扩展的其他方法</h2>
+    到现在为止，我们的扩展只被确定的文件类型调用。通过在<code>HKCR\*</code>下注册成为一个上下文菜单扩展使得被任何文件操作调用成为可能：
+<pre>HKCR{    NoRemove *    {        NoRemove shellex        {            NoRemove ContextMenuHandlers            {                ForceRemove DLLRegSvr = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'            }        }    }}</pre>
+    <code>HKCR\*</code>键被所有文件调用的外壳扩展。注意文档中所说的该扩展也被其他外壳对象所调用（文件，目录，虚拟文件夹，控制面板项等等），但是我在测试中所见到的并不是这样。这些扩展仅仅被文件系统中的文件所调用。
+    在外壳版本4.71以上，还有一个叫做<code>HKCR\AllFileSystemObjects</code>的键。如果我们在这个键下注册，我们的扩展将被文件系统中所有的文件和目录调用，根目录除外。（根目录调用的扩展在<code>HKCR\Drive</code>下注册。)然而，当我在这个键下注册的时候我看到一些奇怪的现象。“发送到”菜单也使用这个键，而它混在了<code>DllReg</code>菜单中间：
+    你同样可以编写一个操作目录的上下文菜单扩展。要这样的例子的话，请看我的文章：
+   <a href="http://www.codeproject.com/tips/DirClean.asp" target="_blank">A Utility to Clean Up Compiler Temp Files(一个清除编译临时文件的实用工具)</a>。（译者：确实是个好玩艺 :)）
+    最后，在外壳版本4.71以上，你可以使你的上下文菜单在用户右键单击一个正在查看目录（包括桌面）的资源管理器窗口背景时被调用。为了使你的扩展被这么调用，你必须在<code>HKCR\Directory\Background\shellex\ContextMenuHandlers</code>键下注册。使用这个方法，你可以向你的桌面上下文菜单中添加菜单项目或者其他任何目录。传递给<code>IShellExtInit::Initialize()</code>的参数有点儿不同，我会在我以后的文章中加以说明。
+<h2>待续……</h2>
+    接着的第三部分我们将实践一种新的扩展，查询。它将显示一些外壳对象的弹出式描述。我还将向你展示如何在外壳扩展中使用MFC。
+    <span style="FONT-SIZE: 10.5pt; FONT-FAMILY: 宋体; mso-ascii-font-family: Times New Roman; mso-hansi-font-family: Times New Roman; mso-bidi-font-size: 12.0pt; mso-bidi-font-family: Times New Roman; mso-font-kerning: 1.0pt; mso-ansi-language: EN-US; mso-fareast-language: ZH-CN; mso-bidi-language: AR-SA"></span><span style="FONT-SIZE: 10.5pt; FONT-FAMILY: 宋体; mso-ascii-font-family: 'Times New Roman'; mso-hansi-font-family: 'Times New Roman'; mso-bidi-font-size: 12.0pt; mso-bidi-font-family: 'Times New Roman'; mso-font-kerning: 1.0pt; mso-ansi-language: EN-US; mso-fareast-language: ZH-CN; mso-bidi-language: AR-SA">你可以从下面的网址获得这个和其他文章的最新版本：</span><span lang="EN-US" style="FONT-SIZE: 10.5pt; FONT-FAMILY: 'Times New Roman'; mso-bidi-font-size: 12.0pt; mso-font-kerning: 1.0pt; mso-ansi-language: EN-US; mso-fareast-language: ZH-CN; mso-bidi-language: AR-SA; mso-fareast-font-family: 宋体">http://home.inreach.com/mdunn/code/</span> 

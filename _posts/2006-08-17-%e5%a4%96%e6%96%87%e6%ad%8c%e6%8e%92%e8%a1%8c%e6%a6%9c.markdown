@@ -1,0 +1,31 @@
+---
+layout: post
+title: 外文歌排行榜
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0xNyAxMjoyNjo0MCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0xNyAwNDoyNjo0MCArMDgwMA==
+---
+终于找到一个看外文歌排行榜的网站了，还是“狗哥”的。
+http://www.google.com/trends/music
+1  Map Of The Problematique  Muse  New! 
+2  Fix You  Coldplay  New! 
+3  The Eraser  Thom Yorke   +2 
+4  Green Eyes  Coldplay   -2 
+5  Analyse  Thom Yorke   +2 
+6  Clocks  Coldplay  New! 
+7  Skip Divided  Thom Yorke   -3 
+8  Love You More  Alexi Murdoch  New! 
+9  A Day Like Today  Tom McRae   +3 
+10  Black Swan  Thom Yorke   -7 
+11  Use It  The New Pornographers   -3 
+12  The Bleeding Heart Show  The New Pornographers  New! 
+13  Seven Nation Army  The White Stripes   -2 
+14  Twin Cinema  The New Pornographers  New! 
+15  Savin' Me  Nickelback  New! 
+16  Take A Bow  Muse  New! 
+17  Politik  Coldplay  New! 
+18  Supermassive Black Hole  Muse  New! 
+19  Harrowdown Hill  Thom Yorke   -1 
+20  You're Beautiful  James Blunt  New!

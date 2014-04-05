@@ -1,0 +1,12 @@
+---
+layout: post
+title: 每日一次Blogging&#8230;
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0wOC0xOCAwMDowMjo1OSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0xNyAxNjowMjo1OSArMDgwMA==
+---
+果然是真理...
+ 
+ 

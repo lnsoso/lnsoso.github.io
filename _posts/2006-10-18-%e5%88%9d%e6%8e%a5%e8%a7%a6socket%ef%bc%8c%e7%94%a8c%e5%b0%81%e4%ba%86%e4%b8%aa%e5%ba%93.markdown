@@ -1,0 +1,594 @@
+---
+layout: post
+title: 初接触SOCKET，用C++封了个库
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMC0xOCAyMjowNjoxOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0xOCAxNDowNjoxOCArMDgwMA==
+---
+分为NetSock.h和NetSock.cpp两个文件，只是Server的基础接口的实现。其中一些Windows Kernel对象的封装陆续在以后提供代码给大家。
+ 
+<font color="#ff0000">//! Faex library
+//! FileName: NetSock.h
+//! LastEdit: 2006/06/01
+//! Author:     Gavin Kwoe
+//! Remark:     <None></font>
+#if _MSC_VER > 1000
+#pragma once
+#endif
+#ifndef __NETSOCK_H
+#define __NETSOCK_H
+#include "Win32.h"
+#include "FaexDll.h"
+#include <WinSock2.h>
+#include "KnrlMutex.h"
+#include "KnrlThread.h"
+// namespace begin
+namespace faex
+{
+//////////////////////////////////
+// Functions
+#ifdef __cplusplus
+ extern "C" {
+#endif
+LPCSTR Sock_GetErrorDesc( int nError );
+ULONG Sock_GetLocalIP( void );
+LPCSTR Sock_GetHostName( void );
+#ifdef __cplusplus
+ }
+#endif
+//////////////////////////////////
+// Classes
+template < 
+ int AddrFamily,
+ int SockType,
+ int NetProtocol
+>
+class FAEX_API CNetSock :
+ public ISyncObject
+{
+private:
+ static DWORD s_dwNetReffer;
+ static WSADATA s_wsaData;
+ CKnrlMutex m_Mutex;
+ SOCKET  m_Socket;
+protected:
+ CNetSock( void );
+ SOCKET GetSocket( void ) const;
+ BOOL Lock( DWORD dwMilliseconds = INFINITE, DWORD dwSpinCount = 1 )
+ {
+  return m_Mutex.Lock( dwMilliseconds, dwSpinCount );
+ }
+ BOOL Unlock( void )
+ {
+  return m_Mutex.Unlock();
+ }
+public:
+ ~CNetSock( void );
+private:
+ static void InitNetwork( void );
+ static void UninitNetwork( void );
+};
+//////////////////////////////////
+// Classes
+class FAEX_API CTCPServer : 
+ public CNetSock<AF_INET, SOCK_STREAM, IPPROTO_TCP>
+{
+public:
+ enum { 
+  DEF_RECVBUFSIZE = 8192,
+  MAX_CONNECTION = WSA_MAXIMUM_WAIT_EVENTS
+ };
+ typedef DWORD (CALLBACK *LPAPCEVENT)( SOCKET sock, DWORD dwParam0, DWORD dwParam1 );
+ typedef SOCKET * LPSOCKET;
+private:
+ typedef struct tagServerInfo
+ {
+  UINT  nActiveConn;
+  UINT  nLimitConn;
+  LPSOCKET pAllSocks;
+  LPWSAEVENT pAllEvents;
+  ULONG  ulRecvSize;
+  LPBYTE  pRecvBuffer;
+  LPAPCEVENT pfnOnAPCAcpt; // On accept new connection
+  LPAPCEVENT pfnOnAPCRecv; // On receive datas from connection
+  LPAPCEVENT pfnOnAPCClos; // On close connection
+  HANDLE  hStopEvent;
+ } SERVERINFO, *LPSERVERINFO;
+ enum { NONE, READY, LISTENING };
+ UINT    m_uStatus;
+ ULONG    m_ulMaxConn;
+ ULONG    m_ulRecvBuf;
+ LPSERVERINFO  m_pServInfo;
+ CKnrlThread   m_theThread;
+private:
+ static DWORD ServerThreadProc( LPVOID pvParam );
+ static BOOL  OnAcceptConn( LPSERVERINFO pServInfo, DWORD dwID );
+ static BOOL  OnReceiveDatas( LPSERVERINFO pServInfo, DWORD dwID );
+ static BOOL  OnCloseConn( LPSERVERINFO pServInfo, DWORD dwID );
+ static void  FreeServerInfo( LPSERVERINFO pServInfo );
+public:
+ CTCPServer( void );
+ CTCPServer( ULONG ulAddress, USHORT uPort );
+ ~CTCPServer( void );
+ void InitializeServer( ULONG ulAddress, USHORT uPort );
+ void FinalizeServer( void );
+ void StartServer( LPAPCEVENT pfnOnAcpt, LPAPCEVENT pfnOnRecv, LPAPCEVENT pfnOnClos );
+ void StopServer( void );
+ void SetMaxConn( ULONG ulMaxConn = MAX_CONNECTION );
+ void SetRecvBuffer( ULONG ulSize = DEF_RECVBUFSIZE );
+ UINT GetActConn( void ) const;
+ UINT GetMaxConn( void ) const;
+};
+typedef CTCPServer   *LPTCPSERVER;
+typedef const CTCPServer *LPCTCPSERVER;
+//////////////////////////////////
+// Members
+inline UINT
+CTCPServer::GetActConn( void ) const
+{
+ if ( m_uStatus >= LISTENING )
+  return m_pServInfo->nActiveConn;
+ else
+  return 0;
+}
+inline UINT
+CTCPServer::GetMaxConn( void ) const
+{
+ if ( m_uStatus >= READY )
+  return m_ulMaxConn;
+ else
+  return 0;
+}
+inline void
+CTCPServer::SetRecvBuffer( ULONG ulSize )
+{
+ m_ulRecvBuf = ulSize;
+}
+inline void
+CTCPServer::SetMaxConn( ULONG ulMaxConn )
+{
+ assert( ulMaxConn <= MAX_CONNECTION );
+    m_ulMaxConn = ulMaxConn;
+}
+}; // namespace faex
+#endif
+ 
+<font color="#ff0000">//! Faex library
+//! FileName: NetSock.cpp
+//! LastEdit: 2006/06/01
+//! Author:     Gavin Kwoe
+//! Remark:     <None></font>
+#include "Win32.h"
+#include "NetSock.h"
+#include <stdexcept>
+#pragma comment(lib,"Ws2_32.lib")
+using namespace std;
+// namespace begin
+namespace faex
+{
+//////////////////////////////////
+// Macros
+#undef WSARET_SUCCEED
+#define WSARET_SUCCEED (0)
+#undef  SOCKID_LISTEN
+#define SOCKID_LISTEN (0)
+//////////////////////////////////
+// Implementations
+LPCSTR Sock_GetErrorDesc( int nError )
+{
+ switch ( nError )
+ {
+ case WSARET_SUCCEED:
+  return "Succeeded.";
+ // 内容过长, 其他略..........
+ }
+ return "";
+}
+ULONG Sock_GetLocalIP( void )
+{
+ static ULONG s_ulLocalIP = 0;
+ 
+ ULONG  ulAddr;
+ LPHOSTENT pHostLocal;
+ if ( s_ulLocalIP == 0 )
+ {
+  pHostLocal = gethostbyname( Sock_GetHostName() );
+  if( NULL != pHostLocal )
+  {
+   ulAddr = *((LPLONG)&pHostLocal->h_addr);
+   s_ulLocalIP = htonl(ulAddr);
+  }
+ }
+ return s_ulLocalIP;
+}
+LPCSTR Sock_GetHostName( void )
+{
+ static CHAR szHostName[MAX_PATH] = { 0 };
+ 
+ if ( szHostName[0] == '\0' )
+  gethostname( szHostName, MAX_PATH );
+ return &szHostName[0];
+}
+//////////////////////////////////
+// Implementations
+template <int AF, int ST, int NP>
+DWORD CNetSock<AF, ST, NP>::s_dwNetReffer = 0;
+template <int AF, int ST, int NP>
+WSADATA CNetSock<AF, ST, NP>::s_wsaData = { 0 };
+//////////////////////////////////
+// Implementations
+template <
+ int AF,
+ int ST,
+ int NP
+>
+CNetSock<AF, ST, NP>::CNetSock( void )
+{
+ CScopeLock guard(this);
+ InitNetwork();
+ m_Socket = WSASocket( AF, ST, NP, NULL, 0, 0 );
+ if ( INVALID_SOCKET == m_Socket )
+  throw runtime_error( Sock_GetErrorDesc(WSAGetLastError()) );
+}
+template <
+ int AF,
+ int ST,
+ int NP
+>
+CNetSock<AF, ST, NP>::~CNetSock( void )
+{
+ CScopeLock guard(this);
+ closesocket( m_Socket );
+ UninitNetwork();
+}
+template <
+ int AF,
+ int ST,
+ int NP
+>
+void
+CNetSock<AF, ST, NP>::InitNetwork( void )
+{
+ if ( s_dwNetReffer == 0 )
+ {
+  int nRet = WSAStartup( WINSOCK_VERSION, &s_wsaData );
+  if ( WSARET_SUCCEED != nRet )
+   throw runtime_error( Sock_GetErrorDesc(WSAGetLastError()) );
+  if ( LOBYTE(s_wsaData.wVersion) != LOBYTE(WINSOCK_VERSION) ||
+    HIBYTE(s_wsaData.wVersion) != HIBYTE(WINSOCK_VERSION) )
+  {
+   WSACleanup();
+   throw runtime_error( "Cannot find a usable WinSock DLL." );
+  }
+ }
+ s_dwNetReffer++;
+}
+template <
+ int AF,
+ int ST,
+ int NP
+>
+void 
+CNetSock<AF, ST, NP>::UninitNetwork( void )
+{
+ if ( (s_dwNetReffer > 0) && !(--s_dwNetReffer) )
+ {
+  int nRet = WSACleanup();
+  if ( nRet == SOCKET_ERROR )
+   throw runtime_error( Sock_GetErrorDesc(WSAGetLastError()) );
+ }
+}
+template <
+ int AF,
+ int ST,
+ int NP
+>
+inline SOCKET
+CNetSock<AF, ST, NP>::GetSocket( void ) const
+{
+ return m_Socket;
+}
+//////////////////////////////////
+// Implementations
+CTCPServer::CTCPServer( void ) :
+ m_uStatus(NONE),
+ m_ulMaxConn(MAX_CONNECTION),
+ m_ulRecvBuf(DEF_RECVBUFSIZE),
+ m_pServInfo(NULL)
+{
+}
+CTCPServer::CTCPServer( ULONG ulAddress, USHORT uPort ) :
+ m_uStatus(NONE),
+ m_ulMaxConn(MAX_CONNECTION),
+ m_ulRecvBuf(DEF_RECVBUFSIZE),
+ m_pServInfo(NULL)
+{
+ InitializeServer( ulAddress, uPort );
+}
+CTCPServer::~CTCPServer( void )
+{
+ FinalizeServer();
+}
+void
+CTCPServer::InitializeServer( ULONG ulAddress, USHORT uPort )
+{
+ int   nRet;
+ int   nReason;
+ SOCKADDR_IN addrIn;
+ SOCKET  sockListen;
+ CScopeLock guard(this);
+ if ( m_uStatus >= READY )
+ {
+  WSASetLastError( WSAEALREADY );
+  return;
+ }
+ sockListen = GetSocket();
+ addrIn.sin_family  = AF_INET;
+ addrIn.sin_port   = htons(uPort);
+ addrIn.sin_addr.s_addr = htonl(ulAddress);
+ nRet = bind( sockListen,(LPSOCKADDR)&addrIn, sizeof(SOCKADDR) );
+ if ( WSARET_SUCCEED != nRet )
+ {
+  nReason = WSAGetLastError();
+  goto __FAILED;
+ }
+ nRet = listen( sockListen, m_ulMaxConn );
+ if ( WSARET_SUCCEED != nRet )
+ {
+  nReason = WSAGetLastError();
+  goto __FAILED;
+ }
+ m_uStatus = READY;
+ return;
+__FAILED:
+ shutdown( sockListen, SD_BOTH );
+ WSASetLastError( nReason );
+ throw runtime_error( Sock_GetErrorDesc(nReason) );
+}
+void
+CTCPServer::FinalizeServer( void  )
+{
+ CScopeLock guard(this);
+ StopServer();
+ m_uStatus = NONE;
+}
+void
+CTCPServer::FreeServerInfo( LPSERVERINFO pServInfo )
+{
+ if ( NULL != pServInfo )
+ {
+  //if ( NULL != pServInfo->hStopEvent )
+  // CloseHandle( pServInfo->hStopEvent );
+  if ( NULL != pServInfo->pAllSocks )
+   free( pServInfo->pAllSocks );
+  if ( NULL != pServInfo->pAllEvents )
+   free( pServInfo->pAllEvents );
+  if ( NULL != pServInfo->pAllEvents )
+   free( pServInfo->pRecvBuffer );
+  free( pServInfo );
+ }
+}
+void
+CTCPServer::StartServer( LPAPCEVENT pfnOnAcpt, LPAPCEVENT pfnOnRecv, LPAPCEVENT pfnOnClos )
+{
+ int   nRet;
+ int   nReason;
+ BOOL  bRet;
+ WSAEVENT hEvent;
+ SOCKET  sockListen;
+ //SECURITY_ATTRIBUTES sa;
+ CScopeLock guard(this);
+ if ( m_uStatus < READY )
+ {
+  WSASetLastError( WSASYSNOTREADY );
+  return;
+ }
+ if ( m_uStatus >= LISTENING )
+ {
+  WSASetLastError( WSAEALREADY );
+  return;
+ }
+ sockListen = GetSocket();
+ m_pServInfo = (LPSERVERINFO)malloc(sizeof(SERVERINFO));
+ if ( NULL == m_pServInfo )
+ {
+  nReason = ERROR_OUTOFMEMORY;
+  goto __FAILED;
+ }
+ ZeroMemory( m_pServInfo, sizeof(SERVERINFO) );
+ hEvent = WSACreateEvent();
+ if ( hEvent == WSA_INVALID_EVENT )
+ {
+  nReason = WSAGetLastError();
+  goto __FAILED;
+ }
+ nRet = WSAEventSelect( sockListen, hEvent, FD_ACCEPT|FD_CLOSE );
+ if ( WSARET_SUCCEED != nRet )
+ {
+  nReason = WSAGetLastError();
+  goto __FAILED;
+ }
+ if ( NULL == m_pServInfo->pRecvBuffer )
+ {
+  m_pServInfo->ulRecvSize  = m_ulRecvBuf;
+  m_pServInfo->pRecvBuffer = (LPBYTE)malloc(sizeof(BYTE) * m_ulRecvBuf);
+ }
+ m_pServInfo->nActiveConn = 1;
+ m_pServInfo->nLimitConn  = m_ulMaxConn;
+ m_pServInfo->pfnOnAPCAcpt = pfnOnAcpt;
+ m_pServInfo->pfnOnAPCRecv = pfnOnRecv;
+ m_pServInfo->pfnOnAPCClos = pfnOnClos;
+ m_pServInfo->pAllSocks  = (LPSOCKET)malloc(sizeof(SOCKET) * m_ulMaxConn);
+ ZeroMemory( m_pServInfo->pAllSocks, sizeof(SOCKET) * m_ulMaxConn );
+ m_pServInfo->pAllSocks[0] = sockListen;
+ m_pServInfo->pAllEvents  = (LPWSAEVENT)malloc(sizeof(WSAEVENT) * m_ulMaxConn);
+ ZeroMemory( m_pServInfo->pAllEvents, sizeof(WSAEVENT) * m_ulMaxConn );
+ m_pServInfo->pAllEvents[0] = hEvent;
+ //sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+ //sa.bInheritHandle = FALSE;
+ //sa.lpSecurityDescriptor = NULL;
+ //m_pServInfo->hStopEvent = CreateEvent( &sa, TRUE, FALSE, NULL );
+ //if ( NULL == m_pServInfo->hStopEvent )
+ //{
+ // nReason = WSAGetLastError();
+ // goto __FAILED;
+ //}
+ bRet = m_theThread.CreateObject( (LPTHREAD_START_ROUTINE)&ServerThreadProc, (LPVOID)m_pServInfo );
+ if ( !bRet )
+ {
+  nReason = ::GetLastError();
+  goto __FAILED;
+ }
+ m_uStatus = LISTENING;
+ m_theThread.Suspend( FALSE );
+ return;
+__FAILED:
+ WSACloseEvent( hEvent );
+ FreeServerInfo( m_pServInfo ); m_pServInfo = NULL;
+ shutdown( sockListen, SD_BOTH );
+ WSASetLastError( nReason );
+ throw runtime_error( Sock_GetErrorDesc(nReason) );
+}
+void
+CTCPServer::StopServer( void )
+{
+ CScopeLock guard(this);
+ if ( m_uStatus >= LISTENING )
+ {
+  //SetEvent( m_pServInfo->hStopEvent );
+  m_theThread.CloseHandle();
+  for ( UINT i = 0; i < m_pServInfo->nActiveConn; ++i )
+  {
+   shutdown( m_pServInfo->pAllSocks[i], SD_BOTH );
+   closesocket( m_pServInfo->pAllSocks[i] );
+   WSACloseEvent( m_pServInfo->pAllEvents[i] );
+  }
+  FreeServerInfo( m_pServInfo );
+  m_pServInfo = NULL;
+  m_uStatus = READY;
+ }
+}
+DWORD
+CTCPServer::ServerThreadProc( LPVOID pvParam )
+{
+ int     nRet;
+ DWORD    dwIndex;
+ WSANETWORKEVENTS netEvents;
+ LPSERVERINFO  pServInfo;
+ BOOL    bContinue;
+ for ( pServInfo = (LPSERVERINFO)pvParam;; )
+ {
+  //nRet = WaitForSingleObject( pServInfo->hStopEvent, 0 );
+  //if ( nRet == WAIT_OBJECT_0 )
+  // break;
+  dwIndex = WSAWaitForMultipleEvents( pServInfo->nActiveConn, pServInfo->pAllEvents,
+           FALSE, WSA_INFINITE, FALSE );
+  if ( WSA_WAIT_FAILED == dwIndex )
+   break;
+  dwIndex -= WSA_WAIT_EVENT_0;
+  WSAResetEvent( pServInfo->pAllEvents[dwIndex] );
+  ZeroMemory( &netEvents, sizeof(WSANETWORKEVENTS) );
+  nRet = WSAEnumNetworkEvents( pServInfo->pAllSocks[dwIndex], 
+          pServInfo->pAllEvents[dwIndex], &netEvents );
+  if ( nRet != WSARET_SUCCEED )
+   break;
+  if ( netEvents.lNetworkEvents & FD_ACCEPT ) // new connection coming
+  {
+   if ( netEvents.iErrorCode[FD_ACCEPT_BIT] != WSARET_SUCCEED || 
+     pServInfo->nActiveConn >= pServInfo->nLimitConn )
+    continue;
+   bContinue = OnAcceptConn( pServInfo, dwIndex );
+   if ( FALSE == bContinue )
+    break;
+  }
+  if ( netEvents.lNetworkEvents & FD_READ )
+  {
+   if ( netEvents.iErrorCode[FD_READ_BIT] != WSARET_SUCCEED )
+    continue;
+   bContinue = OnReceiveDatas( pServInfo, dwIndex );
+   if ( FALSE == bContinue )
+    break;
+  }
+  if ( netEvents.lNetworkEvents & FD_CLOSE )
+  {
+   if ( netEvents.iErrorCode[FD_CLOSE_BIT] != WSARET_SUCCEED )
+    continue;
+   bContinue = OnCloseConn( pServInfo, dwIndex );
+   if ( FALSE == bContinue )
+    break;
+  }
+ }
+ return 0;
+}
+BOOL 
+CTCPServer::OnAcceptConn( LPSERVERINFO pServInfo, DWORD dwID )
+{
+ int   nRet;
+ WSAEVENT hEvent;
+ SOCKADDR sockAddr;
+ SOCKET  sockConn;
+ nRet = sizeof(SOCKADDR);
+ sockConn = WSAAccept( pServInfo->pAllSocks[dwID], (LPSOCKADDR)&sockAddr, &nRet, NULL, NULL );
+ if ( INVALID_SOCKET == sockConn )
+  return FALSE;
+ // 这里可以对每个连接的IP进行记录
+ hEvent = WSACreateEvent();
+ if ( hEvent == WSA_INVALID_EVENT )
+  goto __FAILED;
+ nRet = WSAEventSelect( sockConn, hEvent, FD_READ|FD_WRITE|FD_CLOSE );
+ if ( WSARET_SUCCEED != nRet )
+  goto __FAILED;
+ pServInfo->pAllSocks[pServInfo->nActiveConn] = sockConn;
+ pServInfo->pAllEvents[pServInfo->nActiveConn] = hEvent;
+ pServInfo->nActiveConn++;
+ if ( NULL != pServInfo->pfnOnAPCAcpt )
+  pServInfo->pfnOnAPCAcpt( sockConn, NULL, NULL );
+ return TRUE;
+__FAILED:
+ if ( NULL != hEvent )
+  WSACloseEvent( hEvent );
+ return FALSE;
+}
+BOOL
+CTCPServer::OnReceiveDatas( LPSERVERINFO pServInfo, DWORD dwID )
+{
+ int   nRet;
+ DWORD  dwFlag;
+ DWORD  dwRecv;
+ SOCKET  sockConn;
+ WSABUF  wsaBuf;
+ wsaBuf.buf = (LPSTR)pServInfo->pRecvBuffer;
+ wsaBuf.len = pServInfo->ulRecvSize;
+ dwFlag  = 0;
+ dwRecv  = 0;
+ sockConn = pServInfo->pAllSocks[dwID];
+ nRet = WSARecv( sockConn, &wsaBuf, 1, &dwRecv, &dwFlag, NULL, NULL );
+ if ( WSARET_SUCCEED != nRet )
+ {
+  throw runtime_error( Sock_GetErrorDesc(WSAGetLastError()) );
+  return FALSE;
+ }
+ if ( NULL != pServInfo->pfnOnAPCRecv )
+  pServInfo->pfnOnAPCRecv( sockConn, (DWORD)wsaBuf.buf, dwRecv );
+ return TRUE;
+}
+BOOL
+CTCPServer::OnCloseConn( LPSERVERINFO pServInfo, DWORD dwID )
+{
+ SOCKET  sockConn;
+ sockConn = pServInfo->pAllSocks[dwID];
+ if ( NULL != pServInfo->pfnOnAPCClos )
+  pServInfo->pfnOnAPCClos( sockConn, NULL, NULL );
+ if ( dwID != (pServInfo->nActiveConn - 1) )
+ {
+  pServInfo->pAllSocks[dwID] = pServInfo->pAllSocks[pServInfo->nActiveConn - 1];
+  pServInfo->pAllEvents[dwID] = pServInfo->pAllEvents[pServInfo->nActiveConn - 1];
+ }
+ shutdown( sockConn, SD_BOTH );
+ closesocket( sockConn );
+ pServInfo->nActiveConn--;
+ return TRUE;
+}
+}; // namespace faex

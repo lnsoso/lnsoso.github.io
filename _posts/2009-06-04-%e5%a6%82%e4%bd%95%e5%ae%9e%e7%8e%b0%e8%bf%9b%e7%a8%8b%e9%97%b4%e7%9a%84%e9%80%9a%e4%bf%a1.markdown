@@ -1,0 +1,149 @@
+---
+layout: post
+title: 如何实现进程间的通信
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wNi0wNCAyMjozNDoxMSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNi0wNCAxNDozNDoxMSArMDgwMA==
+---
+如何实现进程间的通信<!--more-->
+                                      
+1、引言
+　　在Windows程序中，各个进程之间常常需要交换数据，进行数据通讯。WIN32 API提供了许多函数使我们能够方便高效的进行进程间的通讯，通过这些函数我们可以控制不同进程间的数据交换，就如同在WIN16中对本地进程进行读写操作一样。
+　　典型的WIN16两进程可以通过共享内存来进行数据交换：（1）进程A将GlobalAlloc（GMEM_SHARE...）API分配一定长度的内存；（2）进程A将GlobalAlloc函数返回的句柄传递给进程B（通过一个登录消息）；（3）进程B对这个句柄调用GlobalLock函数，并利用GlobalLock函数返回的指针访问数据。这种方法在WIN32中可能失败，这是因为GlobalLock函数返回指向的是进程A的内存，由于进程使用的是虚拟地址而非实际物理地址，因此这一指针仅与A进程有关，而于B进程无关。
+　　本文探讨了几种WIN32下进程之间通讯的几种实现方法，读者可以使用不同的方法以达到程序运行高效可靠的目的。
+2、Windows95中进程的内存空间管理
+　　WIN32进程间通讯与Windows95的内存管理有密切关系，理解Windows95的内存管理对我们如下的程序设计将会有很大的帮助，下面我们讨论以下Windows95中进程的内存空间管理。
+　　在WIN16下，所有Windows应用程序共享单一地址，任何进程都能够对这一空间中属于共享单一的地址空间，任何进程都能够对这一空间中属于其他进程的内存进行读写操作，甚至可以存取操作系统本身的数据，这样就可能破坏其他程序的数据段代码。
+　　在WIN32下，每个进程都有自己的地址空间，一个WIN32进程不能存取另一个地址的私有数据，两个进程可以用具有相同值的指针寻址，但所读写的只是它们各自的数据，这样就减少了进程之间的相互干扰。另一方面，每个WIN32进程拥有4GB的地址空间，但并不代表它真正拥有4GB的实际物理内存，而只是操作系统利用CPU的内存分配功能提供的虚拟地址空间。在一般情况下，绝大多数虚拟地址并没有物理内存于它对应，在真正可以使用这些地址空间之前，还要由操作系统提供实际的物理内存（这个过程叫"提交"commit）。在不同的情况下，系统提交的物理内存是不同的，可能是RAM，也可能是硬盘模拟的虚拟内存。
+3、WIN32中进程间的通讯
+　　在Windows 95中，为实现进程间平等的数据交换，用户可以有如下几种选择：
+　　* 使用内存映射文件
+　　* 通过共享内存DLL共享内存
+　　* 向另一进程发送WM_COPYDATA消息
+　　* 调用ReadProcessMemory以及WriteProcessMemory函数，用户可以发送由GlobalLock(GMEM_SHARE,...)函数调用提取的句柄、GlobalLock函数返回的指针以及VirtualAlloc函数返回的指针。
+3.1、利用内存映射文件实现WIN32进程间的通讯
+　　Windows95中的内存映射文件的机制为我们高效地操作文件提供了一种途径，它允许我们在WIN32进程中保留一段内存区域，把目标文件映射到这段虚拟内存中。在程序实现中必须考虑各进程之间的同步。具体实现步骤如下：
+首先我们在发送数据的进程中需要通过调用内存映射API函数CreateFileMapping创建一个有名的共享内存：
+HANDLE CreateFileMapping(
+HANDLE hFile, // 映射文件的句柄，
+//设为0xFFFFFFFF以创建一个进程间共享的对象
+LPSECURITY_ATTRIBUTES lpFileMappingAttributes, // 安全属性
+DWORD flProtect, // 保护方式
+DWORD dwMaximumSizeHigh, //对象的大小
+DWORD dwMaximumSizeLow,
+LPCTSTR lpName // 必须为映射文件命名
+);
+　　与虚拟内存类似，保护方式可以是PAGE_READONLY或是PAGE_READWRITE。如果多进程都对同一共享内存进行写访问，则必须保持相互间同步。映射文件还可以指定PAGE_WRITECOPY标志，可以保证其原始数据不会遭到破坏，同时允许其他进程在必要时自由的操作数据的拷贝。
+　　在创建文件映射对象后使用可以调用MapViewOfFile函数映射到本进程的地址空间内。
+　　下面说明创建一个名为MySharedMem的长度为4096字节的有名映射文件：
+　　HANDLE hMySharedMapFile=CreateFileMapping((HANDLE)0xFFFFFFFF)，
+　　NULL，PAGE_READWRITE，0，0x1000，"MySharedMem")；
+　　并映射缓存区视图：
+　　LPSTR pszMySharedMapView=(LPSTR)MapViewOfFile(hMySharedMapFile，
+　　FILE_MAP_READ|FILE_MAP_WRITE，0，0，0);
+　　其他进程访问共享对象，需要获得对象名并调用OpenFileMapping函数。
+　　HANDLE hMySharedMapFile=OpenFileMapping(FILE_MAP_WRITE，
+　　FALSE，"MySharedMem");
+　　一旦其他进程获得映射对象的句柄，可以象创建进程那样调用MapViewOfFile函数来映射对象视图。用户可以使用该对象视图来进行数据读写操作，以达到数据通讯的目的。
+　　当用户进程结束使用共享内存后，调用UnmapViewOfFile函数以取消其地址空间内的视图：
+if (!UnmapViewOfFile(pszMySharedMapView))
+{ AfxMessageBox("could not unmap view of file"); }
+3.2、利用共享内存DLL
+　　共享数据DLL允许进程以类似于Windows 3.1 DLL共享数据的方式访问读写数据，多个进程都可以对该共享数据DLL进行数据操作，达到共享数据的目的。在WIN32中为建立共享内存，必须执行以下步骤：
+　　首先创建一个有名的数据区。这在Visual C++中是使用data_seg pragma宏。使用data_seg pragma宏必须注意数据的初始化：
+#pragma data_seg("MYSEC")
+char MySharedData[4096]={0};
+#pragma data_seg()
+然后在用户的DEF文件中为有名的数据区设定共享属性。
+LIBRARY TEST
+DATA READ WRITE
+SECTIONS
+.MYSEC READ WRITE SHARED
+　　这样每个附属于DLL的进程都将接受到属于自己的数据拷贝，一个进程的数据变化并不会反映到其他进程的数据中。
+　　在DEF文件中适当地输出数据。以下的DEF文件项说明了如何以常数变量的形式输出MySharedData。
+EXPORTS
+MySharedData CONSTANT
+最后在应用程序（进程）按外部变量引用共享数据。
+extern _export"C"{char * MySharedData[];}
+进程中使用该变量应注意间接引用。
+m_pStatic=(CEdit*)GetDlgItem(IDC_SHARED);
+m_pStatic->GetLine(0,*MySharedData,80);
+3.3、用于传输只读数据的WM_COPYDATA
+　　传输只读数据可以使用Win32中的WM_COPYDATA消息。该消息的主要目的是允许在进程间传递只读数据。　　　　　Windows95在通过WM_COPYDATA消息传递期间，不提供继承同步方式。SDK文档推荐用户使用SendMessage函数，接受方在数据拷贝完成前不返回，这样发送方就不可能删除和修改数据：
+SendMessage(hwnd,WM_COPYDATA,wParam,lParam);
+其中wParam设置为包含数据的窗口的句柄。lParam指向一个COPYDATASTRUCT的结构：
+typedef struct tagCOPYDATASTRUCT{
+DWORD dwData;//用户定义数据
+DWORD cbData;//数据大小
+PVOID lpData;//指向数据的指针
+}COPYDATASTRUCT;
+该结构用来定义用户数据。
+3.4、直接调用ReadProcessMemory和WriteProcessMemory函数实现进程间通讯
+通过调用ReadProcessMemory以及WriteProcessMemory函数用户可以按类似与Windows3.1的方法实现进程间通讯，在发送进程中分配一块内存存放数据，可以调用GlobalAlloc或者VirtualAlloc函数实现：
+pApp->m_hGlobalHandle=GlobalAlloc(GMEM_SHARE,1024);
+可以得到指针地址：
+pApp->mpszGlobalHandlePtr=(LPSTR)GlobalLock
+(pApp->m_hGlobalHandle);
+在接收进程中要用到用户希望影响的进程的打开句柄。为了读写另一进程，应按如下方式调用OpenProcess函数：
+HANDLE hTargetProcess=OpenProcess(
+STANDARD_RIGHTS_REQUIRED|
+PROCESS_VM_REDA|
+PROCESS_VM_WRITE|
+PROCESS_VM_OPERATION,//访问权限
+FALSE,//继承关系
+dwProcessID);//进程ID
+为保证OpenProcess函数调用成功，用户所影响的进程必须由上述标志创建。
+一旦用户获得一个进程的有效句柄，就可以调用ReadProcessMemory函数读取该进程的内存：
+BOOL ReadProcessMemory(
+HANDLE hProcess, // 进程指针
+LPCVOID lpBaseAddress, // 数据块的首地址
+LPVOID lpBuffer, // 读取数据所需缓冲区
+DWORD cbRead, // 要读取的字节数
+LPDWORD lpNumberOfBytesRead
+);
+使用同样的句柄也可以写入该进程的内存：
+BOOL WriteProcessMemory(
+HANDLE hProcess, // 进程指针
+LPVOID lpBaseAddress, // 要写入的首地址
+LPVOID lpBuffer, // 缓冲区地址
+DWORD cbWrite, // 要写的字节数
+LPDWORD lpNumberOfBytesWritten
+);
+如下所示是读写另一进程的共享内存中的数据：
+ReadProcessMemory((HANDLE)hTargetProcess,
+(LPSTR)lpsz,m_strGlobal.GetBuffer(_MAX_FIELD),
+_MAX_FIELD,&cb);
+WriteProcessMemory((HANDLE)hTargetProcess,
+(LPSTR)lpsz,(LPSTR)STARS,
+m_strGlobal.GetLength(),&cb);
+4、进程之间的消息发送与接收
+　　在实际应用中进程之间需要发送和接收Windows消息来通知进程间相互通讯，发送方发送通讯的消息以通知接收方，接收方在收到发送方的消息后就可以对内存进行读写操作。
+　　我们在程序设计中采用Windows注册消息进行消息传递，首先在发送进程初始化过程中进行消息注册：
+m_nMsgMapped=::RegisterWindowsMessage("Mapped");
+m_nMsgHandle=::RegisterWindowsMessage("Handle");
+m_nMsgShared=::RegisterWindowsMessage("Shared");
+在程序运行中向接收进程发送消息：
+CWnd* pWndRecv=FindWindow(lpClassName,"Receive");
+pWndRecv->SendMessage(m_MsgMapped,0,0);
+pWndRecv->SendMessage(m_nMsgHandle,
+(UINT)GetCurrentProcessID(),(LONG)pApp->m_hGlobalHandle);
+pWndRecv->SendMessage(m_nMsgShared,0,0);
+可以按如下方式发送WM_COPYDATA消息：
+static COPYDATASTRUCT cds;//用户存放数据
+pWnd->SendMessage(WM_COPYDATA,NULL,(LONG)&cds);
+接收方进程初始化也必须进行消息注册：
+UNIT CRecvApp:: m_nMsgMapped=::RegisterWindowsMessage("Mapped");
+UNIT CRecvApp::m_nMsgHandle=::RegisterWindowsMessage("Handle");
+UNIT CRecvApp::m_nMsgShared=::RegisterWindowsMessage("Shared");
+同时映射消息函数如下：
+ON_REGISTERED_MASSAGE(CRecvApp::m_nMsgMapped,OnRegMsgMapped)
+ON_REGISTERED_MASSAGE(CRecvApp::m_nMsgHandle,OnRegMsgHandle)
+ON_REGISTERED_MASSAGE(CRecvApp::m_nMsgShared,OnRegMsgShared)
+在这些消息函数我们就可以采用上述技术实现接收进程中数据的读写操作了。
+5、结束语
+　　从以上分析中我们可以看出Windows95的内存管理与Windows 3.x相比有很多的不同，对进程之间的通讯有较为严格的限制。这就确保了任何故障程序无法意外地写入用户的地址空间，而用户则可根据实际情况灵活地进行进程间的数据通讯，从这一点上来讲Windows95增强应用程序的强壮性。
+参考文献：
+1、 David J.Kruglinski, Visual C++技术内幕, 北京：清华大学出版社，1995.
+2、 Microsoft Co. Visual C++ 5.0 On Line Help.

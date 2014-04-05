@@ -1,0 +1,80 @@
+---
+layout: post
+title: 50个有用的网站设计资源
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNiAxMDozMDo1NiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNiAwMjozMDo1NiArMDgwMA==
+---
+<h3>CSS库</h3>
+做设计的时候总是容易没有灵感。到CSS库去看看别人做得设计也许会帮你找到不少灵感。如果你的设计足够优秀让这些CSS库收录的话，那么这还会为你带来很多访问者
+<li><a href="http://www.unmatchedstyle.com/" target="_blank">Unmatchedstyle</a> </li>
+<li><a href="http://www.cssbeauty.com/" target="_blank">cssBeauty</a> </li>
+<li><a href="http://cssvault.com/" target="_blank">cssvault</a> </li>
+<li><a href="http://www.stylegala.com/" target="_blank">Stylegala</a> </li>
+<li><a href="http://cssdrive.com/" target="_blank">CSS Drive</a> </li>
+<li>css thesis </li>
+<li><a href="http://styleboost.com/" target="_blank">Styleboost</a> </li>
+<li>CSSElite </li>
+<li><a href="http://www.cssimport.com/" target="_blank">CSS Import </a></li>
+<li><a href="http://www.webcreme.com/" target="_blank">Web Creme</a> </li>
+<li><a href="http://www.cssmania.com/" target="_blank">CSS Mania</a> </li>
+<li><a href="http://www.designshack.co.uk/" target="_blank">DesignShack</a> 
+
+<h3>Web标准</h3>
+遵守Web标准来编写代码会使你的代码干净而且有对搜索引擎有良好的亲和度。一个可以用100行代码就搞定的代码，为什么一定要把他搞成1001行呢？</li>
+<li><a href="http://www.456bereastreet.com/lab/developing_with_web_standards/" target="_blank">Developing With Web Standards</a> - 这篇文档介绍了如何在Web标准下省时省力的构建你的站点，同时还能带来良好的用户体验。另外还介绍了一些技巧教会你如何提升网站的质量以及流量。 </li>
+<li><a href="http://www.mezzoblue.com/archives/2004/04/30/a_roadmap_to/index.php" target="_blank">Roadmap to Standards</a> </li>
+<li><a href="http://www.webstandards.org/" target="_blank">Web Standards Project</a> </li>
+<li><a href="http://www.maxdesign.com.au/presentation/checklist.htm" target="_blank">Web Standards Checklist</a> </li>
+<li><a href="http://www.sitepoint.com/article/importance-web-standards" target="_blank">Importance of Web Standards</a> 
+
+<h3>验证器</h3>
+在你明白什么是Web标准以后，下面两个小工具可以帮你测试你的站点是否符合标准。 </li>
+<li><a href="http://validator.w3.org/" target="_blank">HTML & XHTML Validator</a> </li>
+<li><a href="http://jigsaw.w3.org/css-validator/" target="_blank">CSS Validator</a> 
+
+<h3>易用性</h3>
+易用性也许是网站设计中最关键的因素之一。良好的设计不但会带来良好的用户体验，而且会提升你的站点的网站转换律 </li>
+<li>What is usability </li>
+<li><a href="http://www.usabilityfirst.com/websites/index.txl" target="_blank">Usability First</a> - 叙述网站易用性的重要程度 </li>
+<li><a href="http://www.useit.com/alertbox/weblogs.html" target="_blank">Weblog Usability: The Top Ten Design Mistakes</a> - Blog往往不是很注重网站的易用性，这使得Blogger很难获得新的读者以及忠实的读者 </li>
+<li>Web Design & Usability Guidelines -这本在线的教程一共分成了18章，它将教你如何设计优秀易用的网站 </li>
+<li><a href="http://www.webcredible.co.uk/user-friendly-resources/web-usability/basics.shtml" target="_blank">Web usability - the basics</a> </li>
+<li><a href="http://www.ddj.com/dept/architect/184411669" target="_blank">The Culture of Usability</a> - 如何使用最小的花销却从易用性中得到更多-测试程序. </li>
+<li><a href="http://adaptivepath.com/publications/essays/archives/000328.php" target="_blank">90% of All Usability Testing is Useless</a> </li>
+<li><a href="http://www.456bereastreet.com/archive/200605/ten_deadly_sins_of_web_design" target="_blank">Ten deadly sins of web design </a>-网站设计中10个易犯的大错 </li>
+<li><a href="http://www.jjg.net/ia/" target="_blank">Information architecture resources</a> </li>
+<li><a href="http://www.usabilityviews.com/" target="_blank">Usability Views</a> 
+
+<h3>博客/资源</h3>
+Blog上有大量即时更新的关于设计以及易用性的资讯。下面这个列表中的blog推荐订阅哦。 </li>
+<li><a href="http://www.stopdesign.com/log/" target="_blank">Stopdesign</a> </li>
+<li><a href="http://www.37signals.com/svn/" target="_blank">Signal vs. Noise Blog</a> - 37signals的blog，关注网站设计以及易用性 </li>
+<li><a href="http://www.digital-web.com/" target="_blank">Digital Web Magazine </a>- Digital Web Magazine 是一个面向专业网站设计人员，开发人员以及信息构架师的在线杂志。 </li>
+<li><a href="http://www.alistapart.com/" target="_blank">A List Apart</a> - A List Apart 基于Web标准的基础上以特殊的视角关注以下几个方面的最佳实践：设计，开发，网站内容。 </li>
+<li><a href="http://www.456bereastreet.com/" target="_blank">456 Berea Street</a> - Roger Johansson 的站点，他经常写一些关于web 标准，可访问性以及易用性的文章 </li>
+<li><a href="http://www.mezzoblue.com/" target="_blank">mezzoblue</a> </li>
+<li><a href="http://adaptivepath.com/blog" target="_blank">Adaptive Path</a> </li>
+<li><a href="http://blog.jjg.net/" target="_blank">Jesse James Garrett</a> - Adaptive Path创始人的blog. </li>
+<li><a href="http://www.veen.com/jeff/index.html" target="_blank">Jeffrey Veen </a></li>
+<li><a href="http://yourtotalsite.com/" target="_blank">Your Total Site</a> - YourTotalSite中包含了很多内容，比如易用性, 可访问性, 视觉设计,在线市场, (X)HTML & CSS, JavaScript, 内容构架等等 </li>
+<li><a href="http://resources.ixdg.org/" target="_blank">IxDG Resource Library</a> - 有很多交互设计方面的东东 </li>
+<li>Apples to oranges - Ryan Nichols的blog. </li>
+<li><a href="http://experiencedynamics.blogs.com/" target="_blank">Demystifying Usability</a> - Frank Spillers的blog,他是一个网站易用性方面的顾问 
+
+<h3>配色</h3>
+配色在设计中显得非常的关键。良好的配色不但能够将你的网站和竞争对手的站点开来，而且还能向你的访问者传递一些特殊的信息。如果你提供的是个人服务的话，你可以选择柔和一点的颜色，如果是为某个组织的网站的话，就应该选择厚实一些的颜色。下面的这些资源可以帮助你做出一些配色上的决定。 </li>
+<li><a href="http://www.colorschemer.com/" target="_blank">Color Schemer</a> - 在线配色(感谢<a href="http://beach.blogbus.com/" target="_blank" rel="external nofollow"><strong>Beach</strong></a>提醒链接错误) </li>
+<li><a href="http://desktoppub.about.com/cs/color/a/symbolism.htm" target="_blank">Color Meaning</a> - 一篇解释不同颜色的象征以及意义的文章 </li>
+<li><a href="http://www.sibagraphics.com/colour.php" target="_blank">The Meaning of Color in Web Design</a> - 在网络营销中颜色如何影响访问者 </li>
+<li><a href="http://www.princetonol.com/groups/iad/lessons/middle/color2.htm" target="_blank">Symbolism of Color</a> </li>
+<li><a href="http://www.colormatters.com/colortheory.html" target="_blank">Color Matters</a> - 探索如何用颜色是去影响情绪, 食欲, 性欲, 性欲, 涉及, 以及艺术. 
+
+<h3>排版</h3>
+有很多字体可供选择，合理的使用它们会得到很好的效果。 </li>
+<li><a href="http://www.1001freefonts.com/" target="_blank">1001 Free Fonts</a> - 收集了Windows 以及 Macintosh下的很多True-type字体 </li>
+<li><a href="http://www.sitepoint.com/article/anatomy-web-fonts" target="_blank">The Anatomy of Web Fonts</a> </li>
+<li><a href="http://typetester.maratz.com/" target="_blank">Typetester</a> - Typetester 提供了一个在线的应用可以让你比较各种字体的效果，有了它网页设计者的工作轻松多了 
+<a href="http://www.pronetadvertising.com/articles/my-50-favorite-design-resources.html" target="_blank"><strong>英文原文</strong></a></li>

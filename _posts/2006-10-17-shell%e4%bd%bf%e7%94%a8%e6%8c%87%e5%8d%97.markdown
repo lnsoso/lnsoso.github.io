@@ -1,0 +1,203 @@
+---
+layout: post
+title: shell使用指南
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0xNyAxOTo0MToyMiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0xNyAxMTo0MToyMiArMDgwMA==
+---
+本文中所用的shell指令及操作均基于Linux ord 2.4.29，即DreamHost现在采用的系统。本人不是计算机专业出身，本指南因此会比较死板，只针对想要使用shell又苦于不知如何下手的新手，如果你也是DreamHost的用户，那本文或许对你有所帮助。
+目录：
+1. Basic Instructions /基本指令
+2. wget /下载工具
+3. Crontab /定时任务
+4. tar/tar.gz /压缩文件
+5. vi /编辑器
+[最后更新: 2006-03-11]
+1. Basic Instructions基本操作命令
+通常来说，使用"$[Instructions] --help"可以获得以下各个命令[instructions]的帮助，包含其参数列表的定义。
+-ls 列出当前文件夹下所有内容
+$ls -o 列出当前文件夹中所有内容，含详细信息，但不列出group
+$ls -l 同上，含group信息
+$ls -a 列出当前文件夹中所有内容，包含以"."开头的文件
+$ls -t 按更改时间排序
+$ls -v 按版本先后排序
+-cd [dir] 进入文件夹
+-pwd 显示当前路径
+-mkdir [dir] 新建文件夹
+-chmod 更改文件/文件夹权限
+$chmod [Mode] [dir]，其中Mode形如"755"或"777"等。
+$chmod [Mode] [file]
+$chmod -R [Mode] [dir]，递归形式，即将目标文件夹内所有文件均改变权限
+Mode还有另一种表达方式，"755"即为"-rwxr-xr-x"，不列举了。
+-rm [file] 删除文件/文件夹
+$rm -f [file] 强行删除，忽略不存在的文件，无提示
+$rm -r [file] 递归删除所有内容
+-cp 拷贝
+$cp [options] [source] [destination]
+其中[options]可以为-f（强行拷贝）或-r（递归拷贝）
+-mv 重命名或移动
+$mv [options] [source] [destination]
+[options]常用：-f(强行移动/重命名), -i(移动/重命名前尝试), -u(更新)
+例如
+$mv wwwroot/cgi-bin . 将/cgi-bin目录移动到当前目录下
+$mv cronfile.txt myfile.txt 将cronfile.txt重命名为myfile.txt
+2. wget下载工具
+wget是一种非交互式的网络文件下载工具，在linux下可以使用该工具快速地从网络上下载所需要的文件而不需要经由本地硬盘中转，而且速度极快。以下是一些使用方法：
+wget [参数列表] URL
+最简单的用法:
+$wget http://targetdomain.com/file.tar
+wget的常用参数：
+&middot; -t [nuber of times]：尝试次数，当wget无法与服务器建立连接时，尝试连接多少次。比如"-t120"表示尝试120次。当这一项为"0"的时候，指定尝试无穷多次直到连接成功为止，这个设置非常有用，当对方服务器突然关机或者网络突然中断的时候，可以在恢复正常后继续下载没有传完的文件；
+&middot; -c：断点续传，这也是个非常有用的设置，特别当下载比较大的文件的时候，如果中途意外中断，那么连接恢复的时候会从上次没传完的地方接着传，而不是又从头开始，使用这一项需要远程服务器也支持断点续传，一般来讲，基于UNIX/linux的Web/FTP服务器都支持断点续传；
+&middot; -T [number of seconds]：超时时间，指定多长时间远程服务器没有响应就中断连接，开始下一次尝试。比如"-T120"表示如果120秒以后远程服务器没有发过来数据，就重新尝试连接。如果网络速度比较快，这个时间可以设置的短些，相反，可以设置的长一些，一般最多不超过900，通常也不少于60，一般设置在120左右比较合适；
+&middot; -w [number of seconds]：在两次尝试之间等待多少秒，比如"-w 100"表示两次尝试之间等待100秒；
+&middot; -nd：不下载目录结构，把从服务器所有指定目录下载的文件都堆到当前目录里；
+&middot; -x：与"-nd"设置刚好相反，创建完整的目录结构，例如"wget -nd http://www.gnu.org/ "，实际的目录结构一级一级建下去，直到所有的文件都传完为止；
+&middot; -nH：不创建以目标主机域名为目录名的目录，将目标主机的目录结构直接下到当前目录下；
+&middot; -r：递归下载，在本机建立服务器端目录结构；
+&middot; -l [depth]：下载远程服务器目录结构的深度，例如"-l 5"下载目录深度小于或者等于5以内的目录结构或者文件；
+&middot; -m：做站点镜像时的选项，如果你想做一个站点的镜像，使用这个选项，它将自动设定其他合适的选项以便于站点镜像；
+&middot; -np：只下载目标站点指定目录及其子目录的内容。这也是一个非常有用的选项，我们假设某个人的个人主页里面有一个指向这个站点其他人个人主页的连接，而我们只想下载这个人的个人主页，如果不设置这个选项，甚至--有可能把整个站点给抓下来，这显然是我们通常不希望的；
+&middot; --http-user=username
+&middot; --http-passwd=password：如果Web服务器需要指定用户名和口令，用这两项来设定；
+&middot; -O 将数据写入文件中。
+3. Crontab 定时执行任务
+在DreamHost系统下, 通过Shell可以建立自己的crontab. 具体使用如下:
+使用支持shell登录的终端(如fterm或putty), 地址栏输入username@qiran.org:22即可以SSH方式登录至服务器.
+常用的crontab命令:
+crontab -l 显示所有现存cron job.
+crontab -r 删除当前cron jobs.
+crontab -e 编辑当前 "crontab file". DH推荐使用nano
+注意你的crontab包含所有的cron jobs, 每个cron一行, 断行结尾. 一个正常的cron如下所示:
+45 2 * * * /home/user/script.pl
+第一个数字是每小时的第几分钟,
+第二个数字是每天的第几小时,
+第三个数字是每月的第几天,
+第四个数字是每年的第几月,
+第五个数字是每周的第几天.
+使用方式例如:
+32 * * * * : 表示每小时的第32分钟.
+12,42 * * * * : 表示每小时的第12及第42分钟两次
+*/15 */2 * * *: 表示0:00, 0:15, 0:30, 0:45, 2:00, 2:15, 2:30, ...
+43 18 * * 7: 表示每个周日的6:43pm运行命令行.
+在DreamHost下使用nano编辑完文件后，使用ctrl+o保存，ctrl+x退出编辑。
+4. tar命令
+tar命令的使用方法如下：
+tar [参数列表] [文件名]
+参数列表：
+-c 生成新的备份，并同时覆盖旧的备份文件
+-x 从备份文件中解压缩
+-t 列出备份文件内的文件目录
+-v 显示所有被操作文件列表
+-f 在指定位置生成备份
+-u 将不存在于备份中的文件，或将已经被更改的文件加入该备份中。
+举例说明：
+tar cvf filename.tar /*制作备份*/
+tar cvf tarfile.tar ./filename /*将filename的文件备份到tarfile.tar里面*/
+tar tvf filename.tar /*列出tar文档的内容*/
+tar xvf filename.tar /*从tar文档中导出文件*/
+tar zxpvf filename.tar.gz /*从tar.gz文档中导出文件*/
+tar zxvf filename.tar.gz /*同上*/
+tar xvf tarfile.tar ./filename /*导出tar文件中的单个文件*/
+5. vi编辑器
+Linux下很易用的一种编辑器，只需要稍微知道几个指令即可应用。
+打开vi：
+$vi [filename]：打开或新建文件，并将光标置于第一行首
+$vi +n [filename] ：打开文件，并将光标置于第n行首
+$vi + [filename] ：打开文件，并将光标置于最后一行首
+$vi +/pattern [filename]：打开文件，并将光标置于第一个与pattern匹配的串处
+$vi -r [filename] ：在上次正用vi编辑时发生系统崩溃，恢复filename
+$vi [filename]....[filename] ：打开多个文件，依次编辑
+如果filename不存在，则自动生成一个名字filename的新文件。
+vi共有两种状态：命令状态/编辑状态
+编辑状态下：
+第一次按下insert键为"insert"模式，再按一下为"replace"模式，使用ESC返回命令状态；
+在此状态下键盘的PgUp/PgDn/Insert/Delete/Home/End/方向键，均处于正常功能状态。
+命令状态下：
+输入的字符串作为命令处理，使用"insert"键切换到编辑状态；
+以下是命令状态下的命令清单：
+移动光标类命令
+h ：光标左移一个字符
+l ：光标右移一个字符
+space：光标右移一个字符
+Backspace：光标左移一个字符
+k或Ctrl+p：光标上移一行
+j或Ctrl+n ：光标下移一行
+Enter ：光标下移一行
+w或W ：光标右移一个字至字首
+b或B ：光标左移一个字至字首
+e或E ：光标右移一个字j至字尾
+) ：光标移至句尾
+( ：光标移至句首
+}：光标移至段落开头
+{：光标移至段落结尾
+nG：光标移至第n行首
+n+：光标下移n行
+n-：光标上移n行
+n$：光标移至第n行尾
+H ：光标移至屏幕顶行
+M ：光标移至屏幕中间行
+L ：光标移至屏幕最后行
+0：（注意是数字零）光标移至当前行首
+$：光标移至当前行尾
+屏幕翻滚类命令
+Ctrl+u：向文件首翻半屏
+Ctrl+d：向文件尾翻半屏
+Ctrl+f：向文件尾翻一屏
+Ctrl＋b；向文件首翻一屏
+nz：将第n行滚至屏幕顶部，不指定n时将当前行滚至屏幕顶部。
+插入文本类命令
+i ：在光标前
+I ：在当前行首
+a：光标后
+A：在当前行尾
+o：在当前行之下新开一行
+O：在当前行之上新开一行
+r：替换当前字符
+R：替换当前字符及其后的字符，直至按ESC键
+s：从当前光标位置处开始，以输入的文本替代指定数目的字符
+S：删除指定数目的行，并以所输入文本代替之
+ncw或nCW：修改指定数目的字
+nCC：修改指定数目的行
+删除命令
+ndw或ndW：删除光标处开始及其后的n-1个字
+do：删至行首
+d$：删至行尾
+ndd：删除当前行及其后n-1行
+x或X：删除一个字符，x删除光标后的，而X删除光标前的
+Ctrl+u：删除输入方式下所输入的文本
+搜索及替换命令 :
+/pattern：从光标开始处向文件尾搜索pattern
+?pattern：从光标开始处向文件首搜索pattern
+n：在同一方向重复上一次搜索命令
+N：在反方向上重复上一次搜索命令
+：s/p1/p2/g：将当前行中所有p1均用p2替代
+：n1,n2s/p1/p2/g：将第n1至n2行中所有p1均用p2替代
+：g/p1/s//p2/g：将文件中所有p1均用p2替换
+选项设置
+all：列出所有选项设置情况
+term：设置终端类型
+ignorance：在搜索中忽略大小写
+list：显示制表位(Ctrl+I)和行尾标志（$)
+number：显示行号
+report：显示由面向行的命令修改过的数目
+terse：显示简短的警告信息
+warn：在转到别的文件时若没保存当前文件则显示NO write信息
+nomagic：允许在搜索模式中，使用前面不带“\”的特殊字符
+nowrapscan：禁止vi在搜索到达文件两端时，又从另一端开始
+mesg：允许vi显示其他用户用write写到自己终端上的信息
+最后行方式命令
+：n1,n2 co n3：将n1行到n2行之间的内容拷贝到第n3行下
+：n1,n2 m n3：将n1行到n2行之间的内容移至到第n3行下
+：n1,n2 d ：将n1行到n2行之间的内容删除
+：w ：保存当前文件
+：e filename：打开文件filename进行编辑
+：x：保存当前文件并退出
+：q：退出vi
+：q!：不保存文件并退出vi
+：!command：执行shell命令command
+：n1,n2 w!command：将文件中n1行至n2行的内容作为command的输入并执行之，若不指
+定n1，n2，则表示将整个文件内容作为command的输入
+：r!command：将命令command的输出结果放到当前行 。

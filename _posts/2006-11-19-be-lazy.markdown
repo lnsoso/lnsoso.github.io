@@ -1,0 +1,14 @@
+---
+layout: post
+title: Be lazy~!
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0xOSAxODoxNzoyNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0xOSAxMDoxNzoyNiArMDgwMA==
+---
+在 Rasmus 大神身上学到的东西.......
+Quote 一段吧,情不自禁
+<strong>不要试图解决不存在的问题
+</strong>许多人，虽然没有意识到，非常热衷于解决根本不存在的问题。比如：真的需要多国语言支持吗？真的需要完全用面向对象OOP吗？他们花了很多精力实现了这些美好的意愿，而是解决了根本不存在的问题！事实上，很多应用只需要用gb2312就足够了；而有些使用纯OOP的程序，除了降低效率以外，我也看不太出有任何意义。
+参见:http://www.songchen.org/

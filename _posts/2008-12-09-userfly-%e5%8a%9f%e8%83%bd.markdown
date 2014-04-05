@@ -1,0 +1,11 @@
+---
+layout: post
+title: userfly 功能
+author: Alvin
+date: !binary |-
+  MjAwOC0xMi0wOSAxNDowNDo1OSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMi0wOSAwNjowNDo1OSArMDgwMA==
+---
+在 2006 年为了给刘剑提供 UE 分析的依据，自己开发了一个记录用户鼠标移动轨迹的东西。今天在 twitter 里看到有人在介绍国外的 userfly ，忽然感觉很有趣。
+userfly 除了在记录移动轨迹外，还记录了同一 session 所浏览的页面和键盘的按键情况。只要加个 keyboard event handler 就能完成这个工作，不过 userfly 能整合这些功能，提供一体化的服务还是不错的。

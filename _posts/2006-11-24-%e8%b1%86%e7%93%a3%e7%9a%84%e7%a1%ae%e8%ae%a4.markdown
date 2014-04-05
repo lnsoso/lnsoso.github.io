@@ -1,0 +1,10 @@
+---
+layout: post
+title: 豆瓣的确认
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0yNCAxMzozMTo0OSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0yNCAwNTozMTo0OSArMDgwMA==
+---
+doubanclaimb330c02db09171e7 这回豆瓣应该确认我了吧。 :)

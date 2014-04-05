@@ -1,0 +1,53 @@
+---
+layout: post
+title: 利用rsync同步数据
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0xMSAxMDozMjo1NiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0xMSAwMjozMjo1NiArMDgwMA==
+---
+<div>主机A、B：A为备份服务器，B为重要数据需要做备份目标服务器
+1. 在A上生成隐藏文件夹/root/.ssh ，在里面生成密钥对
+]#cd /root/.ssh
+]#ssh-keygen -d
+Generating public/private dsa key pair.
+Enter file in which to save the key (/root/.ssh/id_dsa): 
+Enter passphrase (empty for no passphrase): <-- 此处不打passphrase..下次才不会询问password
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_dsa.
+Your public key has been saved in /root/.ssh/id_dsa.pub.
+The key fingerprint is:
+11:22:33:44:55:66:77:88:99:00:11:22:33:44:55:66 <a href="mailto:root@mondeo.adj.idv.tw"><font color="#22229c">root@mondeo.adj.idv.tw</font></a>
+]#
+2. 在/root/.ssh内已经生成id_dsa与id_dsa.pub（分别为私钥和公钥）
+]#scp id_dsa.pub B的IP:/root/.ssh/authorized_keys
+B服务器要求输入登录密码验证身份，成功后在B server的/root/.ssh目录里面生成authorized_keys（公钥）
+测试：在A上输入 ssh B的IP A可以无需密码验证就登录进B
+3. 配置B server来支持远程备份
+]#chkconfig --list rsync （检查B上面是否支持远程sync备份）
+]#rsync off （默认是关闭的）
+]#chkconfig rsync on （开启rsync功能）
+
+4. 在A的备份目录中
+]#vi sync
+rsync -avlR --delete -e ssh B的IP:/var/lib/mysql /backup/
+参数意义如下﹕
+-a, --archive
+It is a quick way of saying you want recursion and want to preserve almost everything.
+-v, --verbose
+This option increases the amount of information you are given during the transfer.
+-l, --links
+When symlinks are encountered, recreate the symlink on the destination.
+-R, --relative
+Use relative paths. 保留相对路径...才不让子目录跟 parent 挤在同一层...
+--delete
+是指如果Server端刪除了一文件，那客戶端也相应把这一文件刪除，保持真正的一致。 
+-e ssh
+建立起加密的连接。 
+
+可以用./sync来做测试
+
+5. 在A上用crontab定制计划任务
+]#crontab -e
+0 0 * * * /backup/sync （表示分、时、日、月、年）</div>

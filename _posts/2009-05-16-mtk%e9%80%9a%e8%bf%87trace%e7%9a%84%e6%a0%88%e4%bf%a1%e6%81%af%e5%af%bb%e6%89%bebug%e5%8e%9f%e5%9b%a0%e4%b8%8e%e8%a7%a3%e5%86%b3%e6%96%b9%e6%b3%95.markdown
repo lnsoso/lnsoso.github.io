@@ -1,0 +1,50 @@
+---
+layout: post
+title: MTK通过TRACE的栈信息寻找BUG原因与解决方法
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wNS0xNiAwMDoxMzoxOSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNS0xNSAxNjoxMzoxOSArMDgwMA==
+---
+前几天去一个公司帮他们解决BUG。BUG的描述是这样的，在使用在线QQ时，如果来电话，就会重启。没有发现ASSERT信息，只有stack dump信息。起初听他们描述，感觉像是QQ或者通话的问题。抓了TRACE之后，发现是MED模块的问题，由于MED主要是一些媒体文件的解码。由于观察现象时发现，通话时，还没有来得及响铃，就开始重启，因此可以大概推知是来电振铃出了问题，具体出在什么地方，需要查找TRACE信息。从别人那里获取的TRACE信息如下：
+Trace 1745424 150706 MOD_NIL TRACE_ERROR [1] fatal error (4): Data_abort - MED
+Trace 1745424 150706 MOD_NIL TRACE_ERROR Exception type: data abort
+Trace 1745424 150706 MOD_NIL TRACE_ERROR software version:
+E500_A.1.4
+Trace 1745424 150706 MOD_NIL TRACE_ERROR boot mode: normal mode
+Trace 1745424 150706 MOD_NIL TRACE_ERROR rtc sec = 16, rtc min = 33, rtc hour = 1
+Trace 1745424 150706 MOD_NIL TRACE_ERROR rtc day = 1, rtc mon = 1, rtc wday = 1, rtc year = 9
+Trace 1745424 150706 MOD_NIL TRACE_ERROR execution unit: MEDMED
+Trace 1745424 150706 MOD_NIL TRACE_ERROR status: 0x00000000
+Trace 1745424 150706 MOD_NIL TRACE_ERROR stack pointer: 0x00169380
+Trace 1745424 150706 MOD_NIL TRACE_ERROR stack dump:
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x085569C9
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0xA0001BED
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x085569C9
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x085569C9
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x08480FD5
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x0847CE59
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x084DE0EF
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x0866D4D3
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x0845E407
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x0866D4A1
+Trace 1745424 150706 MOD_NIL TRACE_ERROR number of messages in the external queue: 0
+Trace 1745424 150706 MOD_NIL TRACE_ERROR messages in the external queue:
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     MSG_ID_INVALID_TYPE
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     MSG_ID_INVALID_TYPE
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     MSG_ID_INVALID_TYPE
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     MSG_ID_INVALID_TYPE
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     MSG_ID_INVALID_TYPE
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     MSG_ID_INVALID_TYPE
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     MSG_ID_INVALID_TYPE
+Trace 1745424 150706 MOD_NIL TRACE_ERROR     MSG_ID_INVALID_TYPE
+观察TRACE，结合BUG描述，可以大致推知是MED的振铃问题，具体位置需要看catcher打印的栈信息。有些人遇到这个信息，就蒙了，感觉无从下手，我最早学习MTK时，也是无从下手，总觉得这样的信息没有ASSERT直观，一看就知道哪个文件哪一行出错。但ASSERT并不总是金牌，有一次遇到一个MEMCPY的ASSERT，调用的地方太多，照样需要查栈信息来寻找问题。当然写的代码，尽量在一些关键的地方加上ASSET，这会让人查找问题更轻松一些。当然有了这个信息，我们也可以大概推测出BUG的地方和原因的。要查找这个error的信息，必须要找到该软件版本对应的sym文件。该 sym和BIN文件同步生成，都位于BUILD文件下。该文件储存了ARM编绎器为软件中所有函数生成的地址。而出错时，MTK会保存当时栈中最近执行的 10条指令的地址，我们通过对这些地址的研究，就可以找到出错的地方。由于sym文件只保存了函数的地址，函数体里执行的代码地址没有列出，而一般打出的错误地址不会正好对应某个函数的地址，一般会会偏移N个单位。当然也有例外，我曾遇到一次出错，有一个地址正好和某函数地址对应。对于出错信息的地址与函数地址不对应的情况，我推测应该是函数体里的指令出错，所以应查找比该出错指令小且最近的函数。比如上例行 “Trace 1745424 150706 MOD_NIL TRACE_ERROR     0x085569C9”，我们在sym文件中不应该查找0x085569C9对应的指令，因为一般会一个也找不到，我们要查找x085569C或者 x085569对就的函数，这时大约可以查到许多函数，找到与该出错地址最近且比该地址小的地址对应的函数，十个地址大约可以找到十个左右的函数，通过仔细排查，确认以下函数：
+med_int_left_size
+med_int_sfreeaud_main
+aud_tts_play_req_hdlr
+med_int_smalloc
+med_set_ext_memory_pool
+TCC_Task_Shell
+如此可以大致确定问题出处和原因了，请教项目负责人，知道aud_tts_play_req_hdlr
+是语音王的播放函数，在呼入时，有来电报号，该功能和QQ都是从MED栈上动态分配内存，由于QQ占用了一部内存，有呼入电话时，语音王分配内存失败，导到语音解码故障。问题一下解决。

@@ -1,0 +1,34 @@
+# Dependencies
+markdown:         rdiscount
+pygments:         true
+
+# Permalinks
+permalink:        /post/:title/
+
+# Setup
+title:            DoneVII
+tagline:          'Alvin & Gavin Personal Blog'
+description:      'Alvin 和 Gavin 关于技术的一些思考，以及对生活的吐槽。'
+url:              http://www.donevii.com
+
+author:
+  name:           'Alvin'
+  url:            https://twitter.com/lnsoso
+
+paginate:         8
+
+# Custom vars
+version:          1.0.0
+
+github:
+  alvin:          https://github.com/lnsoso
+  gavin:          https://github.com/gavinkwoe
+
+weibo:
+  alvin:          http://weibo.com/dengwei
+  gavin:          http://weibo.com/gavinkwoe
+
+analytics:
+  baidu:          'e683ce6f8900255009cf896036db3c1c'
+  
+disqus_shortname: 'donevii'

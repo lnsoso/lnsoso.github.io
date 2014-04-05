@@ -1,0 +1,18 @@
+---
+layout: post
+title: facebook 的聊天与 sohu 聊天的区别
+author: Alvin
+date: !binary |-
+  MjAwOC0xMi0xMCAxODoxMTo0OSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMi0xMCAxMDoxMTo0OSArMDgwMA==
+---
+1、从SOHU的产品上讲，原本他们的“小纸条”就是点对点（单人对单人）的交流，所以经过不断的对需求调研和产品改进能从他们的”站内消息“演化”小纸条“，和现在的这个类似QQ的功能。
+2、在对网站的定位也略有不同，实际上FACEBOOK并不是”交友网站“，官方不推荐大家去结交新朋友，而是鼓励与现实生活中的朋友沟通，所以FACEBOOK的聊天上都是和好友聊天，而SOHU的列表是和陌生聊天。
+3、他们新的登录条方式借鉴了FACEBOOK的设计，不过对于这个设计个人认为现在的屏幕是足够宽，但是不够长。牺牲有效可视范围来实现这个功能是否正确也是仁者见仁，智者见智。
+另外，从对FACEBOOK的这个安排可理解为用户浏览网页时因为是 F Scanning (“Ｆ”形状的模式阅读网页，如开心)，所以右下角区域相对内容重要度较低，所以把聊天功能安排在这里对功能干扰较少。
+而对于SOHU的页面浏览方式是 Box Scanning(“盒”形状的模式阅读网页)，页面顶部、底部、左右两边基本都有广告，主要浏览区别为中间的盒状区域内，像SOHU的这个聊天功能在使用时就对他页面右侧的“搜狐博客”和“精彩推荐”的内容产生了影响。
+
+以下两个链接是对小纸条的介绍：
+http://www.hudong.com/wiki/%E6%90%9C%E7%8B%90%E5%B0%8F%E7%BA%B8%E6%9D%A1
+http://it.sohu.com/20081124/n260803249.shtml

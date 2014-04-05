@@ -1,0 +1,115 @@
+---
+layout: post
+title: ! '[php5]静态类比全局数组快'
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wNy0wNCAxMTozMTowOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wNy0wNCAwMzozMTowOCArMDgwMA==
+---
+好吧，我承认，标题是有点误导人了……
+第一种测试方法：
+<?php
+/**
+ * @date : Wed Jul 04 11:34:00 CST 2007 11:34:00
+ * @author : Deng Wei <<a href="mailto:Alvin@gmail.com">Alvin@gmail.com</a>>
+ * @package : test
+ * @version : $Rev$ 
+ * @info : $Id$
+ */
+$sth_like_config = array(
+ 'a' => 1,
+ 'b' => 2,
+);
+function get_config_a()
+{
+ global $sth_like_config;
+ foreach ( range(1,10000) as $i )
+ {
+  $b = $sth_like_config['a'];
+ }
+}
+class StaticConfig
+{
+ public static $sth_like_config = array(
+  'a' => 1,
+  'b' => 2,
+ );
+}
+function microtime_float()
+{
+   list($usec, $sec) = explode(" ", microtime());
+   return ((float)$usec + (float)$sec);
+}
+/**
+ * start test
+ */
+$s = microtime_float();
+get_config_a();
+echo microtime_float()-$s;
+echo "\n";
+$s = microtime_float();
+foreach ( range(1,10000) as $i )
+{
+ $b = StaticConfig::$sth_like_config['a'];
+}
+echo microtime_float()-$s;
+echo "\n";
+?>
+结果：
+0.15xxxxxxxx
+0.18xxxxxxxxx
+按上面这种方式测试的话是数组比静态类快，原因是我们在函数里调用的全局数组，只用了 global 一次，在同一作用域下变量比类快，这是一定的。但是在实际环境里，比如我们的配置数组经常要在一些函数里用，那么就会有多次 global 声明，让我们换一种方式测试。
+测试方法二：
+<?php
+/**
+ * @date : Wed Jul 04 11:34:00 CST 2007 11:34:00
+ * @author : Deng Wei <<a href="mailto:Alvin@gmail.com">Alvin@gmail.com</a>>
+ * @package : test
+ * @version : $Rev$ 
+ * @info : $Id$
+ */
+$sth_like_config = array(
+ 'a' => 1,
+ 'b' => 2,
+);
+function get_config_a()
+{
+ global $sth_like_config;
+ return $sth_like_config['a'];
+}
+class StaticConfig
+{
+ public static $sth_like_config = array(
+  'a' => 1,
+  'b' => 2,
+ );
+}
+function microtime_float()
+{
+   list($usec, $sec) = explode(" ", microtime());
+   return ((float)$usec + (float)$sec);
+}
+/**
+ * start test
+ */
+$s = microtime_float();
+foreach ( range(1,10000) as $i )
+{
+ $b = get_config_a();
+}
+echo microtime_float()-$s;
+echo "\n";
+$s = microtime_float();
+foreach ( range(1,10000) as $i )
+{
+ $b = StaticConfig::$sth_like_config['a'];
+}
+echo microtime_float()-$s;
+echo "\n";
+?>
+结果：
+0.51952910423279
+0.18489503860474
+可见 global 有多慢了，并且我们经常还会因为一些原因忘记写他，所以我的“建议”是把一些全局变量都放到静态类里，这样还用的时候就不用一直记着去 global 声明了，并且通过类来访问，我们还可以对访问进行一些控制。：）
+不知道您是怎么想？我现在是把配置信息都放到静态类里了。终于告别了“global”~！

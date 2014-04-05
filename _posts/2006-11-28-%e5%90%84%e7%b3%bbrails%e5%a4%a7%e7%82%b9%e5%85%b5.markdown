@@ -1,0 +1,36 @@
+---
+layout: post
+title: 各系Rails大点兵
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0yOCAwMDoyMjoyMCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0yNyAxNjoyMjoyMCArMDgwMA==
+---
+不知道明年今日，会不会出现一队只会用Ruby On Rails的毕业生，像当年的asp、jsp、php迅速剿了C++/perl的CGI那样，把我们给剿了。同好们劝我，根据大公司经济学，这基本不会发生。
+在茫茫的框架之海认出一个Rails框架，基本上靠四个特征
+1.一门动态语言
+2.一个extreme simple to use的ORM框架
+3.一个extreme simple to use的MVC框架
+4.一些自动生成代码的命令、模版
+其余ajax、web service、i18n等特性自由扩展
+1.Ruby: Ruby on Rails
+Rails系的旗手，一己之力搞得J2EE阵营鸡飞蛋打。
+旗手的作用表现在：
+*最接近1.0的版本，目前已出到最后一个RC版 1.0 rc4(0.14.3)
+*拥有一本amazon超级畅销的《Agile Web Development with Rails》，而且这本书的组织也好，part I是一个渐进的sample application 让你快速入门，partII是几个重要领域的深入介绍。
+*拥有自己的IDE: RadRails ，基于Eclipse但独立成军，目前出到0.5。(是不是怕惨了Eclipse的多变，现在这些IDE的发行版本开始反包含了Eclipse在内。)
+2.Python: DJango、turbogears
+认识不深，所以DJango请看limodou的blog，turbogears看xlp123的。
+3.Groovy: grails
+如果能顺产，绝对是J2EE阵营里感情分最高涨的项目。因为它语言用Groovy，ORM用annotation版Hibernate，MVC用Spring。不用担心它换汤不换药，因为经过extreme的封装，再结合Groovy，绝对不再是原来的Spring+Hibernate，而是和RoR差不多的一样东西了。不信可以看看他的Sample。
+不过这个项目的源码目录树非一般的乱，也还没有0.1版释出。还有一样奇怪的事情，这个Groovy项目，大多数的class代码都是Java写的。
+4.Php: symfony ,cake
+据说cake比symfony弱非常多，所以没看。
+symfonys是基于php5的项目，成功整合了Propel(ORM)、Mojavi3(MVC)，再配合自动生成的脚本打造而成。看他的sample，最后整合出来的东西也很Rails了，除了ORM层的xml文件。
+还有一个发现是Php项目现在可以用pear来安装，很像Ruby的gem，Java的Maven要努力了。
+C: />pear channel-discover pear.symfony-project.com 
+C: />pear install symfony/symfony
+这样就装完了symfonys和propel&croel, mojavi3,还有用来运行脚本命令的pake(php make)，PHing(php ant?)，一大堆东西。
+from :http://www.blogjava.net/calvin/archive/2005/11/22/20938.html
+author:江南白衣  

@@ -1,0 +1,209 @@
+---
+layout: post
+title: VC++开发BHO插件 - 定制你的浏览器
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMC0zMSAwOTozMTo0OSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0zMSAwMTozMTo0OSArMDgwMA==
+---
+转至<a href="http://dev.yesky.com">http://dev.yesky.com</a>
+在Windows操作系统上，我们最常见的浏览器有两种：文件浏览器（exploer.exe，应用于文件系统）和Internet浏览器（iexplore.exe，应用于互联网资源）。由于这两个浏览器功能强大，而且又与Windows操作系统捆绑销售，最终也就成为了浏览器的标准。但有时候，为了给浏览器加入一些新的特性，我们往往会重新设计一个自己的浏览器。新的浏览器模仿标准浏览器的大部分功能，同时加入新特性。这种做法最直观，但实际上也是相对于微软的重复劳动，且工作量比较大。其实，使用BHO插件，一切都变得很简单。 
+　　BHO（Browser Help Objects），是实现了特定接口的COM组件。开发好的BHO插件在注册表特定的位置注册好后，每当微软的浏览器启动，BHO实例就会被创建。在浏览器工作的工程中，BHO会接收到很多事件，比如浏览器浏览新的地址、前进或后退、生成新的窗口、浏览器退出等等；BHO可以在这些事件的响应中实现与浏览器的交互。
+　
+　　下面，我们首先来介绍一下BHO的工作原理。上面我们已经提到，BHO是COM组件，而且一定实现了IObjectWithSite接口。这些组件除了在注册表中注册为COM Server外，还必须将它们的CLSID在HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\ CurrentVersion\Explorer\Browser Helper Objects下注册为子键。微软在设计浏览器的时候，已经给这些组件预留了空间。每当浏览器启动时，浏览器会首先在上述注册表位置查看是否有注册的BHO CLSID；如果有则分别创建一个实例，并对BHO实例进行初始化，建立交互连接。（注：BHO实例只有在创建它的浏览器窗口销毁时才被释放。）下图演示了BHO的创建过程：
+
+<table width="90%" align="center">
+<tbody>
+<tr>
+<td>
+<div align="center"><img alt="说明 Createbho.jpg" src="http://dev.yesky.com/imagelist/06/33/wd0h60g5a5t1.jpg" /></div>            </td>        </tr>    </tbody></table>
+　　成功创建的BHO，不仅可以得到各种标准的浏览器操作事件，并做出响应；还可以定制浏览器的菜单、工具条等界面元素；更或者可以安装钩子函数，监视浏览器的一举一动。值得注意的是，使用BHO插件，Internet浏览器要求在4.0以上版本；如果是文件浏览器，操作系统要求是Windows 95/98/2000或Window NT 4.0以上版本，并且Shell的版本在4.71以上。下面是支持BHO特性的系统一览表：
+
+<table cellspacing="0" cellpadding="0" width="90%" align="center" border="1">
+<tbody>
+<tr>
+<td>Shell版本</td>
+<td>操作系统版本</td>
+<td>支持BHO </td>        </tr>
+<tr>
+<td>4.00</td>
+<td>Windows 95 and Windows NT 4.0（IE版本为 4.0）</td>
+<td>仅IE4.0 </td>        </tr>
+<tr>
+<td>4.71</td>
+<td>Windows 95 and Windows NT 4.0（IE版本为 4.0）</td>
+<td>IE和文件浏览器</td>        </tr>
+<tr>
+<td>4.72</td>
+<td>Windows 98 </td>
+<td>IE和文件浏览器</td>        </tr>
+<tr>
+<td>5.00</td>
+<td>Windows 2000</td>
+<td>IE和文件浏览器</td>        </tr>    </tbody></table>
+　　接下去，笔者就来介绍一下如何开发BHO插件，开发环境为VC6.0（使用ATL），安装Platform SDK中的Internet Development SDK。首先，启动VC的ATL COM AppWizard，生成一个项目名为BhoPlugin，其余均采用默认设置。接着，我们就来分步详细阐述。
+　　第一步，增加一个ATL Object到该项目中。VC菜单Insert->New ATL Object…，在弹出的对话框中选择“Internet Explorer Object”，输入COM类名（在Short Name后输入EyeOnIE，其它各项会自动生成）。完成后，我们可以看到CEyeOnIE类有一个基类IObjectWithSiteImpl，这个就是实现IObjectWithSite接口的模版类。
+　　第二步，实现IObjectWithSite的接口方法。在这之前，我们要先定义几个成员变量：CComQIPtr<IWebBrowser2, &IID_IWebBrowser2> mWebBrowser2，（需要加入#include "ExDisp.h"），用以保存浏览器组件的指针；DWORD mCookie，用以保存与浏览器的连接ID。IObjectWithSite有两个接口方法：SetSite和GetSite。我们只需重载SetSite就行了。在EyeOnIE.h中增加函数声明STDMETHOD(SetSite)(IUnknown *pUnkSite)，在EyeOnIE.cpp实现如下：
+
+<table bordercolor="#cccccc" width="90%" align="center" bgcolor="#e7e9e9" border="1">
+<tbody>
+<tr>
+<td>STDMETHODIMP CEyeOnIE::SetSite(IUnknown *pUnkSite)
+            {
+            　USES_CONVERSION;
+            
+            　if (pUnkSite)
+            　{
+            　　mWebBrowser2 = pUnkSite;
+            　　if (mWebBrowser2)
+            　　{
+            　　　return RegisterEventHandler(TRUE);
+            　　}
+            　}
+            　return E_FAIL;
+            }
+            
+            HRESULT CEyeOnIE::RegisterEventHandler(BOOL inAdvise)
+            {
+            　CComPtr<IConnectionPoint> spCP;
+            　// Receives the connection point for WebBrowser events
+            　CComQIPtr<IConnectionPointContainer, &IID_IConnectionPointContainer> spCPC(mWebBrowser2);
+            　HRESULT hr = spCPC->FindConnectionPoint(DIID_DWebBrowserEvents2, &spCP);
+            　if (FAILED(hr))
+            　　return hr;
+            
+            　if (inAdvise)
+            　{
+            　　// Pass the event handlers to the container
+            　　hr = spCP->Advise(reinterpret_cast<IDispatch*>(this), &mCookie);
+            　}
+            　else
+            　{
+            　　spCP->Unadvise(mCookie);
+            　}
+            　return hr; 
+            }</td>        </tr>    </tbody></table>
+　　我们可以看到，SetSite的参数实际上指向的是浏览器组件。在SetSite实现中，我们首先保存浏览器组件指针，然后将该BHO向浏览器注册为事件处理器。
+第三步，实现IDispatch接口方法。事件处理也就在IDispatch::Invoke中实现（各个事件的ID在ExDispID.h中定义）。BHO可能会接收到很多事件，但我们只需要响应我们感兴趣的那一部分。首先在EyeOnIE.h中增加该函数的声明，在EyeOnIE.cpp的实现中，笔者试着响应浏览器浏览一个地址之前发出的事件DISPID_BEFORENAVIGATE2，以此来实现简单的网址过滤功能，代码参考如下：
+
+<table bordercolor="#cccccc" width="90%" align="center" bgcolor="#e7e9e9" border="1">
+<tbody>
+<tr>
+<td>STDMETHODIMP CEyeOnIE::Invoke(DISPID dispidMember,REFIID riid, LCID lcid, 
+            WORD wFlags, DISPPARAMS * pDispParams, 
+            VARIANT * pvarResult,EXCEPINFO * pexcepinfo, 
+            UINT * puArgErr)
+            { 
+            　USES_CONVERSION;
+            
+            　if (!pDispParams)
+            　　return E_INVALIDARG;
+            
+            　switch (dispidMember)
+            　{
+            　　//
+            　　// The parameters for this DISPID are as follows:
+            　　// [0]: Cancel flag - VT_BYREF|VT_BOOL
+            　　// [1]: HTTP headers - VT_BYREF|VT_VARIANT
+            　　// [2]: Address of HTTP POST data - VT_BYREF|VT_VARIANT 
+            　　// [3]: Target frame name - VT_BYREF|VT_VARIANT 
+            　　// [4]: Option flags - VT_BYREF|VT_VARIANT
+            　　// [5]: URL to navigate to - VT_BYREF|VT_VARIANT
+            　　// [6]: An object that evaluates to the top-level or frame
+            　　// WebBrowser object corresponding to the event. 
+            　　//
+            　　case DISPID_BEFORENAVIGATE2:
+            　　{
+            　　　LPOLESTR lpURL = NULL;
+            　　　mWebBrowser2->get_LocationURL(&lpURL);
+            　　　char * strurl;
+            　　　if (pDispParams->cArgs >= 5 && pDispParams->rgvarg[5].vt == (VT_BYREF|VT_VARIANT))
+            　　　{
+            　　　　CComVariant varURL(*pDispParams->rgvarg[5].pvarVal);
+            　　　　varURL.ChangeType(VT_BSTR);
+            　　　　strurl = OLE2A(varURL.bstrVal);
+            　　　}
+            　　　if (strstr(strurl, "girl.com"))
+            　　　{
+            　　　　*pDispParams->rgvarg[0].pboolVal = TRUE;
+            　　　　::MessageBox(NULL, _T("该网页已被禁止!"),_T("Warning"),MB_ICONSTOP);
+            　　　　return S_OK;
+            　　　}
+            　　　break;
+            　　}
+            
+            　　case DISPID_NAVIGATECOMPLETE2:
+            　　　break;
+            　　case DISPID_DOCUMENTCOMPLETE:
+            　　　break;
+            　　case DISPID_DOWNLOADBEGIN:
+            　　　break;
+            　　case DISPID_DOWNLOADCOMPLETE:
+            　　　break;
+            　　case DISPID_NEWWINDOW2:
+            　　　break;
+            　　case DISPID_QUIT:
+            　　　RegisterEventHandler(FALSE);
+            　　　break;
+            　　default:
+            　　　break;
+            　}
+            
+            　return S_OK;
+            }</td>        </tr>    </tbody></table>
+　　我们看到，当用户浏览的新地址包含"girl.com"字符的时候，浏览器就会弹出一个警告对话框，并且停止进一步的动作。另外值得注意的是，在DISPID_QUIT事件（浏览器将要退出）的响应中，我们将BHO事件处理器进行了注销。
+　　第四步，因为BHO可能会被文件浏览器加载。如果我们不想这样，我们就要在DllMain中对加载者进行判断，参考如下：
+
+<table bordercolor="#cccccc" width="90%" align="center" bgcolor="#e7e9e9" border="1">
+<tbody>
+<tr>
+<td>extern "C"
+            BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID /*lpReserved*/)
+            {
+            　if (dwReason == DLL_PROCESS_ATTACH)
+            　{
+            　　// Check who's loading us. 
+            　　// If it's Explorer then "no thanks" and exit...
+            　　TCHAR pszLoader[MAX_PATH];
+            　　GetModuleFileName(NULL, pszLoader, MAX_PATH);
+            　　_tcslwr(pszLoader);
+            　　if (_tcsstr(pszLoader, _T("explorer.exe"))) 
+            　　　return FALSE;
+            
+            　　_Module.Init(ObjectMap, hInstance, &LIBID_BHOPLUGINLib);
+            　　DisableThreadLibraryCalls(hInstance);
+            　}
+            　else if (dwReason == DLL_PROCESS_DETACH)
+            　　_Module.Term();
+            　　return TRUE; // ok
+            }</td>        </tr>    </tbody></table>
+　　最后，别忘了修改注册表文件，追加BHO的注册信息。在EyeOnIE.rgs文件的下面增加如下代码：
+
+<table bordercolor="#cccccc" width="90%" align="center" bgcolor="#e7e9e9" border="1">
+<tbody>
+<tr>
+<td>HKLM
+            {
+            　SOFTWARE
+            　{
+            　　Microsoft
+            　　{
+            　　　Windows
+            　　　{
+            　　　　CurrentVersion
+            　　　　{
+            　　　　　Explorer
+            　　　　　{
+            　　　　　　'Browser Helper Objects'
+            　　　　　　{
+            　　　　　　　{6E28339B-7A2A-47B6-AEB2-46BA53782379}
+            　　　　　　}
+            　　　　　}
+            　　　　}
+            　　　}
+            　　}
+            　}
+            }</td>        </tr>    </tbody></table>
+　　注意，{6E28339B-7A2A-47B6-AEB2-46BA53782379}是笔者这个BHO的CLSID，如果你自己开发BHO，这里应该正确填写你的CLSID。
+　　好了，一个简单的BHO开发完成了。（可以到本人的个人主页 http://hqtech.nease.net 下载实例源代码。）BHO插件可以实现的功能还有很多，比如网页内容分析、IE界面定制等等。作为总结，笔者还要提醒读者一点的是，如果不想让BHO起作用了，可以注销该插件，如下格式：regsvr32 /u yourpath\yourbho.dll，或者直接在注册表中将“Browser Helper Objects”目录下注册的CLSID删掉。

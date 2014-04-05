@@ -1,0 +1,10 @@
+---
+layout: post
+title: xcode 中使用 lua 的方法
+author: Alvin
+date: !binary |-
+  MjAwOS0wNy0yOCAxNTo1MDozMSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wNy0yOCAwNzo1MDozMSArMDgwMA==
+---
+在 lua maillist 中看到 Hans van der meer 发的一个安装方法。<a href="http://drop.io/v47uqar/asset/luaxcode3syntaxcolor-zip" title="luaxcode3syntaxcolor-zip">View luaxcode3syntaxcolor-zip</a>

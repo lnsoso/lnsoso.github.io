@@ -1,0 +1,14 @@
+---
+layout: post
+title: 什么是MIPS？
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0xMi0xNyAwOTowOToxNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0xMi0xNyAwMTowOToxNiArMDgwMA==
+---
+Million Instructions Per Second的缩写，每秒处理的百万级的机器语言指令数。这是衡量CPU速度的一个指标。像是一个Intel 80386 电脑可以每秒处理3百万到5百万机器语言指令，既我们可以说80386是3到5MIPS的CPU。MIPS只是衡量CPU性能的指标。这是
+一种过时的而且不科学的衡量处理器速度与性能的度量单位，不过依然在用。
+MIPS技术公司是一家设计制造高性能、高档次及嵌入式32位和64位处理器的厂商，在RISC处理器方面占有重要地位。1984年，MIPS计算机公司成立。1992年，SGI收购了MIPS计算机公司。1998年，MIPS脱离SGI，成为MIPS技术公司。
+MIPS公司设计RISC处理器始于二十世纪八十年代初，1986年推出R2000处理器，1988年推R3000处理器，1991年推出第一款64位商用微处器R4000。之后又陆续推出R8000（于1994年）、R10000（于1996年）和R12000（于1997年）等型号。
+随后，MIPS公司的战略发生变化，把重点放在嵌入式系统。1999年，MIPS公司发布MIPS32和MIPS64架构标准，为未来MIPS处理器的开发奠定了基础。新的架构集成了所有原来NIPS指令集，并且增加了许多更强大的功能。MIPS公司陆续开发了高性能、低功耗的32位处理器内核（core）MIPS324Kc与高性能64位处理器内核MIPS64 5Kc。2000年，MIPS公司发布了针对MIPS32 4Kc的版本以及64位MIPS 64 20Kc处理器内核。

@@ -1,0 +1,10 @@
+---
+layout: post
+title: 友情
+author: gavinkwoe
+date: !binary |-
+  MjAwOC0wNy0yMiAyMzoxOToyNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wNy0yMiAxNToxOToyNyArMDgwMA==
+---
+<a href="http://tu.6.cn/pic/show/id/189427"><img src="http://i3.6.cn/cvbnm/ae/26/0c/d8619aa8b0069a2f3570105cf68a062f.jpg" alt="" /></a>

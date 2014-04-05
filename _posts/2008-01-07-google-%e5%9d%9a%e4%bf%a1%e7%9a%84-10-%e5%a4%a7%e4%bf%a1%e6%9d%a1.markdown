@@ -1,0 +1,25 @@
+---
+layout: post
+title: Google 坚信的 10 大信条
+author: Alvin
+date: !binary |-
+  MjAwOC0wMS0wNyAxNjo0NzoyNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wMS0wNyAwODo0NzoyNSArMDgwMA==
+---
+1. Focus on the user and all else will follow. 关注使用者,则一切将水到渠成.
+(H:对我来说这就是客户关系的经营,设身处地的为客户着想,而不是把这些行为都当成新案子的酬庸;至于新案子?对我而言这绝对是第二个考虑... 我想只要用心,客户是可以感受到并给予回馈.)2. It's best to do one thing really, really well. 尽力将一件事做到最好.
+(H:手上正在进行的工作,别只是把他做完就好,也不要有太多的权宜、妥协!尽可能真的把他的「做好」,因为老想着之后再回过头来怎样又怎样,经验告诉我,通常回过头来怎样又怎样的机会是非常低的,然而这个不完美的作品却已经被客户在心中悄悄的打了分数.)
+3. Fast is better than slow. 快比慢好.
+(H:这不是指把事情做的快的意思,比如说:你写的程序跑起来效率要高、有新的点子想到就要快点实作、.... 太多了,说不完.)
+4. Democracy on the web works. 网络的民主效应.
+(H: Web 2.0!!! Wikipedia, Blog..... )
+5. You don't need to be at your desk to need an answer. 您不一定要在桌子前找答案.
+(手机通讯,行动通讯,3G....)
+6. You can make money without doing evil. 不做坏事也能赚钱.
+7. There's always more information out there. 「信息」也无涯.
+8. The need for information crosses all borders. 对信息的需求没有国界.
+9. You can be serious without a suit. 不穿西装也可以很正经.
+(H: 早上你可以晚点进公司,上班时间你可以开心的大声说笑,傍晚你也可以早点下班回家,这些我都不在乎;但是你不能上班时间不工作而回家报边加班边工作,是因为公司风水比较差吗?你必需要对自己开出来的Schedule负责,当你面对自己开的Schedule是一再的Delay,那我会势必质疑你的能力!也许我什么都没说,但请相信我,很多事情是看在眼里,放在心底的.我的重点是--你要对你自己的决定/行为负责,形式上的一些规定对我来讲并不是重点.)
+10. Great just isn't good enough. 精益求精.
+(H:没啥好说说的,尽可能做到下面这句话吧 -- Be the only one, not number one.)

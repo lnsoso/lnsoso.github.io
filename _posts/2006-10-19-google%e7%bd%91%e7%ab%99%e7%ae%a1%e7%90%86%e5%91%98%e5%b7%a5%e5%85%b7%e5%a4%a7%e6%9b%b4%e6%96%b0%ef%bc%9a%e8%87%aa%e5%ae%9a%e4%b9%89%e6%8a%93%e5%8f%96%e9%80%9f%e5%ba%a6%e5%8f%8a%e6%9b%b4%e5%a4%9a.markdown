@@ -1,0 +1,17 @@
+---
+layout: post
+title: Google网站管理员工具大更新：自定义抓取速度及更多
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0xOSAxMDozMDowOSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0xOSAwMjozMDowOSArMDgwMA==
+---
+Google网站管理员工具即原先的Google Sitemps，后来Google给它增加了额外的功能和工具后，把它重新改名。在一个月前，Google已经开始测试一项新功能，即允许站长自定义Googlebot的抓取频率。这是非常实用的功能，因为理论上它可以加速Google对你的网站的收录。不过当时只是内测，只有极少数用户能使用它。 " 　　今天Google网站管理员中心blog宣布，Google网站管理员工具已进行了大更新，其中项就是向所有用户（包括简体中文）开放了自定义Googlebot抓取频率的功能。主要的更新包括：
+1.自定义Googlebot抓取频率。可选择"更快"、"正常"、"更慢"三个档次，虽然比内测时少了，但已足够用：
+2.Googlebot活动图表显示。这也是一项极实用的功能，可以显示在过去三个月里Googlebot在你的网站上的活动状况：
+3. 开启增强型图片搜索。
+"Google目前提供增强型搜索功能，可搜索您网站中的图片，这些功能包括用于 Google所托管图片的高级标签技术。如果您选择启用增强型图片搜索，Google 将使用Google ImageLabeler等工具将您网站所包含的图片与标签相关联，以优化这些图片的索引并提高搜索质量。"
+这是Google在图片搜索方面进行的最新改进。也就是说，你可以允许Google把Google Image Labeler的研究成果应用于你网站上的图片。这意味着你的网站上的图片将会被Google图片搜索更好地收录，也意味着用户更容易搜索到你的网站。
+4.显示某个Sitemap里已提交的网址总数。这允许用户知道自己所提交的某个Sitemap里一共包含多少个网址：
+　　强烈推荐每一位站长都试一下Google的网站管理员工具，因为它可以令Google更容易地收录你的网站内容。

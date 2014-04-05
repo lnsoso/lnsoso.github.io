@@ -1,0 +1,11 @@
+---
+layout: post
+title: 百度，很不幸
+author: Alvin
+date: !binary |-
+  MjAwOC0xMi0xMCAyMzoxNTo0NiArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMi0xMCAxNToxNTo0NiArMDgwMA==
+---
+在最近大家对百度不断质疑的时候，有没有想过放开眼界看看其它媒体？比如CCTV…并不是说百度没有问题，而是指光整一个百度是不行的。
+CCTV上的烂广告也不少。

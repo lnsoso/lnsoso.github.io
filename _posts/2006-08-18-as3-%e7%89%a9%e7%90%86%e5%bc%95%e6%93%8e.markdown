@@ -1,0 +1,12 @@
+---
+layout: post
+title: AS3 物理引擎
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0xOCAxMzozNDoxMyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0xOCAwNTozNDoxMyArMDgwMA==
+---
+http://blog.andre-michelle.com/2006/announcing-new-physics-engine-in-as3/
+自己做个记录 AS3 做的，并且提供源代码。
+:)

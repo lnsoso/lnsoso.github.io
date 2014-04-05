@@ -1,0 +1,15 @@
+---
+layout: post
+title: php echo 时的问题
+author: Alvin
+date: !binary |-
+  MjAwOC0xMC0wOSAxMTo1ODowMiArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMC0wOSAwMzo1ODowMiArMDgwMA==
+---
+某同学问
+echo 04555720201;
+为啥输出
+632791169
+之前第一反应是溢出，结果一看长度和返回的数值都不对，再看前边，才发现是进制转换的问题。
+

@@ -1,0 +1,22 @@
+---
+layout: post
+title: 改进网页可读性的7个方法
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0zMSAxMzoyMTo0OSArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0zMSAwNToyMTo0OSArMDgwMA==
+---
+原文链接：<a href="http://www.webcredible.co.uk/user-friendly-resources/web-usability/web-page-readability.shtml" target="_blank">Improve the Readability of Your Web Page </a>
+1.　使用对比色 （Use contrasting colours）. 这里说的对比是文字的颜色和背景色的对比。这样用户可以比较容易的看清文字，减少阅读疲劳。有视力障碍的人可能看不清楚低对比度的文字。可以去Vischeck这个网站可以看看你的网站在色弱（或色盲）用户眼中的样子。 
+2.　把文字圈成小块 （”Chunk up” your copy）. 大块的高密度的文字让你的用户感觉信息负荷超载，有压抑感。几个小技巧: 
+<ul dir="ltr" style="MARGIN-RIGHT: 0px">
+<li>用列表（或者1-2-3）和副标题. </li>
+<li>保持段落短小. </li>
+<li>在重要的观点上使用加粗或使用不同颜色，便于那些不太耐心而快速浏览的用户能抓住重点。 </li>
+<li>控制文字的行宽（Use columns to control text width.）</li></ul>
+<p dir="ltr">3.　避免杂乱的背景（Avoid busy backgrounds），让文字容易看清楚。  
+4.　少一点更好（Less is better）. 在页面上放置越多杂乱的东西，越是让用户迷惑，分散注意力，不能集中阅读。网站看起来也不够专业.在放任何一项东西前想想，真的不放不可么？ 
+5.　使用辨识性好的字体（Strive for a clean font style for maximum readability.） 
+6.　文字不要太小（Don&rsquo;t use itsy-bitsy font sizes）. 蚂蚁似的文字，很难快速的阅读。如果用户自己可以控制就更好了. 
+7.　让链接更像链接（Make your links look like links）. 如果不是标准蓝色链接，最好可以加上下划线。不是链接的文字，最好不要加下划线。 

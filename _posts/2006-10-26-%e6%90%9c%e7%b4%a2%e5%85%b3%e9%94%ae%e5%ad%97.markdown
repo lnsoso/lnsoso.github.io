@@ -1,0 +1,97 @@
+---
+layout: post
+title: 搜索关键字
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNiAxMTozODozNiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNiAwMzozODozNiArMDgwMA==
+---
+今天查看 Webmasters 时发现原来搜索 FFMPEG 过来的人是最多的……看来大家最近对视频很感兴趣嘛，不知是不是因为 youtube 被收购的原因？
+<table class="data">
+<thead class="maingreen">
+<tr>
+<td width="75%"><a href="https://www.google.com/webmasters/sitemaps/querystats?siteUrl=http%3A%2F%2Fwww.donevii.com%2F&hl=zh-CN&sort=popularity&reverse=0">热门搜索查询 </a></td>
+<td> </td>
+<td width="25%"><a href="https://www.google.com/webmasters/sitemaps/querystats?siteUrl=http%3A%2F%2Fwww.donevii.com%2F&hl=zh-CN&sort=position&reverse=0">平均最前排名 </a><a href="https://www.google.com/webmasters/sitemaps/querystats?siteUrl=http%3A%2F%2Fwww.donevii.com%2F&hl=zh-CN&sort=position&reverse=0"><img alt="" src="https://www.google.com/webmasters/sitemaps/images/sortup.gif" border="0" /></a> </td>        </tr>    </thead>
+<tbody>
+<tr>
+<td width="75%">  2. <a onclick="focusWindow()" href="http://google.com/search?q=ffmpeg&hl=zh-CN" target="google_popup">ffmpeg</a> </td>
+<td> </td>
+<td width="25%">44 </td>        </tr>
+<tr>
+<td width="75%">15. <a onclick="focusWindow()" href="http://google.com/search?q=flickr%20php&hl=zh-CN" target="google_popup">flickr php</a> </td>
+<td> </td>
+<td width="25%">43 </td>        </tr>
+<tr>
+<td width="75%">  7. <a onclick="focusWindow()" href="http://google.com/search?q=pligg&hl=zh-CN" target="google_popup">pligg</a> </td>
+<td> </td>
+<td width="25%">35 </td>        </tr>
+<tr>
+<td width="75%">14. <a onclick="focusWindow()" href="http://google.com/search?q=c%23%20%22%E5%85%B1%E4%BA%AB%20%E5%86%85%E5%AD%98%22&hl=zh-CN" target="google_popup">c# "共享 内存"</a> </td>
+<td> </td>
+<td width="25%">31 </td>        </tr>
+<tr>
+<td width="75%">13. <a onclick="focusWindow()" href="http://google.com/search?q=iconv&hl=zh-CN" target="google_popup">iconv</a> </td>
+<td> </td>
+<td width="25%">30 </td>        </tr>
+<tr>
+<td width="75%">12. <a onclick="focusWindow()" href="http://google.com/search?q=dhtmlgoodies&hl=zh-CN" target="google_popup">dhtmlgoodies</a> </td>
+<td> </td>
+<td width="25%">26 </td>        </tr>
+<tr>
+<td width="75%">20. <a onclick="focusWindow()" href="http://google.com/search?q=ffmpeg%20c%23&hl=zh-CN" target="google_popup">ffmpeg c#</a> </td>
+<td> </td>
+<td width="25%">18 </td>        </tr>
+<tr>
+<td width="75%">11. <a onclick="focusWindow()" href="http://google.com/search?q=pjblog%20%E4%B8%8E%20zblog&hl=zh-CN" target="google_popup">pjblog 与 zblog</a> </td>
+<td> </td>
+<td width="25%">13 </td>        </tr>
+<tr>
+<td width="75%">10. <a onclick="focusWindow()" href="http://google.com/search?q=php%20python%20asp%20jsp%20cgi&hl=zh-CN" target="google_popup">php python asp jsp cgi</a> </td>
+<td> </td>
+<td width="25%">13 </td>        </tr>
+<tr>
+<td width="75%">19. <a onclick="focusWindow()" href="http://google.com/search?q=jay%20qianlizhiwai%20mp3&hl=zh-CN" target="google_popup">jay qianlizhiwai mp3</a> </td>
+<td> </td>
+<td width="25%">10 </td>        </tr>
+<tr>
+<td width="75%">18. <a onclick="focusWindow()" href="http://google.com/search?q=%22mollio%20beat%22&hl=zh-CN" target="google_popup">"mollio beat"</a> </td>
+<td> </td>
+<td width="25%">8 </td>        </tr>
+<tr>
+<td width="75%">  9. <a onclick="focusWindow()" href="http://google.com/search?q=c%2B%2B%20externalinterface&hl=zh-CN" target="google_popup">c++ externalinterface</a> </td>
+<td> </td>
+<td width="25%">7 </td>        </tr>
+<tr>
+<td width="75%">17. <a onclick="focusWindow()" href="http://google.com/search?q=c%2B%2B%20list%20sort&hl=zh-CN" target="google_popup">c++ list sort</a> </td>
+<td> </td>
+<td width="25%">5 </td>        </tr>
+<tr>
+<td width="75%">  8. <a onclick="focusWindow()" href="http://google.com/search?q=mencoder%20%22%E6%94%AF%E6%8C%81%20%E7%9A%84%20%E6%A0%BC%E5%BC%8F%22&hl=zh-CN" target="google_popup">mencoder "支持 的 格式"</a> </td>
+<td> </td>
+<td width="25%">5 </td>        </tr>
+<tr>
+<td width="75%">  3. <a onclick="focusWindow()" href="http://google.com/search?q=%E8%B6%8A%E7%8B%B1%20flash&hl=zh-CN" target="google_popup">越狱 flash</a> </td>
+<td> </td>
+<td width="25%">5 </td>        </tr>
+<tr>
+<td width="75%">  4. <a onclick="focusWindow()" href="http://google.com/search?q=%E8%B6%8A%E7%8B%B1%20flash%20%E6%B8%B8%E6%88%8F&hl=zh-CN" target="google_popup">越狱 flash 游戏</a> </td>
+<td> </td>
+<td width="25%">3 </td>        </tr>
+<tr>
+<td width="75%">16. <a onclick="focusWindow()" href="http://google.com/search?q=Alvin&hl=zh-CN" target="google_popup">Alvin</a> </td>
+<td> </td>
+<td width="25%">2 </td>        </tr>
+<tr>
+<td width="75%">  6. <a onclick="focusWindow()" href="http://google.com/search?q=php%20communicate%20c%20or%20c%2B%2B&hl=zh-CN" target="google_popup">php communicate c or c++</a> </td>
+<td> </td>
+<td width="25%">1 </td>        </tr>
+<tr>
+<td width="75%">  5. <a onclick="focusWindow()" href="http://google.com/search?q=asp%20iconv&hl=zh-CN" target="google_popup">asp iconv</a> </td>
+<td> </td>
+<td width="25%">1 </td>        </tr>
+<tr>
+<td width="75%">  1. <a onclick="focusWindow()" href="http://google.com/search?q=donevii&hl=zh-CN" target="google_popup">donevii</a> </td>
+<td> </td>
+<td width="25%">1 </td>        </tr>    </tbody></table>

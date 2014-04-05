@@ -1,0 +1,11 @@
+---
+layout: post
+title: ! '[趣味]What is Love'
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMi0wNCAxMzoyMzoyNCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMi0wNCAwNToyMzoyNCArMDgwMA==
+---
+在 icebin 上看到的,太搞笑了~!之前看过一点 what is love 的视频,很经典.
+<embed src="http://content.jengajam.com/whatislove.swf" type="application/x-shockwave-flash" play="true" loop="true" menu="true"></embed>

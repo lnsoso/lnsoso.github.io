@@ -1,0 +1,70 @@
+---
+layout: post
+title: ACE自适配通信环境
+author: Alvin
+date: !binary |-
+  MjAwNi0wOC0yMyAxMzo0MzowOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0wOC0yMyAwNTo0MzowOCArMDgwMA==
+---
+<div id="msgcns!CD6A8257796937C8!146">
+一、ACE综述
+　　ACE自适配通信环境（ADAPTIVE Communication Environment）是可以自由使用、开放源码的面向对象（OO）框架（Framework），在其中实现了许多用于并发通信软件的核心模式。ACE提供了一组丰富的可复用C++ Wrapper Facade（包装外观）和框架组件，可跨越多种平台完成通用的通信软件任务，其中包括：事件多路分离和事件处理器分派、信号处理、服务初始化、进程间通信、共享内存管理、消息路由、分布式服务动态（重）配置、并发执行和同步，等等。
+ACE的目标用户是高性能和实时通信服务和应用的开发者。它简化了使用进程间通信、事件多路分离、显式动态链接和并发的OO网络应用和服务的开发。此外，通过服务在运行时与应用的动态链接，ACE还使系统的配置和重配置得以自动化。
+ACE正在进行持续的改进。Riverace公司（<a href="http://www.riverace.com/"><font color="#4d99d3">http://www.riverace.com</font></a>）采用开放源码商业模式对ACE进行商业支持。此外，ACE开发组的许多成员目前正在进行The ACE ORB（TAO，<a href="http://www.cs.wustl.edu/~schmidt/TAO.html"><font color="#4d99d3">http://www.cs.wustl.edu/~schmidt/TAO.html</font></a>）的开发工作。
+二、使用ACE的好处
+使用ACE的好处有：
+l       增强可移植性：在ACE组件的帮助下，很容易在一种OS平台上编写并发网络应用，然后快速地将它们移植到各种其他的OS平台上。而且，因为ACE是开放源码的自由软件，你无需担心被锁定在特定的操作系统平台或编译器上。
+l       更好的软件质量：ACE的设计使用了许多可提高软件质量的关键模式，这些质量因素包括通信软件灵活性、可扩展性、可复用性和模块性。
+l       更高的效率和可预测性：ACE经仔细设计，支持广泛的应用服务质量（QoS）需求，包括延迟敏感应用的低响应等待时间、高带宽应用的高性能，以及实时应用的可预测性。
+l       更容易转换到标准的高级中间件：TAO使用了ACE提供的可复用组件和模式。它是CORBA的开发源码、遵循标准的实现，并为高性能和实时系统作了优化。为此，ACE和TAO被设计为能良好地协同工作，以提供全面的中间件解决方案。
+三、ACE的结构和功能 
+下图显示了ACE中的关键组件以及它们的层次关系： 
+图中的结构和各层的组成部分描述如下。
+四、ACE OS适配层
+该层直接位于用C写成的本地OS API之上。它提供轻型的类POSIX OS适配层，将ACE中的其他层及组件和以下与OS API相关联的平台专有特性屏蔽开来：
+l       并发和同步：ACE的适配层封装了用于多线程、多进程和同步的OS API。
+l       进程间通信（IPC）和共享内存：ACE的适配层封装了用于本地和远地IPC、以及共享内存的OS API。
+l       事件多路分离机制：ACE的适配层封装了用于对基于I/O、定时器、信号和同步的事件进行同步和异步多路分离的OS API。
+l       显式动态链接：ACE的适配层封装了用于显式动态链接的OS API。显式动态链接允许在安装时或运行时对应用服务进行配置。
+l       文件系统机制：ACE的适配层封装了用于操作文件和目录的OS文件系统API。
+ACE OS适配层的可移植性使得ACE可运行在许多操作系统上。ACE已在广泛的OS平台上进行了移植和测试，包括Win32（也就是，在Intel和Alpha平台，使用MSVC++、Borland C++ Builder和IBM Visual Age的WinNT 3.5.x、4.x、2000、Win95/98和WinCE）、Mac OS X、大多数版本的UNIX（例如，SPARC和Intel上的Solaris 1.x和2.x、SGI IRIX 5.x和6.x、DG/UX、HP-UX 9.x、10.x和11.x、DEC/Compaq UNIX 3.x和4.x、AIX 3.x和4.x、UnixWare、SCO，以及可自由使用的UNIX实现，比如Debian Linux 2.x、RedHat Linux 5.2、6.x和7.x、FreeBSD和NetBSD）、实时操作系统（比如，LynxOS、VxWorks、Chorus ClassiX 4.0、QnX Neutrino、RTEMS和PSoS）、MVS OpenEdition和CRAY UNICOS。
+由于ACE的OS适配层所提供的抽象，所有这些平台使用同一棵代码树。这样的设计极大地增强了ACE的可移植性和可维护性。此外，还有Java版本的ACE可用（<font color="#4d99d3">http://www.cs.wustl.edu/~eea1/JACE.html</font>）。
+五、OS接口的C++ Wrapper Facade
+可以直接在ACE OS适配层之上编写高度可移植的C++应用。但是，大多数ACE开发者使用的是上图中所示的C++ Wrapper Facade层。通过提供类型安全的C++接口（这些接口封装并增强本地的OS并发、通信、内存管理、事件多路分离、动态链接和文件系统API），ACE Wrapper Facade简化了应用的开发。应用可以通过有选择地继承、聚合和/或实例化下面的组件来组合和使用这些包装：
+l       并发和同步组件：ACE对像互斥体和信号量这样的本地OS多线程和多进程机制进行抽象，以创建高级的OO并发抽象，像主动对象（Active Object）和多态期货（Polymorphic Future）。
+l       IPC和文件系统组件：ACE C++包装对本地和/或远地IPC机制进行封装，比如socket、TLI、UNIX FIFO和STREAM管道，以及Win32命名管道。此外，ACE C++包装还封装了OS文件系统API。
+l       内存管理组件：ACE内存管理组件为管理进程间共享内存和进程内堆内存的动态分配和释放提供了灵活和可扩展的抽象。
+ACE C++包装提供了许多与ACE OS适配层一样的特性。但是，这些特性是采用C++类和对象、而不是独立的C函数来构造的。这样的OO包装有助于减少正确地学习和使用ACE所需的努力。
+例如，C++的使用提高了应用的健壮性，因为C++包装是强类型的。所以，编译器可在编译时、而不是运行时检测类型系统违例。相反，不到运行时，不可能检测像socket或文件系统I/O这样的C一级OS API的类型系统违例。
+ACE采用了许多技术来降低或消除额外的性能开销。例如，ACE大量地使用C++内联来消除额外的方法调用开销；这样的开销可由OS适配层和C++包装所提供的额外的类型安全和抽象层次带来。此外，对于性能要求很高的包装，比如socket和文件I/O的send/recv方法，ACE会避免使用虚函数。
+六、框架
+ACE还含有一个高级的网络编程框架，集成并增强了较低层次的C++ Wrapper Facade。该框架支持将并发分布式服务动态配置进应用。ACE的框架部分包含以下组件：
+l       事件多路分离组件：ACE Reactor(反应器)和Proactor（前摄器）是可扩展的面向对象多路分离器，它们分派应用特有的处理器，以响应多种类型的基于I/O、定时器、信号和同步的事件。
+l       服务初始化组件：ACE Acceptor（接受器）和Connector（连接器）组件分别使主动和被动的初始化任务与初始化一旦完成后通信服务所执行的应用特有的任务去耦合。
+l       服务配置组件：ACE Service Configurator（服务配置器）支持应用的配置，这些应用的服务可在安装时和/或运行时动态装配。
+l       分层的流组件：ACE Stream组件简化了像用户级协议栈这样的由分层服务组成的通信软件应用的开发。
+l       ORB适配器组件：通过ORB适配器，ACE可以与单线程和多线程CORBA实现进行无缝集成。
+ACE框架组件便利了通信软件的开发，它们无需修改、重编译、重链接，或频繁地重启运行中的应用，就可被更新和扩展。在ACE中，这样的灵活性是通过结合以下要素来获得的：（1）C++语言特性，比如模板、继承和动态绑定，（2）设计模式，比如抽象工厂、策略和服务配置器，以及（3）OS机制，比如显式动态链接和多线程。
+七、分布式服务和组件 
+除了OS适配层、C++ Wrapper Facade和框架组件，ACE还提供了包装成自包含组件的标准分布式服务库。尽管这些服务组件并不是ACE框架库的严格组成部分，它们在ACE中扮演了两种角色：
+1.       分解出可复用分布式应用的“积木”：这些服务组件提供通用的分布式应用任务的可复用实现，比如名字服务、事件路由、日志、时间同步和网络锁定。
+2.       演示ACE组件的常见用例：这些分布式服务还演示了怎样用像Reactor、Service Configurator、Acceptor和Connector、Active Object，以及IPC包装这样的ACE组件来有效地开发灵活、高效和可靠的通信软件。
+八、高级分布式计算中间件组件
+即使使用像ACE这样的通信框架，开发健壮、可扩展和高效的通信应用仍富有挑战性。特别是，开发者必须掌握许多复杂的OS和通信的概念，比如：
+l       网络寻址和服务标识。
+l       表示转换，比如加密、压缩和在异种终端系统间的字节序转换。
+l       进程和线程的创建和同步。
+l       本地和远地进程间通信（IPC）机制的系统调用和库例程。
+通过采用像CORBA、DCOM或Java RMI这样的高级分布式计算中间件，可以降低开发通信应用的复杂性。高级分布式计算中间件驻留在客户端和服务器之间，可自动完成分布式应用开发的许多麻烦而易错的方面，包括：
+l       认证、授权和数据安全。
+l       服务定位和绑定。
+l       服务注册和启用。
+l       事件多路分离和分派。
+l       在像TCP这样的面向字节流的通信协议之上实现消息帧。
+l       涉及网络字节序和参数整编（marshaling）的表示转换问题。
+为给通信软件的开发者提供这些特性，在ACE中绑定了下面的高级中间件应用：
+1.       The ACE ORB（TAO）：TAO是使用ACE提供的框架组件和模式构建的CORBA实时实现，包含有网络接口、OS、通信协议和CORBA中间件组件等特性。TAO基于标准的OMG CORBA参考模型，并进行了增强的设计，以克服传统的用于高性能和实时应用的ORB的缺点。TAO像ACE一样，也是可自由使用的开放源码软件。
+2.       JAWS：JAWS是高性能、自适配的Web服务器，使用ACE提供的框架组件和模式构建。JAWS被构造成“框架的框架”。JAWS的总体框架含有以下组件和框架：事件多路分派器、并发策略、I/O策略、协议管道、协议处理器和缓存虚拟文件系统。每个框架都被构造成一组协作对象，通过组合和扩展ACE中的组件来实现。JAWS也是可自由使用的开放源码软件。
+九、主页
+ACE的主页为：<a href="http://www.cs.wustl.edu/~schmidt/ACE.html"><font color="#4d99d3">http://www.cs.wustl.edu/~schmidt/ACE.html</font></a>，在这里可获得最新版本的ACE以及其他相关资源。</div>

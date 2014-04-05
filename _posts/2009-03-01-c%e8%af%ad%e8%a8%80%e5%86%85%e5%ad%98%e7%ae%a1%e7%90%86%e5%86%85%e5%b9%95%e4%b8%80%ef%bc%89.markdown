@@ -1,0 +1,102 @@
+---
+layout: post
+title: C语言内存管理内幕(一）
+author: gavinkwoe
+date: !binary |-
+  MjAwOS0wMy0wMSAxMzozODo0MSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOS0wMy0wMSAwNTozODo0MSArMDgwMA==
+---
+为什么必须管理内存
+内存管理是计算机编程最为基本的领域之一。在很多脚本语言中，您不必担心内存是如何管理的，这并不能使得内存管理的重要性有一点点降低。对实际编程来说，理解您的内存管理器的能力与局限性至关重要。在大部分系统语言中，比如 C 和 C++，您必须进行内存管理。本文将介绍手工的、半手工的以及自动的内存管理实践的基本概念。
+追溯到在 Apple II 上进行汇编语言编程的时代，那时内存管理还不是个大问题。您实际上在运行整个系统。系统有多少内存，您就有多少内存。您甚至不必费心思去弄明白它有多少内存，因为每一台机器的内存数量都相同。所以，如果内存需要非常固定，那么您只需要选择一个内存范围并使用它即可。
+不过，即使是在这样一个简单的计算机中，您也会有问题，尤其是当您不知道程序的每个部分将需要多少内存时。如果您的空间有限，而内存需求是变化的，那么您需要一些方法来满足这些需求：
+确定您是否有足够的内存来处理数据。
+从可用的内存中获取一部分内存。
+向可用内存池（pool）中返回部分内存，以使其可以由程序的其他部分或者其他程序使用。
+ 
+实现这些需求的程序库称为 分配程序（allocators），因为它们负责分配和回收内存。程序的动态性越强，内存管理就越重要，您的内存分配程序的选择也就更重要。让我们来了解可用于内存管理的不同方法，它们的好处与不足，以及它们最适用的情形。
+C 风格的内存分配程序
+C 编程语言提供了两个函数来满足我们的三个需求：
+malloc：该函数分配给定的字节数，并返回一个指向它们的指针。如果没有足够的可用内存，那么它返回一个空指针。
+free：该函数获得指向由 malloc 分配的内存片段的指针，并将其释放，以便以后的程序或操作系统使用（实际上，一些 malloc 实现只能将内存归还给程序，而无法将内存归还给操作系统）。
+ 
+物理内存和虚拟内存
+要理解内存在程序中是如何分配的，首先需要理解如何将内存从操作系统分配给程序。计算机上的每一个进程都认为自己可以访问所有的物理内存。显然，由于同时在运行多个程序，所以每个进程不可能拥有全部内存。实际上，这些进程使用的是 虚拟内存。
+只是作为一个例子，让我们假定您的程序正在访问地址为 629 的内存。不过，虚拟内存系统不需要将其存储在位置为 629 的 RAM 中。实际上，它甚至可以不在 RAM 中 &mdash;&mdash; 如果物理 RAM 已经满了，它甚至可能已经被转移到硬盘上！由于这类地址不必反映内存所在的物理位置，所以它们被称为虚拟内存。操作系统维持着一个虚拟地址到物理地址的转换的表，以便计算机硬件可以正确地响应地址请求。并且，如果地址在硬盘上而不是在 RAM 中，那么操作系统将暂时停止您的进程，将其他内存转存到硬盘中，从硬盘上加载被请求的内存，然后再重新启动您的进程。这样，每个进程都获得了自己可以使用的地址空间，可以访问比您物理上安装的内存更多的内存。
+在 32-位 x86 系统上，每一个进程可以访问 4 GB 内存。现在，大部分人的系统上并没有 4 GB 内存，即使您将 swap 也算上， 每个进程所使用的内存也肯定少于 4 GB。因此，当加载一个进程时，它会得到一个取决于某个称为 系统中断点（system break）的特定地址的初始内存分配。该地址之后是未被映射的内存 &mdash;&mdash; 用于在 RAM 或者硬盘中没有分配相应物理位置的内存。因此，如果一个进程运行超出了它初始分配的内存，那么它必须请求操作系统“映射进来（map in）”更多的内存。（映射是一个表示一一对应关系的数学术语 &mdash;&mdash; 当内存的虚拟地址有一个对应的物理地址来存储内存内容时，该内存将被映射。）
+基于 UNIX 的系统有两个可映射到附加内存中的基本系统调用：
+brk： brk() 是一个非常简单的系统调用。还记得系统中断点吗？该位置是进程映射的内存边界。 brk() 只是简单地将这个位置向前或者向后移动，就可以向进程添加内存或者从进程取走内存。
+mmap： mmap()，或者说是“内存映像”，类似于 brk()，但是更为灵活。首先，它可以映射任何位置的内存，而不单单只局限于进程。其次，它不仅可以将虚拟地址映射到物理的 RAM 或者 swap，它还可以将它们映射到文件和文件位置，这样，读写内存将对文件中的数据进行读写。不过，在这里，我们只关心 mmap 向进程添加被映射的内存的能力。 munmap() 所做的事情与 mmap() 相反。
+ 
+如您所见， brk() 或者 mmap() 都可以用来向我们的进程添加额外的虚拟内存。在我们的例子中将使用 brk()，因为它更简单，更通用。
+实现一个简单的分配程序
+如果您曾经编写过很多 C 程序，那么您可能曾多次使用过 malloc() 和 free()。不过，您可能没有用一些时间去思考它们在您的操作系统中是如何实现的。本节将向您展示 malloc 和 free 的一个最简化实现的代码，来帮助说明管理内存时都涉及到了哪些事情。
+要试着运行这些示例，需要先 复制本代码清单，并将其粘贴到一个名为 malloc.c 的文件中。接下来，我将一次一个部分地对该清单进行解释。
+在大部分操作系统中，内存分配由以下两个简单的函数来处理：
+void *malloc(long numbytes)：该函数负责分配 numbytes 大小的内存，并返回指向第一个字节的指针。
+void free(void *firstbyte)：如果给定一个由先前的 malloc 返回的指针，那么该函数会将分配的空间归还给进程的“空闲空间”。
+malloc_init 将是初始化内存分配程序的函数。它要完成以下三件事：将分配程序标识为已经初始化，找到系统中最后一个有效内存地址，然后建立起指向我们管理的内存的指针。这三个变量都是全局变量：
+清单 1. 我们的简单分配程序的全局变量
+        int has_initialized = 0;void *managed_memory_start;void *last_valid_address;      
+如前所述，被映射的内存的边界（最后一个有效地址）常被称为系统中断点或者 当前中断点。在很多 UNIX? 系统中，为了指出当前系统中断点，必须使用 sbrk(0) 函数。 sbrk 根据参数中给出的字节数移动当前系统中断点，然后返回新的系统中断点。使用参数 0 只是返回当前中断点。这里是我们的 malloc 初始化代码，它将找到当前中断点并初始化我们的变量：
+清单 2. 分配程序初始化函数
+        /* Include the sbrk function */#include <unistd.h>void malloc_init(){ /* grab the last valid address from the OS */ last_valid_address = sbrk(0); /* we don't have any memory to manage yet, so  *just set the beginning to be last_valid_address  */ managed_memory_start = last_valid_address; /* Okay, we're initialized and ready to go */  has_initialized = 1;}      
+现在，为了完全地管理内存，我们需要能够追踪要分配和回收哪些内存。在对内存块进行了 free 调用之后，我们需要做的是诸如将它们标记为未被使用的等事情，并且，在调用 malloc 时，我们要能够定位未被使用的内存块。因此， malloc 返回的每块内存的起始处首先要有这个结构：
+清单 3. 内存控制块结构定义
+        struct mem_control_block { int is_available; int size;};      
+现在，您可能会认为当程序调用 malloc 时这会引发问题 &mdash;&mdash; 它们如何知道这个结构？答案是它们不必知道；在返回指针之前，我们会将其移动到这个结构之后，把它隐藏起来。这使得返回的指针指向没有用于任何其他用途的内存。那样，从调用程序的角度来看，它们所得到的全部是空闲的、开放的内存。然后，当通过 free() 将该指针传递回来时，我们只需要倒退几个内存字节就可以再次找到这个结构。
+在讨论分配内存之前，我们将先讨论释放，因为它更简单。为了释放内存，我们必须要做的惟一一件事情就是，获得我们给出的指针，回退 sizeof(struct mem_control_block) 个字节，并将其标记为可用的。这里是对应的代码：
+清单 4. 解除分配函数
+        void free(void *firstbyte) { struct mem_control_block *mcb; /* Backup from the given pointer to find the  * mem_control_block  */ mcb = firstbyte - sizeof(struct mem_control_block); /* Mark the block as being available */ mcb->is_available = 1; /* That's It!  We're done. */ return;}      
+如您所见，在这个分配程序中，内存的释放使用了一个非常简单的机制，在固定时间内完成内存释放。分配内存稍微困难一些。以下是该算法的略述：
+清单 5. 主分配程序的伪代码
+        1. If our allocator has not been initialized, initialize it.2. Add sizeof(struct mem_control_block) to the size requested.3. start at managed_memory_start.4. Are we at last_valid address?5. If we are:   A. We didn't find any existing space that was large enough      -- ask the operating system for more and return that.6. Otherwise:   A. Is the current space available (check is_available from      the mem_control_block)?   B. If it is:      i)   Is it large enough (check "size" from the           mem_control_block)?      ii)  If so:           a. Mark it as unavailable           b. Move past mem_control_block and return the              pointer      iii) Otherwise:           a. Move forward "size" bytes           b. Go back go step 4   C. Otherwise:      i)   Move forward "size" bytes      ii)  Go back to step 4      
+我们主要使用连接的指针遍历内存来寻找开放的内存块。这里是代码：
+清单 6. 主分配程序
+        void *malloc(long numbytes) { /* Holds where we are looking in memory */ void *current_location; /* This is the same as current_location, but cast to a  * memory_control_block  */ struct mem_control_block *current_location_mcb; /* This is the memory location we will return.  It will  * be set to 0 until we find something suitable  */ void *memory_location; /* Initialize if we haven't already done so */ if(! has_initialized)  {  malloc_init(); } /* The memory we search for has to include the memory  * control block, but the users of malloc don't need  * to know this, so we'll just add it in for them.  */ numbytes = numbytes + sizeof(struct mem_control_block); /* Set memory_location to 0 until we find a suitable  * location  */ memory_location = 0; /* Begin searching at the start of managed memory */ current_location = managed_memory_start; /* Keep going until we have searched all allocated space */ while(current_location != last_valid_address) {  /* current_location and current_location_mcb point   * to the same address.  However, current_location_mcb   * is of the correct type, so we can use it as a struct.   * current_location is a void pointer so we can use it   * to calculate addresses.   */  current_location_mcb =   (struct mem_control_block *)current_location;  if(current_location_mcb->is_available)  {   if(current_location_mcb->size >= numbytes)   {    /* Woohoo!  We've found an open,     * appropriately-size location.     */    /* It is no longer available */    current_location_mcb->is_available = 0;    /* We own it */    memory_location = current_location;    /* Leave the loop */    break;   }  }  /* If we made it here, it's because the Current memory   * block not suitable; move to the next one   */  current_location = current_location +   current_location_mcb->size; } /* If we still don't have a valid location, we'll  * have to ask the operating system for more memory  */ if(! memory_location) {  /* Move the program break numbytes further */  sbrk(numbytes);  /* The new memory will be where the last valid   * address left off   */  memory_location = last_valid_address;  /* We'll move the last valid address forward   * numbytes   */  last_valid_address = last_valid_address + numbytes;  /* We need to initialize the mem_control_block */  current_location_mcb = memory_location;  current_location_mcb->is_available = 0;  current_location_mcb->size = numbytes; } /* Now, no matter what (well, except for error conditions),  * memory_location has the address of the memory, including  * the mem_control_block  */ /* Move the pointer past the mem_control_block */ memory_location = memory_location + sizeof(struct mem_control_block); /* Return the pointer */ return memory_location; }      
+这就是我们的内存管理器。现在，我们只需要构建它，并在程序中使用它即可。
+运行下面的命令来构建 malloc 兼容的分配程序（实际上，我们忽略了 realloc() 等一些函数，不过， malloc() 和 free() 才是最主要的函数）：
+清单 7. 编译分配程序
+        gcc -shared -fpic malloc.c -o malloc.so      
+该程序将生成一个名为 malloc.so 的文件，它是一个包含有我们的代码的共享库。
+在 UNIX 系统中，现在您可以用您的分配程序来取代系统的 malloc()，做法如下：
+清单 8. 替换您的标准的 malloc
+        LD_PRELOAD=/path/to/malloc.soexport LD_PRELOAD      
+LD_PRELOAD 环境变量使动态链接器在加载任何可执行程序之前，先加载给定的共享库的符号。它还为特定库中的符号赋予优先权。因此，从现在起，该会话中的任何应用程序都将使用我们的 malloc()，而不是只有系统的应用程序能够使用。有一些应用程序不使用 malloc()，不过它们是例外。其他使用 realloc() 等其他内存管理函数的应用程序，或者错误地假定 malloc() 内部行为的那些应用程序，很可能会崩溃。ash shell 似乎可以使用我们的新 malloc() 很好地工作。
+如果您想确保 malloc() 正在被使用，那么您应该通过向函数的入口点添加 write() 调用来进行测试。
+我们的内存管理器在很多方面都还存在欠缺，但它可以有效地展示内存管理需要做什么事情。它的某些缺点包括：
+由于它对系统中断点（一个全局变量）进行操作，所以它不能与其他分配程序或者 mmap 一起使用。
+当分配内存时，在最坏的情形下，它将不得不遍历 全部进程内存；其中可能包括位于硬盘上的很多内存，这意味着操作系统将不得不花时间去向硬盘移入数据和从硬盘中移出数据。
+没有很好的内存不足处理方案（ malloc 只假定内存分配是成功的）。
+它没有实现很多其他的内存函数，比如 realloc()。
+由于 sbrk() 可能会交回比我们请求的更多的内存，所以在堆（heap）的末端会遗漏一些内存。
+虽然 is_available 标记只包含一位信息，但它要使用完整的 4-字节 的字。
+分配程序不是线程安全的。
+分配程序不能将空闲空间拼合为更大的内存块。
+分配程序的过于简单的匹配算法会导致产生很多潜在的内存碎片。
+我确信还有很多其他问题。这就是为什么它只是一个例子!
+ 
+其他 malloc 实现
+malloc() 的实现有很多，这些实现各有优点与缺点。在设计一个分配程序时，要面临许多需要折衷的选择，其中包括：
+分配的速度。
+回收的速度。
+有线程的环境的行为。
+内存将要被用光时的行为。
+局部缓存。
+簿记（Bookkeeping）内存开销。
+虚拟内存环境中的行为。
+小的或者大的对象。
+实时保证。
+ 
+每一个实现都有其自身的优缺点集合。在我们的简单的分配程序中，分配非常慢，而回收非常快。另外，由于它在使用虚拟内存系统方面较差，所以它最适于处理大的对象。
+还有其他许多分配程序可以使用。其中包括：
+Doug Lea Malloc：Doug Lea Malloc 实际上是完整的一组分配程序，其中包括 Doug Lea 的原始分配程序，GNU libc 分配程序和 ptmalloc。 Doug Lea 的分配程序有着与我们的版本非常类似的基本结构，但是它加入了索引，这使得搜索速度更快，并且可以将多个没有被使用的块组合为一个大的块。它还支持缓存，以便更快地再次使用最近释放的内存。 ptmalloc 是 Doug Lea Malloc 的一个扩展版本，支持多线程。在本文后面的 参考资料部分中，有一篇描述 Doug Lea 的 Malloc 实现的文章。
+BSD Malloc：BSD Malloc 是随 4.2 BSD 发行的实现，包含在 FreeBSD 之中，这个分配程序可以从预先确实大小的对象构成的池中分配对象。它有一些用于对象大小的 size 类，这些对象的大小为 2 的若干次幂减去某一常数。所以，如果您请求给定大小的一个对象，它就简单地分配一个与之匹配的 size 类。这样就提供了一个快速的实现，但是可能会浪费内存。在 参考资料部分中，有一篇描述该实现的文章。
+Hoard：编写 Hoard 的目标是使内存分配在多线程环境中进行得非常快。因此，它的构造以锁的使用为中心，从而使所有进程不必等待分配内存。它可以显著地加快那些进行很多分配和回收的多线程进程的速度。在 参考资料部分中，有一篇描述该实现的文章。
+ 
+众多可用的分配程序中最有名的就是上述这些分配程序。如果您的程序有特别的分配需求，那么您可能更愿意编写一个定制的能匹配您的程序内存分配方式的分配程序。不过，如果不熟悉分配程序的设计，那么定制分配程序通常会带来比它们解决的问题更多的问题。要获得关于该主题的适当的介绍，请参阅 Donald Knuth 撰写的 The Art of Computer Programming Volume 1: Fundamental Algorithms 中的第 2.5 节“Dynamic Storage Allocation”（请参阅 参考资料中的链接）。它有点过时，因为它没有考虑虚拟内存环境，不过大部分算法都是基于前面给出的函数。
+在 C++ 中，通过重载 operator new()，您可以以每个类或者每个模板为单位实现自己的分配程序。在 Andrei Alexandrescu 撰写的 Modern C++ Design 的第 4 章（“Small Object Allocation”）中，描述了一个小对象分配程序（请参阅 参考资料中的链接）。
+基于 malloc() 的内存管理的缺点
+不只是我们的内存管理器有缺点，基于 malloc() 的内存管理器仍然也有很多缺点，不管您使用的是哪个分配程序。对于那些需要保持长期存储的程序使用 malloc() 来管理内存可能会非常令人失望。如果您有大量的不固定的内存引用，经常难以知道它们何时被释放。生存期局限于当前函数的内存非常容易管理，但是对于生存期超出该范围的内存来说，管理内存则困难得多。而且，关于内存管理是由进行调用的程序还是由被调用的函数来负责这一问题，很多 API 都不是很明确。
+因为管理内存的问题，很多程序倾向于使用它们自己的内存管理规则。C++ 的异常处理使得这项任务更成问题。有时好像致力于管理内存分配和清理的代码比实际完成计算任务的代码还要多！因此，我们将研究内存管理的其他选择。

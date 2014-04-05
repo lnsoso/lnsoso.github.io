@@ -1,0 +1,10 @@
+---
+layout: post
+title: ffmpeg wmv9
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNiAxMzo1Mjo0NCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNiAwNTo1Mjo0NCArMDgwMA==
+---
+看了 ffmpeg 的 svn log ，哈 ffmpeg 终于 native 支持 wmv9 了。不过貌似 avisynth.org 一直访问不了，唉，rv30/40 看来还要等一段时间了。

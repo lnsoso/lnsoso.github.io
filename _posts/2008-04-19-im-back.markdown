@@ -1,0 +1,14 @@
+---
+layout: post
+title: i'm back
+author: Alvin
+date: !binary |-
+  MjAwOC0wNC0xOSAxMzozNDo1NSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0wNC0xOSAwNTozNDo1NSArMDgwMA==
+---
+此前因为一次不小心的升级把造成 donevii.com 的 plugins 在 PHP 输出 header 之前输出了一段警告信息，以致于 donevii.com 一直无法提供服务。昨晚终于升到 wordpress 2.5 解决了这个问题。
+themes 暂时还没弄，已经不想再用别人提供了，准备自己再搞一个。
+最近欠了好多帐，H老师的东东、Y同学的W网站的SKIN、L的网站、T网站、B网站&#8230;&#8230;太多了，一点点补上吧。
+btw: 穆爽爽今天在全国女子举重的抓举和挺举项目上纷纷打破世界纪录。
+:)

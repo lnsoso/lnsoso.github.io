@@ -1,0 +1,47 @@
+---
+layout: post
+title: Win32创建快捷方式
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMC0zMCAxMDoxNDoyNyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0zMCAwMjoxNDoyNyArMDgwMA==
+---
+void CreateShortcut(LPCTSTR szPath,
+LPCTSTR szWorkingDir,
+LPCSTR pszIconPath,
+int iShowCmd,
+int iIcon,
+LPCSTR pszArgs,
+LPSTR pszDescription
+)
+{
+
+HRESULT hres;
+IShellLink* psl;
+hres = CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
+&IID_IShellLink, (void **) &psl);
+if (SUCCEEDED(hres))
+{
+IPersistFile* ppf;
+if (SUCCEEDED(hres))
+{
+hres = psl->lpVtbl->SetPath(psl,szPath);
+psl->lpVtbl->SetWorkingDirectory(psl,szWorkingDir);
+psl->lpVtbl->SetShowCmd(psl,iShowCmd);
+psl->lpVtbl->SetIconLocation(psl,pszIconPath,iIcon);
+psl->lpVtbl->SetArguments(psl,pszArgs);
+psl->lpVtbl->SetDescription(psl,pszDescription);
+if (SUCCEEDED(hres))
+{
+static WCHAR wsz[1024];
+wsz[0]=0;
+MultiByteToWideChar(CP_ACP, 0, buf1, -1, wsz, 1024);
+hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
+}
+ppf->lpVtbl->Release(ppf);
+}
+psl->lpVtbl->Release(psl); 
+}
+}
+

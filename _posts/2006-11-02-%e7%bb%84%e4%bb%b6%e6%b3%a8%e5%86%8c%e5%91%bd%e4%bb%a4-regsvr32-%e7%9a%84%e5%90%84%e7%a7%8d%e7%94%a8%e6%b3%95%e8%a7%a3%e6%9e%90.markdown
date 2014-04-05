@@ -1,0 +1,72 @@
+---
+layout: post
+title: 组件注册命令 Regsvr32 的各种用法解析
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0wMiAxNjowMzowMCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0wMiAwODowMzowMCArMDgwMA==
+---
+Windows系统提供的Regsvr32命令也许很多朋友都见过可能还不知道怎么用，它可是一个很实用的功能。 
+一、能够帮你轻松修复IE浏览器 
+很多经常上网的朋友都有过这样的遭遇：IE不能打开新的窗口，用鼠标点击超链接也没有任何反应。这时重装IE一般能解决问题。其实不必这么麻烦，使用Regsvr32命令就可以轻松搞定。 
+在“开始&rarr;运行”中键入“regsvr32  actxprxy.dll”命令，点击“确定”按钮，这时会弹出一个信息对话框“DllRegisterServer  in  actxprxy.dll  succeeded”，点击“确定”；然后再在“开始&rarr;运行”中键入“regsvr32  shdocvw.dll”命令，单击“确定”即可。重新启动后IE已经被轻松修复了。 
+二、解决Windows无法在线升级的问题 
+Windows的漏洞很多，每隔一段时间就需要使用“Windows  Update”升级程序进行在线升级，不过“Windows  Update”经常出现无法使用的情况，这时，我们可以使用Regsvr32来解决这个问题。 
+在“开始&rarr;运行”中键入“regsvr32  wupdinfo.dll”，点击“确定”按钮，这样在系统中就重新注册了“Windows  Update”组件，重新启动后问题已经解决。 
+三、防范网络脚本病毒有新招 
+网络脚本病毒嵌在网页中，上网时在不知不觉中机器就会感染上这种病毒。笔者认为单纯使用杀毒软件并不能有效地防范这些脚本病毒，必须从病毒传播的机理入手。网络脚本病毒的复制、传播都离不开FSO对象(File System  Object，文件系统对象)，因此禁用FSO对象就能有效地控制脚本病毒的传播。操作方法很简单： 
+在“开始&rarr;运行”中键入“regsvr32  /u  scrrun.dll”就可以禁用FSO对象；如果需要使用FSO对象，键入“regsvr32  scrrun.dll”命令即可。 
+四、卸载Win  XP自带的“鸡肋”功能 
+Win  XP以功能强大而著称，但有些功能却常常令人有“鸡肋”之感，比如Win  XP自带的ZIP功能和图片预览功能，不仅占用了系统资源，功能也远不如第三方软件强大。其实用Regsvr32命令可以很容易地卸载这些功能。 
+在“开始&rarr;运行”中键入“regsvr32  /u  zipfldr.dll”，单击“确定”按钮，弹出卸载成功信息框后就完成了ZIP功能的卸载；要恢复ZIP功能，键入“regsvr32  zipfldr.dll”即可。同样，卸载图片预览功能也很简单，在“开始&rarr;运行”中键入“regsvr32  /u  thumbvw.dll”即可；如果要恢复该功能，只须键入“regsvr32  thumbvw.dll”。
+五、让WMP播放器支持RM格式 
+很多朋友喜欢用Windows  Media  Player(以下简称WMP)播放器，但是它不支持RM格式，难道非得安装其他播放软件吗？笔者有办法。 
+以Win  XP为例，首先下载一个RM格式插件，解压缩后得到两个文件夹：Release(用于Windows  9x)和Release Unicode  (用于Windows  2000/XP)；将Release  Unicode文件夹下的RealMediaSplitter.ax文件拷贝到“系统盘符\\WINDOWS\\System32\\”目录下；在“开始&rarr;运行”中键入“regsvr32  RealMediaSplitter.ax”，点击“确定”即可。接着下载解码器，如Real  Alternative，安装后就能用WMP播放RM格式的影音文件了。 
+RM格式插件下载地址：http://www.fyrose.com/realmediasplitter_20030729.zip 
+RM格式解码器下载地址：http://www.fyrose.com/realalt111.exe 
+你知道吗？Regsvr32命令 
+Regsvr  32命令是Windows中控件文件(如扩展名为DLL、OCX、CPL的文件)的注册和反注册工具。 
+格式：regsvr32 [/s] [/n] [/i[:cmdline]] DLLname
+使用参数--------解除服务器注册
+使用参数[/s]--------无声；不显示消息框
+使用参数---------调用DllInstall，给其传递一个可选[cmdline];跟/u参数一起使用时卸载DLL。
+使用参数[/n]--------不用调用DLLRegisterServer。这个参数必须跟/i一起使用。
+简单实例 
+要手工注册“E:\CPCW.dll”，只需在“开始&rarr;运行”中键入“Regsvr32  E:\CPCW.dll”，单击“确定”按钮后会弹出提示信息“DllRegisterServer  in  CPCW.dll  succeeded”，说明组件注册成功；如果要卸载此组件，在“开始&rarr;运行”中键入“Regsvr32  /u  E:\CPCW.dll”即可。 
+实例1：IE无法打开新窗口
+regsvr32 actxprxy.dll
+regsvr32 shdocvw.dll
+重启后如果还不能解决
+regsvr32 mshtml.dll
+regsvr32 urlmon.dll
+regsvr32 msjava.dll
+regsvr32 browseui.dll
+regsvr32 oleaut32.dll
+regsvr32 shell32.dll
+实例2：IE无法保存HTML格式文件
+regsvr32 inetcomm.dll
+实例3：MSN无法登陆
+regsvr32 softpub.dll
+实例4：windows默认的文件关联混乱
+regsvr32 /i shdocvw.dll
+regsvr32 /i shell.dll
+regsvr32 /i shdoc401.dll
+实例5：Window server 2003中无法播放MP3
+regsvr32 i3codeca.acm
+regsvr32 i3codecx.ax
+实例6：Windows添加/删除程序无法启动
+regsvr32 mshtml.dll
+regsvr32 /i shdocvw.dll
+regsvr32 /i shell.dll
+实例7 Windows搜索功能故障
+regsvr32 urlmon.dll
+实例8：禁止系统对媒体文件进行预览
+regsvr32 /u shmedia.dll
+恢复可用
+regsvr32 shmedia.dll
+实例9：卸载Win XP自带的zip功能
+regsvr32 /u zipfldr.dll
+实例10：禁用FSO对象
+regsvr32 /u scrrun.dll
+

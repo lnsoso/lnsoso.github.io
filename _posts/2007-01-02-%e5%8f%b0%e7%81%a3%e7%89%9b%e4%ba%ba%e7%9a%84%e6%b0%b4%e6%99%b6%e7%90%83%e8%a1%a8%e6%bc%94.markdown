@@ -1,0 +1,11 @@
+---
+layout: post
+title: 台灣牛人的水晶球表演
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wMS0wMiAyMDowNjozMyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0wMiAxMjowNjozMyArMDgwMA==
+---
+台灣的牛人，控制力超棒，大家表要亂試……哈哈哈
+<object width="410" height="348"><param name="movie" value="http://www.maidee.com/v/3ZSk3K7T3GBG.auto.swf"></param><embed src="http://www.maidee.com/v/3ZSk3K7T3GBG.auto.swf" type="application/x-shockwave-flash" width="410" height="348"></embed></object>

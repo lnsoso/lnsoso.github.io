@@ -1,0 +1,93 @@
+---
+layout: post
+title: ! '[转] 一步一步学习Vim 全图解释'
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0xMi0xNyAwOToxMDoxNCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0xMi0xNyAwMToxMDoxNCArMDgwMA==
+---
+<img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/26a4d44679.gif" style="display: block" title="ctrl+鼠标滚轮缩放" />
+Whole 中文版 感谢 fdl 的翻译工作
+<img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/48c300a889.png" style="display: block" title="ctrl+鼠标滚轮缩放" />
+以下是学习这些基本的VIM命令的基本步骤，在学习完之后，可以依照上图进一步的学习和使用！！
+步骤1
+注释1:
+1) h j k l为光标键，分别左下上右
+2) i 插入键进入编辑模式，Esc键退出到一般模式
+3) x 删除当前光标所在字符，X删除当前光标前的一个字符
+4) A 在一行的末尾添加text，a在当前光标后添加text
+5) u 执行Undo操作，Ctrl+R表示Redo
+6) 0 跳到行首，$ 跳到行尾 ^跳到行首(类似正则式$和^的意义)
+7) w b e移动一个单词word(全部是字符或者符号)
+8) W B E移动一个单词WORD(以空格隔开)
+9) R 进入插入编辑模式，并且对被编辑位置进行覆盖
+10) :w 保存 :q 退出 :q! 强制退出
+<p align="center"><img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/018e06e545.gif" style="display: block" title="ctrl+鼠标滚轮缩放" />
+步骤2
+注释2:
+1) f 移动光标从当前位置到下一个f后跟的字符的右边,包含此指定字符,F 方向相反为前一个，需要和操作(operator)配合操作
+2) t 和 T类似f 和 F，只是它们一直到指定的字符左才停，即不包含指定的字符。
+3) d 删除操作 与上面 w f t 等配合：例如"dw"删除下一word，"df-"从当前位置一直往前删除到字符"-"，不保留"-"，"dt-"删除直到"-"但是保留"-"
+4) c 删除且进入编辑模式(类似d和i的结合),同样可以与f t T w 等motion结合
+5) j k 可以和c和d结合，删除所有末尾或开头的所有行
+6) . 可以重复最后一次编辑的所有操作，注意是在一般模式下重复最后一次编辑操作
+7) 操作和motion可以和数字组合，"d2w" 删除后2个单词word "d2t,"删除知道这一行的第2个","
+8) cc 和 dd 删除当前行
+9) v 进入可视模式
+<p align="center"><img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/a94bd4850c.gif" style="display: block" title="ctrl+鼠标滚轮缩放" />
+步骤3
+注释3:
+1) y 后面跟任意的motion执行copy操作
+2) p (paster)粘贴，如果复制的是字符形式，则粘贴到右边，行形式粘贴到下面
+3) P 同上p操作，但是粘贴方向相反，在左边或上面
+4) yy 复制当前行
+5) y 也可以在可视模式(visual mode)下工作，同时，d,c,x..等text删除操作也将被删除内容进行复制(这一点要注意)
+6) "和a-z字符如果在复制/删除/粘贴命令前表示选择一个寄存器暂存
+7) 在复制/删除前的A-Z 寄存器意味进行叠加复制，就是多个复制操作的内容将被加起来
+8) "*操作或者"+操作选择系统的剪贴板
+9) o 在当前行下新其一行进入插入模式，O 操作类似o，只是在当前行的上新起一行
+<p align="center"><img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/94ec70d670.gif" style="display: block" title="ctrl+鼠标滚轮缩放" />
+步骤4
+注释4:
+1) / 是基本的查找motion，可以和operation结合执行操作，也可以单独使用，直接查找匹配后面的正则式
+2) ? 与/相同，但是方向相反backward，/ 方向forward
+3) n 重复最后一次查找方向， N 重复最后一次查找的相反方向
+4) * 和 # 查找当前光标所在的实体相同的实体，前者方向向前，后者方向向后，两者仅在vim下有效(vi not support)
+<p align="center"><img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/64599d02d8.gif" style="display: block" title="ctrl+鼠标滚轮缩放" />
+步骤5
+注释5:
+1) m 操作后跟a-z字符用来设置一个标记mark
+2) ` 后面跟a-z字符可以去这个字符表示的标记处
+3) ' 和一个字符可以到所在行的第一个非空处
+4) A-Z 标记为全局标记 a-z仅在每个buffer内可见
+5) `. 表示到最后一个修改的地方
+6) q 后跟字符a-z用来记录宏
+7) @ 后跟字符用了重放宏，@@ 重放最后一个宏
+<p align="center"><img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/fa0e3069f7.gif" style="display: block" title="ctrl+鼠标滚轮缩放" />
+步骤6
+注释6:
+1) % 在配对的( 和 ) [ 和 ]等 之间跳动
+2) H M L 直接跳到整个屏幕的最上面，中间和最下面
+3) G 跳到文件的末尾，G 前面跟行号表明跳到指定的行
+4) - 或者 + 直接跳到前一行 或 后一行
+5) K 跳到帮助
+6) ( 和 )跳到当前句子的最前和最后
+7) { 和 }跳到前一个空行 或 后一个空行
+8) [[ 跳到前一个第0列是{的位置(必须{为第0列)
+9) ]] 跳到下一个第0列是}的位置
+<p align="center"><img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/07f967eb50.gif" style="display: block" title="ctrl+鼠标滚轮缩放" />
+步骤7
+注释7:
+1) J 连接当前行和下一行在一般模式，或所有行在可是模式
+2) r 后跟任意字符替换当前字符
+3) C 为c$的简写，表示删除当前位置到行结束并进入插入模式
+4) D 为d$的简写，表示删除当前到行结束
+5) Y 为yy的简写，复制整个行
+6) s 删除当前光标所在字符并进入插入模式
+7) S 清除当前行，并进入插入模式
+8) > 和一个motion 表示缩进一行或多行
+9) < 和一个motion 表示不缩进
+10) = 和一个motion 表示重新格式化text
+11) > < 和 = 工作在可视模式下，且均可重复例如>>表示缩进整个当前行
+<p align="center"><img resized="1" border="0" vspace="5" width="450" src="http://unix-cd.com/vc/attachment/070821/57f82f590b.gif" style="display: block" title="ctrl+鼠标滚轮缩放" />

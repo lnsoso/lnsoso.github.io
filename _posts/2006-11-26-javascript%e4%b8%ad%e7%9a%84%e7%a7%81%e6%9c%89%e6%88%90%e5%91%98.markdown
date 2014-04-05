@@ -1,0 +1,59 @@
+---
+layout: post
+title: JavaScript中的私有成员
+author: gavinkwoe
+date: !binary |-
+  MjAwNi0xMS0yNiAxNToyMzoxMiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0yNiAwNzoyMzoxMiArMDgwMA==
+---
+<h2>Private Members in JavaScript</h2>
+JavaScript是世界上是被误解得最厉害的编程语言。有些人认为它不具备“信息隐藏”的能力，因为JavaScript的对象没有私有变量和方法。这是误解。JavaScript对象可以拥有私有成员，下面我们来看看怎么做。（SharkUI.com注：JavaScript并不是真正拥有私有、公有等等OOP的特性，这篇译文中提到的这些私有、公有、特权等特性，是利用JavaScript的其他特性(参看本文的“闭包”一节)“模拟”出来的。感兴趣的话可以搜索相关的文章来看，当然也可以不管这些，就当它是真正的OOP来用。Have fun!）
+<h4>对象</h4>
+JavaScript是建立在对象之上的。数组（Array）是对象，函数（Function）是对象，对象（Objects）当然也是对象。那什么是对象呢？对象是一组“名称:值”对（name-value pair）的集合。名称是字符串，值却可以是字符串、数值、布尔或对象（包括数组和函数）。对象通常是用哈希表来实现的，以便可以快速地取值。
+如果值是一个函数，我们就可以把它当作一个“方法”。当对象的一个方法被执行，变量this就被设为对象本身。如此，方法就可以通过this变量来访问对象的实例。
+对象可以通过“构造器（constructor）”来创建。构造器是一个拥有初始化对象的函数。构造器提供了类似其他语言中的“类（class）”所提供的特性和功能，包括静态变量和方法。
+<h4>公有</h4>
+对象的所有成员都是公有成员。任何函数都可以访问、修改或者删除这些成员，当然也可以添加新的成员。给对象添加成员的两种主要方法：
+<h5>通过构造器</h5>
+这种方法一般用来初始化对象实例的公有变量。构造器的this变量被用来给对象添加成员：
+<pre><code>function Container(param) {   this.member = param;}</code></pre>
+构造一个新的对象：
+<pre><code>var myContainer = new Container('abc');</code></pre>
+然后，公有变量 myContainer.member 就拥有了值 'abc'。
+<h5>通过原型（prototype）</h5>
+这种方法通常用来添加公有方法。在对象本身搜寻一个成员但没有找到时，就使用构造器的原型（prototype）成员。这种原型机制实现了面向对象所谓的 “继承（inheritance）”，同时也节省了内存。给创建自同一个构造器的所有的对象加上一个方法，只需要给构造器的prototype增加一个函数：
+<pre><code>Container.prototype.stamp = function (string) {   return this.member + string;}</code></pre>
+然后我们就可以调用这个方法：
+<pre><code>myContainer.stamp('def')</code></pre>
+返回'abcdef'。
+<h4>私有</h4>
+私有（Private)成员是由构造器创建的。通常构造器中用var声明的变量和函数参数成为私有成员。
+<pre><code>function Container(param) {   this.member = param;   var secret = 3;   var self = this;}</code></pre>
+这个构造器创建了三个私有的实例变量：param,secret和self。
+<pre><code>function Container(param) {   function dec() {      if (secret > 0) {         secret -= 1;         return true;      } else {         return false;      }   }   this.member = param;   var secret = 3;   var self = this;}</code></pre>
+私有方法dec会检查实例变量secret，如果它大于0，自减1并返回true；如果它小于0，返回false。这样就实现了由这个架造器所创建对象的dec函数只能用三次的功能。
+按惯例，我们创建了一个私有变量self。私有方法可以通过它来访问到对象本身。但这只是一种权宜之计，因为《ECMAScript Language Specification》中有一个错误，使得内部函数的this变量被设置成一个错误值。
+公有方法（SharkUI.com注：即上文说的通过prototype创建的方法）是无法调用私有方法的，所以为了能使用私有方法，我们需要引入特权方法（privileged method）。
+<h4>特权</h4>
+一个特权方法可以访问私有变量和方法，而它本身可以被公有方法和外界访问。你可以删除或替换一个特权方法，但不能修改它，也不能强制它放弃自己的密秘（SharkUI.com注：原文如此，可能是指它的特权，关于这点请高手指教）。
+特权方法是在构造器内部通过this来创建的。
+<pre><code>function Container(param) {   function dec() {      if (secret > 0) {         secret -= 1;         return true;      } else {         return false;      }   }   this.member = param;   var secret = 3;   var self = this;   this.service = function () {      if (dec()) {         return self.member;      } else {         return null;      }   };}</code></pre>
+service是一个特权方法。前三次调用myContainer.service()将返回'abc'，之后将返回null。service通过调用私有方法dec来访问私有变量secret。对于其他对象和方法来说，可以访问到service，但不能直接访问到私有的成员。
+<h4>闭包</h4>
+这种公有、私有和特权成员模式的存在是由于JavaScript的内在机制：闭包。这意味着一个内部函数永远可以访问它外部函数的变量和参数，即使外部函数已经返回。这是JavaScript语言非常强大的一个特性。目前还没有关于JavaScript编程的书籍展示了如何来利用它，它们甚至都没有提到这一点。
+私有和特权成员只能在对象初始化的时候创建，而公有成员可以被随时添加进来。
+<h4>模式</h4>
+<h5>公有</h5>
+<pre><code>function Constructor(...) {   this.membername = value;}Constructor.prototype.membername = value;</code></pre>
+<h5>私有</h5>
+<pre><code>function Constructor(...) {   var self = this;   var membername = value;   function membername(...) {...}}</code></pre>
+注：这句代码：
+<pre><code>function membername(...) {...}</code></pre>
+事实上是以下代码的简略写法
+<pre><code>var membername = function membername(...) {...};</code></pre>
+<h5>特权</h5>
+<pre><code>function Constructor(...) {   this.membername = function (...) {...};}</code></pre>
+<h4>后记</h4>
+Douglas Crockford的这篇文章为我们写出更优美的JavaSciprt程序奠定了基础，为我们创建出更合理的面向对象应用和框架带来了可能。在这篇译文快要完成的时候，惊诧的发现作者网站上出现了一个本文中文版的链接。好事！有越来越多的中国人开始关注这些“边边角角”的技术。虽然做了重复工作，但一样希望各位能从这篇文章中有所收益。也希望有更多的人能投入到原创和翻译前端技术文章中来，在多数人浮躁的时候，我们需要更多基础性的工作。一周一篇不多，一年一篇不少，只要开始了就行！
+转载自: http://www.sharkui.com/articles/article.php?id=44

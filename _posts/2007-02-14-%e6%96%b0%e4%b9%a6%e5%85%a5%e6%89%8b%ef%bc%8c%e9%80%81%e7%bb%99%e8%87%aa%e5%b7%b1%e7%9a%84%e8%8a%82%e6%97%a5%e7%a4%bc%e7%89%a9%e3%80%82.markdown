@@ -1,0 +1,11 @@
+---
+layout: post
+title: 新书入手，送给自己的节日礼物。
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0wMi0xNCAxMzo1Njo1MiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMi0xNCAwNTo1Njo1MiArMDgwMA==
+---
+重构、蓝海战略
+：）

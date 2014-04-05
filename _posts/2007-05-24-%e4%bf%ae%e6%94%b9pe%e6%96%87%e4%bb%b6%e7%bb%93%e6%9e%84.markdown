@@ -1,0 +1,423 @@
+---
+layout: post
+title: 修改PE文件结构
+author: Alvin
+date: !binary |-
+  MjAwNy0wNS0yNCAwOToxNzo1NiArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wNS0yNCAwMToxNzo1NiArMDgwMA==
+---
+转至<a href="http://www.xfocus.net">http://www.xfocus.net</a>
+在windows 9x、NT、2000下，所有的可执行文件都是基于Microsoft设计的一种新的文件格式Portable Executable File Format（可移植的执行体），即PE格式。有一些时候，我们需要对这些可执行文件进行修改，下面文字试图详细的描述PE文件的格式及对PE格式文件的修改。
+1、PE文件框架构成
+DOS MZ header
+DOS stub 
+PE header 
+Section table 
+Section 1 
+Section 2 
+Section ... 
+Section n 
+上表是PE文件结构的总体层次分布。所有 PE文件(甚至32位的 DLLs) 必须以一个简单的 DOS MZ header 开始，在偏移0处有DOS下可执行文件的“MZ标志”，有了它，一旦程序在DOS下执行，DOS就能识别出这是有效的执行体，然后运行紧随 MZ header 之后的 DOS stub。DOS stub实际上是个有效的EXE，在不支持 PE文件格式的操作系统中，它将简单显示一个错误提示，类似于字符串 " This program cannot run in DOS mode " 或者程序员可根据自己的意图实现完整的 DOS代码。通常DOS stub由汇编器/编译器自动生成，对我们的用处不是很大，它简单调用中断21h服务9来显示字符串"This program cannot run in DOS mode"。
+紧接着 DOS stub 的是 PE header。 PE header 是PE相关结构 IMAGE_NT_HEADERS 的简称，其中包含了许多PE装载器用到的重要域。可执行文件在支持PE文件结构的操作系统中执行时，PE装载器将从 DOS MZ header的偏移3CH处找到 PE header 的起始偏移量。因而跳过了 DOS stub 直接定位到真正的文件头 PE header。
+PE文件的真正内容划分成块，称之为sections（节）。每节是一块拥有共同属性的数据，比如“.text”节等，那么，每一节的内容都是什么呢？实际上PE格式的文件把具有相同属性的内容放入同一个节中，而不必关心类似“.text”、“.data”的命名，其命名只是为了便于识别，所有，我们如果对PE格式的文件进行修改，理论上讲可以写入任何一个节内，并调整此节的属性就可以了。
+PE header 接下来的数组结构 section table（节表）。 每个结构包含对应节的属性、文件偏移量、虚拟偏移量等。如果PE文件里有5个节，那么此结构数组内就有5个成员。
+以上就是PE文件格式的物理分布，下面将总结一下装载一PE文件的主要步骤：
+1、    PE文件被执行，PE装载器检查 DOS MZ header 里的 PE header 偏移量。如果找到，则跳转到 PE header。 
+2、PE装载器检查 PE header 的有效性。如果有效，就跳转到PE header的尾部。 
+3、紧跟 PE header 的是节表。PE装载器读取其中的节信息，并采用文件映射方法将这些节映射到内存，同时付上节表里指定的节属性。 
+4、PE文件映射入内存后，PE装载器将处理PE文件中类似 import table（引入表）逻辑部分。 
+上述步骤是一些前辈分析的结果简述。
+2、PE文件头概述
+我们可以在winnt.h这个文件中找到关于PE文件头的定义：
+typedef struct _IMAGE_NT_HEADERS {
+DWORD Signature;                
+//PE文件头标志 ：“PE\0\0”。在开始DOS header的偏移3CH处所指向的地址开始
+IMAGE_FILE_HEADER FileHeader;        //PE文件物理分布的信息
+IMAGE_OPTIONAL_HEADER32 OptionalHeader;    //PE文件逻辑分布的信息
+} IMAGE_NT_HEADERS32, *PIMAGE_NT_HEADERS32;
+typedef struct _IMAGE_FILE_HEADER {
+WORD    Machine;            //该文件运行所需要的CPU，对于Intel平台是14Ch
+WORD    NumberOfSections;        //文件的节数目
+DWORD   TimeDateStamp;        //文件创建日期和时间
+DWORD   PointerToSymbolTable;    //用于调试
+DWORD   NumberOfSymbols;        //符号表中符号个数
+WORD    SizeOfOptionalHeader;    //OptionalHeader 结构大小
+WORD    Characteristics;        //文件信息标记，区分文件是exe还是dll
+} IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;
+typedef struct _IMAGE_OPTIONAL_HEADER {
+WORD    Magic;            //标志字(总是010bh)
+BYTE    MajorLinkerVersion;        //连接器版本号
+BYTE    MinorLinkerVersion;        //
+DWORD   SizeOfCode;            //代码段大小
+DWORD   SizeOfInitializedData;    //已初始化数据块大小
+DWORD   SizeOfUninitializedData;    //未初始化数据块大小
+DWORD   AddressOfEntryPoint;    //PE装载器准备运行的PE文件的第一个指令的RVA，若要改变整个执行的流程，可以将该值指定到新的RVA，这样新RVA处的指令首先被执行。（许多文章都有介绍RVA，请去了解）
+DWORD   BaseOfCode;            //代码段起始RVA
+DWORD   BaseOfData;            //数据段起始RVA
+DWORD   ImageBase;            //PE文件的装载地址
+DWORD   SectionAlignment;        //块对齐
+DWORD   FileAlignment;        //文件块对齐
+WORD    MajorOperatingSystemVersion;//所需操作系统版本号
+WORD    MinorOperatingSystemVersion;//
+WORD    MajorImageVersion;        //用户自定义版本号
+WORD    MinorImageVersion;        //
+WORD    MajorSubsystemVersion;    //win32子系统版本。若PE文件是专门为Win32设计的
+WORD    MinorSubsystemVersion;    //该子系统版本必定是4.0否则对话框不会有3维立体感
+DWORD   Win32VersionValue;        //保留
+DWORD   SizeOfImage;            //内存中整个PE映像体的尺寸
+DWORD   SizeOfHeaders;        //所有头+节表的大小
+DWORD   CheckSum;            //校验和
+WORD    Subsystem;            //NT用来识别PE文件属于哪个子系统
+WORD    DllCharacteristics;        //
+DWORD   SizeOfStackReserve;        //
+DWORD   SizeOfStackCommit;        //
+DWORD   SizeOfHeapReserve;        //
+DWORD   SizeOfHeapCommit;        //
+DWORD   LoaderFlags;            //
+DWORD   NumberOfRvaAndSizes;    //
+IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+//IMAGE_DATA_DIRECTORY 结构数组。每个结构给出一个重要数据结构的RVA，比如引入地址表等
+} IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;
+typedef struct _IMAGE_DATA_DIRECTORY {
+DWORD   VirtualAddress;        //表的RVA地址
+DWORD   Size;                //大小
+} IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;
+PE文件头后是节表，在winnt.h下如下定义
+typedef struct _IMAGE_SECTION_HEADER {
+BYTE    Name[IMAGE_SIZEOF_SHORT_NAME];//节表名称,如“.text”
+union {
+    DWORD   PhysicalAddress;    //物理地址            
+    DWORD   VirtualSize;        //真实长度
+} Misc;
+DWORD   VirtualAddress;        //RVA
+DWORD   SizeOfRawData;        //物理长度
+DWORD   PointerToRawData;        //节基于文件的偏移量
+DWORD   PointerToRelocations;    //重定位的偏移
+DWORD   PointerToLinenumbers;    //行号表的偏移
+WORD    NumberOfRelocations;    //重定位项数目
+WORD    NumberOfLinenumbers;    //行号表的数目
+DWORD   Characteristics;        //节属性
+} IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;
+以上结构就是在winnt.h中关于PE文件头的定义，如何我们用C/C++来进行PE可执行文件操作，就要用到上面的所有结构，它详细的描述了PE文件头的结构。
+3、修改PE可执行文件
+现在让我们把一段代码写入任何一个PE格式的可执行文件，代码如下：
+-- test.asm --
+.386p
+.model flat, stdcall
+option casemap:none
+include \masm32\include\windows.inc
+include \masm32\include\user32.inc
+includelib \masm32\lib\user32.lib 
+.code
+start:
+    INVOKE MessageBoxA,0,0,0,MB_ICONINFORMATION or MB_OK
+    ret
+end start
+以上代码只显示一个MessageBox框，编译后得到二进制代码如下：
+unsigned char writeline[18]={
+0x6a,0x40,0x6a,0x0,0x6a,0x0,0x6a,0x0,0xe8,0x01,0x0,0x0,0x0,0xe9,0x0,0x0,0x0,0x0
+};
+好，现在让我们看看该把这些代码写到那。现在用Tdump.exe显示一个PE格式得可执行文件信息，可以发现如下描述：
+Object table:
+#   Name      VirtSize    RVA     PhysSize  Phys off  Flags   
+--  --------  --------  --------  --------  --------  --------
+01  .text     0000CCC0  00001000  0000CE00  00000600  60000020 [CER]
+02  .data     00004628  0000E000  00002C00  0000D400  C0000040 [IRW]
+03  .rsrc     000003C8  00013000  00000400  00010000  40000040 [IR]
+Key to section flags:
+  C - contains code
+  E - executable
+  I - contains initialized data
+  R - readable
+  W - writeable
+上面描述此文件中存在3个段及每个段得信息，实际上我们的代码可以写入任何一个段，这里我选择“.text”段。
+用如下代码得到一个PE格式可执行文件的头信息：
+//writePE.cpp
+#include <windows.h>
+#include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
+#include <time.h>
+#include <SYS\STAT.H>
+unsigned char writeline[18]={
+0x6a,0x40,0x6a,0x0,0x6a,0x0,0x6a,0x0,0xe8,0x01,0x0,0x0,0x0,0xe9,0x0,0x0,0x0,0x0
+};
+DWORD space;
+DWORD entryaddress;
+DWORD entrywrite;
+DWORD progRAV;
+DWORD oldentryaddress;
+DWORD newentryaddress;
+DWORD codeoffset;
+DWORD peaddress;
+DWORD flagaddress;
+DWORD flags;
+DWORD virtsize;
+DWORD physaddress;
+DWORD physsize;
+DWORD MessageBoxAadaddress;
+int main(int argc,char * * argv)
+{
+HANDLE hFile, hMapping;
+void *basepointer;
+FILETIME * Createtime;
+FILETIME * Accesstime;
+FILETIME * Writetime;
+Createtime = new FILETIME;
+Accesstime = new FILETIME;
+Writetime = new FILETIME;
+if ((hFile = CreateFile(argv[1], GENERIC_READ|GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0)) == INVALID_HANDLE_VALUE)//打开要修改的文件
+{
+puts("(could not open)");
+return EXIT_FAILURE;
+}
+if(!GetFileTime(hFile,Createtime,Accesstime,Writetime))
+{
+printf("\nerror getfiletime: %d\n",GetLastError());
+}
+//得到要修改文件的创建、修改等时间
+if (!(hMapping = CreateFileMapping(hFile, 0, PAGE_READONLY | SEC_COMMIT, 0, 0, 0)))
+{
+puts("(mapping failed)");
+CloseHandle(hFile);
+return EXIT_FAILURE;
+}
+if (!(basepointer = MapViewOfFile(hMapping, FILE_MAP_READ, 0, 0, 0)))
+{
+puts("(view failed)");
+CloseHandle(hMapping);
+CloseHandle(hFile);
+return EXIT_FAILURE;
+}
+//把文件头映象存入baseointer
+CloseHandle(hMapping);
+CloseHandle(hFile);
+map_exe(basepointer);//得到相关地址
+UnmapViewOfFile(basepointer);
+printaddress();
+printf("\n\n");
+if(space<50)
+{
+printf("\n空隙太小,数据不能写入.\n");
+}
+else
+{
+writefile();//写文件
+}
+if ((hFile = CreateFile(argv[1], GENERIC_READ|GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0)) == INVALID_HANDLE_VALUE)
+{
+puts("(could not open)");
+return EXIT_FAILURE;
+}
+if(!SetFileTime(hFile,Createtime,Accesstime,Writetime))
+{
+printf("error settime : %d\n",GetLastError());
+}
+//恢复修改后文件的建立时间等
+delete Createtime;
+delete Accesstime;
+delete Writetime;
+CloseHandle(hFile);
+return 0;
+}
+void map_exe(const void *base)
+{
+IMAGE_DOS_HEADER * dos_head;
+dos_head =(IMAGE_DOS_HEADER *)base;
+#include
+<pshpack1.h>
+typedef struct PE_HEADER_MAP
+{
+DWORD signature;
+IMAGE_FILE_HEADER _head;
+IMAGE_OPTIONAL_HEADER opt_head;
+IMAGE_SECTION_HEADER section_header[];
+} peHeader;
+#include
+<poppack.h>
+if (dos_head->e_magic != IMAGE_DOS_SIGNATURE)
+{
+puts("unknown type of file");
+return;
+}
+peHeader * header;
+header = (peHeader *)((char *)dos_head + dos_head->e_lfanew);//得到PE文件头
+if (IsBadReadPtr(header, sizeof(*header))
+{
+puts("(no PE header, probably DOS executable)");
+return;
+}
+DWORD mods;
+char tmpstr[4]={0};
+DWORD  tmpaddress;
+DWORD  tmpaddress1;
+if(strstr((const char *)header->section_header[0].Name,".text")!=NULL)
+{
+virtsize=header->section_header[0].Misc.VirtualSize;
+//此段的真实长度
+physaddress=header->section_header[0].PointerToRawData;
+//此段的物理偏移
+physsize=header->section_header[0].SizeOfRawData;
+//此段的物理长度
+peaddress=dos_head->e_lfanew; 
+//得到PE文件头的开始偏移
+peHeader peH;
+tmpaddress=(unsigned long )&peH;
+//得到结构的偏移
+tmpaddress1=(unsigned long )&(peH.section_header[0].Characteristics);
+//得到变量的偏移
+flagaddress=tmpaddress1-tmpaddress+2;
+//得到属性的相对偏移
+flags=0x8000;
+//一般情况下，“.text”段是不可读写的，如果我们要把数据写入这个段需要改变其属性，实际上这个程序并没有把数据写入“.text”段，所以并不需要更改，但如果你实现复杂的功能，肯定需要数据，肯定需要更改这个值，
+space=physsize-virtsize;
+//得到代码段的可用空间，用以判断可不可以写入我们的代码
+//用此段的物理长度减去此段的真实长度就可以得到
+progRAV=header->opt_head.ImageBase; 
+//得到程序的装载地址，一般为400000
+codeoffset=header->opt_head.BaseOfCode-physaddress;
+//得到代码偏移，用代码段起始RVA减去此段的物理偏移
+//应为程序的入口计算公式是一个相对的偏移地址，计算公式为：
+//代码的写入地址＋codeoffset
+entrywrite=header->section_header[0].PointerToRawData+header->section_header[0].Misc.VirtualSize;
+//代码写入的物理偏移
+mods=entrywrite%16;
+//对齐边界
+if(mods!=0)
+{
+entrywrite+=(16-mods);
+}
+oldentryaddress=header->opt_head.AddressOfEntryPoint;
+//保存旧的程序入口地址
+newentryaddress=entrywrite+codeoffset;
+//计算新的程序入口地址        
+return;
+}
+void printaddress()
+{
+HINSTANCE gLibMsg=NULL;
+DWORD funaddress;
+gLibMsg=LoadLibrary("user32.dll"); 
+funaddress=(DWORD)GetProcAddress(gLibMsg,"MessageBoxA");
+MessageBoxAadaddress=funaddress;
+gLibAMsg=LoadLibrary("kernel32.dll"); 
+//得到MessageBox在内存中的地址，以便我们使用
+}
+void writefile()
+{
+int ret;
+long retf;
+DWORD address;
+int tmp;
+unsigned char waddress[4]={0};
+ret=_open(filename,_O_RDWR | _O_CREAT | _O_BINARY,_S_IREAD | _S_IWRITE);
+if(!ret)
+{
+printf("error open\n");
+return;
+}
+    
+retf=_lseek(ret,(long)peaddress+40,SEEK_SET);
+//程序的入口地址在PE文件头开始的40处
+if(retf==-1)
+{
+printf("error seek\n");
+return;
+}
+address=newentryaddress;
+tmp=address>>24;
+waddress[3]=tmp;
+tmp=address<<8;
+tmp=tmp>>24;
+waddress[2]=tmp;
+tmp=address<<16;
+tmp=tmp>>24;
+waddress[1]=tmp;
+tmp=address<<24;
+tmp=tmp>>24;
+waddress[0]=tmp;
+retf=_write(ret,waddress,4);
+//把新的入口地址写入文件
+if(retf==-1)
+{
+printf("error write: %d\n",GetLastError());
+return;
+}
+    
+retf=_lseek(ret,(long)entrywrite,SEEK_SET);
+if(retf==-1)
+{
+printf("error seek\n");
+return;
+}
+retf=_write(ret,writeline,18);
+if(retf==-1)
+{
+printf("error write: %d\n",GetLastError());
+return;
+}
+//把writeline写入我们计算出的空间
+retf=_lseek(ret,(long)entrywrite+9,SEEK_SET);
+//更改MessageBox函数地址，它的二进制代码在writeline[10]处
+if(retf==-1)
+{
+printf("error seek\n");
+return;
+}
+address=MessageBoxAadaddress-(progRAV+newentryaddress+9+4);
+//重新计算MessageBox函数的地址，MessageBox函数的原地址减去程序的装载地址加上新的入口地址加9（它的二进制代码相对偏移）加上4（地址长度）
+tmp=address>>24;
+waddress[3]=tmp;
+tmp=address<<8;
+tmp=tmp>>24;
+waddress[2]=tmp;
+tmp=address<<16;
+tmp=tmp>>24;
+waddress[1]=tmp;
+tmp=address<<24;
+tmp=tmp>>24;
+waddress[0]=tmp;
+retf=_write(ret,waddress,4);
+//写入重新计算的MessageBox地址
+if(retf==-1)
+{
+printf("error write: %d\n",GetLastError());
+return;
+}
+retf=_lseek(ret,(long)entrywrite+14,SEEK_SET);
+//更改返回地址，用jpm返回原程序入口地址，其它的二进制代码在writeline[15]处
+if(retf==-1)
+{
+printf("error seek\n");
+return;
+}
+address=0-(newentryaddress-oldentryaddress+4+15);
+//返回地址计算的方法是新的入口地址减去老的入口地址加4（地址长度）加15（二进制代码相对偏移）后取反
+tmp=address>>24;
+waddress[3]=tmp;
+tmp=address<<8;
+tmp=tmp>>24;
+waddress[2]=tmp;
+tmp=address<<16;
+tmp=tmp>>24;
+waddress[1]=tmp;
+tmp=address<<24;
+tmp=tmp>>24;
+waddress[0]=tmp;
+retf=_write(ret,waddress,4);
+//写入返回地址
+if(retf==-1)
+{
+printf("error write: %d\n",GetLastError());
+return;
+}
+_close(ret);
+printf("\nall done...\n");
+return;
+}
+//end
+由于在PE格式的文件中，所有的地址都使用RVA地址，所以一些函数调用和返回地址都要经过计算才可以得到，以上是我在实践中的心得，如果你有更好的办法，真心的希望你能告诉我。
+如果存在错误，请告诉我，以免误导看这篇文章的人。
+写的较乱，请原谅。
+ilsy@netguard.com.cn

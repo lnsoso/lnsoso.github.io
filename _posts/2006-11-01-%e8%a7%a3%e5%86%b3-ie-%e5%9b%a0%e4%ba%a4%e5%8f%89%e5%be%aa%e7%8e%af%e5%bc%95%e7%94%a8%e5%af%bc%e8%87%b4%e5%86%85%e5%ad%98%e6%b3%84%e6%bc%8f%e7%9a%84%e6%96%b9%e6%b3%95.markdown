@@ -1,0 +1,43 @@
+---
+layout: post
+title: 解决 IE 因交叉(循环)引用导致内存泄漏的方法
+author: Alvin
+date: !binary |-
+  MjAwNi0xMS0wMSAxNjo1MzowMyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMS0wMSAwODo1MzowMyArMDgwMA==
+---
+很好的一篇文章，可能标题我翻译得不是很准。
+Closures and IE Circular References
+A little tip for you advanced Javascripters...
+First, if you are not familiar with JavaScript closures, I highly recommend you read up on them. They are extremely powerful.  However, they are also very unforgiving in they quickly generate memory leaks.  IE has an issue where it leaks memory when a circular reference is created between a com object and a javascript object.  In IE, the DOM is implemented via com.
+So looking at a simple closure (noticed the nested function):
+function DoThis()
+{
+  var el = document.createElement("div");
+  el.attachEvent("onclick",DoThis);
+  function DoThis()
+  {
+    alert("clicked");
+  }
+}
+creates a new scope and generates a circular reference that will leak memory in IE. This memory is not reclaimed until the browser closes.  The simplest solution is to pretend there is no garbage collector for objects and make sure you always clean-up after yourself.
+Fixed version:
+function DoThis()
+{
+  var el = document.createElement("div");
+  el.attachEvent("onclick",DoThis);
+  window.attachEvent("onunload",Cleanup);
+  function DoThis()
+  {
+   alert("clicked");
+  }
+  function Cleanup()
+  {
+    el.detachEvent("onclick",DoThis);
+    window.detachEvent("onunload",Cleanup);
+    el = null;
+  }
+}
+I will go into more details on closures in a follow-up post as they a very powerful for encapsulating functionality and creating reusable code. 
+原文地址：http://siteexperts.spaces.live.com/Blog/cns!1pNcL8JwTfkkjv4gg6LkVCpw!338.entry

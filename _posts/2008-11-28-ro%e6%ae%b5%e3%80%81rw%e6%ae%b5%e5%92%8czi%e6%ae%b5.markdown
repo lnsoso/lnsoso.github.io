@@ -1,0 +1,151 @@
+---
+layout: post
+title: RO段、RW段和ZI段
+author: gavinkwoe
+date: !binary |-
+  MjAwOC0xMS0yOCAxMDoxNDozOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMS0yOCAwMjoxNDozOCArMDgwMA==
+---
+一直以来对于ARM体系中所描述的RO，RW和ZI数据存在似是而非的理解，这段时间对其仔细了解了一番，发现了一些规律，理解了一些以前书本上有的但是不理解的东西，我想应该有不少人也有和我同样的困惑，因此将我的一些关于RO，RW和ZI的理解写出来，希望能对大家有所帮助。
+要了解RO，RW和ZI需要首先了解以下知识：
+ARM程序的组成
+此处所说的“ARM程序”是指在ARM系统中正在执行的程序，而非保存在ROM中的bin映像（image）文件，这一点清注意区别。
+一个ARM程序包含3部分：RO，RW和ZI
+RO是程序中的指令和常量
+RW是程序中的已初始化变量
+ZI是程序中的未初始化的变量
+由以上3点说明可以理解为：
+RO就是readonly，
+RW就是read/write，
+ZI就是zero
+ARM映像文件的组成
+所谓ARM映像文件就是指烧录到ROM中的bin文件，也成为image文件。以下用Image文件来称呼它。
+Image文件包含了RO和RW数据。
+之所以Image文件不包含ZI数据，是因为ZI数据都是0，没必要包含，只要程序运行之前将ZI数据所在的区域一律清零即可。包含进去反而浪费存储空间。
+Q：为什么Image中必须包含RO和RW？
+A：因为RO中的指令和常量以及RW中初始化过的变量是不能像ZI那样“无中生有”的。
+ARM程序的执行过程
+从以上两点可以知道，烧录到ROM中的image文件与实际运行时的ARM程序之间并不是完全一样的。因此就有必要了解ARM程序是如何从ROM中的image到达实际运行状态的。
+实际上，RO中的指令至少应该有这样的功能：
+1. 将RW从ROM中搬到RAM中，因为RW是变量，变量不能存在ROM中。
+2. 将ZI所在的RAM区域全部清零，因为ZI区域并不在Image中，所以需要程序根据编译器给出的ZI地址及大小来将相应得RAM区域清零。ZI中也是变量，同理：变量不能存在ROM中
+在程序运行的最初阶段，RO中的指令完成了这两项工作后C程序才能正常访问变量。否则只能运行不含变量的代码。
+说了上面的可能还是有些迷糊，RO，RW和ZI到底是什么，下面我将给出几个例子，最直观的来说明RO，RW，ZI在C中是什么意思。
+1; RO
+看下面两段程序，他们之间差了一条语句，这条语句就是声明一个字符常量。因此按照我们之前说的，他们之间应该只会在RO数据中相差一个字节（字符常量为1字节）。
+Prog1：
+#include <stdio.h>
+void main(void)
+{
+;
+}
+Prog2：
+#include <stdio.h>
+const char a = 5；
+void main(void)
+{
+;
+}
+Prog1编译出来后的信息如下：
+================================================================================
+Code RO Data RW Data ZI Data Debug
+948 60 0 96 0 Grand Totals
+================================================================================
+Total RO Size(Code + RO Data) 1008 ( 0.98kB)
+Total RW Size(RW Data + ZI Data) 96 ( 0.09kB)
+Total ROM Size(Code + RO Data + RW Data) 1008 ( 0.98kB)
+================================================================================
+Prog2编译出来后的信息如下：
+================================================================================
+Code RO Data RW Data ZI Data Debug
+948 61 0 96 0 Grand Totals
+================================================================================
+Total RO Size(Code + RO Data) 1009 ( 0.99kB)
+Total RW Size(RW Data + ZI Data) 96 ( 0.09kB)
+Total ROM Size(Code + RO Data + RW Data) 1009 ( 0.99kB)
+================================================================================
+以上两个程序编译出来后的信息可以看出：
+Prog1和Prog2的RO包含了Code和RO Data两类数据。他们的唯一区别就是Prog2的RO Data比Prog1多了1个字节。这正和之前的推测一致。
+如果增加的是一条指令而不是一个常量，则结果应该是Code数据大小有差别。
+2; RW
+同样再看两个程序，他们之间只相差一个“已初始化的变量”，按照之前所讲的，已初始化的变量应该是算在RW中的，所以两个程序之间应该是RW大小有区别。
+Prog3：
+#include <stdio.h>
+void main(void)
+{
+;
+}
+Prog4：
+#include <stdio.h>
+char a = 5；
+void main(void)
+{
+;
+}
+Prog3编译出来后的信息如下：
+================================================================================
+Code RO Data RW Data ZI Data Debug
+948 60 0 96 0 Grand Totals
+================================================================================
+Total RO Size(Code + RO Data) 1008 ( 0.98kB)
+Total RW Size(RW Data + ZI Data) 96 ( 0.09kB)
+Total ROM Size(Code + RO Data + RW Data) 1008 ( 0.98kB)
+================================================================================
+Prog4编译出来后的信息如下：
+================================================================================
+Code RO Data RW Data ZI Data Debug
+948 60 1 96 0 Grand Totals
+================================================================================
+Total RO Size(Code + RO Data) 1008 ( 0.98kB)
+Total RW Size(RW Data + ZI Data) 97 ( 0.09kB)
+Total ROM Size(Code + RO Data + RW Data) 1009 ( 0.99kB)
+================================================================================
+可以看出Prog3和Prog4之间确实只有RW Data之间相差了1个字节，这个字节正是被初始化过的一个字符型变量“a”所引起的。
+3; ZI
+再看两个程序，他们之间的差别是一个未初始化的变量“a”，从之前的了解中，应该可以推测，这两个程序之间应该只有ZI大小有差别。
+Prog3：
+#include <stdio.h>
+void main(void)
+{
+;
+}
+Prog4：
+#include <stdio.h>
+char a；
+void main(void)
+{
+;
+}
+Prog3编译出来后的信息如下：
+================================================================================
+Code RO Data RW Data ZI Data Debug
+948 60 0 96 0 Grand Totals
+================================================================================
+Total RO Size(Code + RO Data) 1008 ( 0.98kB)
+Total RW Size(RW Data + ZI Data) 96 ( 0.09kB)
+Total ROM Size(Code + RO Data + RW Data) 1008 ( 0.98kB)
+================================================================================
+Prog4编译出来后的信息如下：
+================================================================================
+Code RO Data RW Data ZI Data Debug
+948 60 0 97 0 Grand Totals
+================================================================================
+Total RO Size(Code + RO Data) 1008 ( 0.98kB)
+Total RW Size(RW Data + ZI Data) 97 ( 0.09kB)
+Total ROM Size(Code + RO Data + RW Data) 1008 ( 0.98kB)
+================================================================================
+编译的结果完全符合推测，只有ZI数据相差了1个字节。这个字节正是未初始化的一个字符型变量“a”所引起的。
+注意：如果一个变量被初始化为0，则该变量的处理方法与未初始化华变量一样放在ZI区域。
+即：ARM C程序中，所有的未初始化变量都会被自动初始化为0。
+总结：
+1; C中的指令以及常量被编译后是RO类型数据。
+2; C中的未被初始化或初始化为0的变量编译后是ZI类型数据。
+3; C中的已被初始化成非0值的变量编译后市RW类型数据。
+附：
+程序的编译命令（假定C程序名为tst.c）：
+armcc -c -o tst.o tst.c
+armlink -noremove -elf -nodebug -info totals -info sizes -map -list aa.map -o tst.elf tst.o
+编译后的信息就在aa.map文件中。
+ROM主要指：NAND Flash，Nor Flash
+RAM主要指：PSRAM，SDRAM，SRAM，DDRAM

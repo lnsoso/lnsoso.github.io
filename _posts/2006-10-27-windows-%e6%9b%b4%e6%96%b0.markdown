@@ -1,0 +1,11 @@
+---
+layout: post
+title: Windows 更新
+author: Alvin
+date: !binary |-
+  MjAwNi0xMC0yNyAxMDoyNzozMCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNi0xMC0yNyAwMjoyNzozMCArMDgwMA==
+---
+在 CB 上看到的一个比较好用的小软件，自己做个记录。
+<a href="http://wud.jcarle.com/">http://wud.jcarle.com/</a>

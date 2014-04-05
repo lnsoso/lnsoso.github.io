@@ -1,0 +1,25 @@
+---
+layout: post
+title: ! '[转] MTK平台芯片概说'
+author: gavinkwoe
+date: !binary |-
+  MjAwNy0xMS0yNiAyMToxMToyOCArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0xMS0yNiAwNToxMToyOCArMDgwMA==
+---
+转至 <a href="http://blog.sina.com.cn/mobliephone" title="http://blog.sina.com.cn/mobliephone">http://blog.sina.com.cn/mobliephone</a>
+目前联发科技已开发出MT6205、MT6217、MT6218、MT6219、MT6226、MT6227、MT6228等系列平台,其中MT6205、MT6217、MT6218、MT6219、MT6226、MT6227、MT6228、MT6229、MT6225、MT6223、MT6230均为基带芯片，所有芯片均采用ARM7的核。
+MT6305为电源管理芯片，有MT6305、MT6305N、MT6305BN；
+MT6129、MT6139是射频芯片。MT6129为早期的射频RF芯片，一般与MT6205的CPU一起使用。现在用的多的是MT6129C、MT6129N、MT6129D，其中MT6129C、MT6129N一般用在MT6217、MT6218、MT6219的CPU的机器上，MT6129D一般用在MT6226、MT6227的CPU的机器上。RF3146（7&times;7mm）、RF3146D（双频）、RF3166（6&times;6mm）为RFMD的PA。
+MT6205为最早的方案，只有GSM的基本功能，不支持GPRS、WAP、MP3等功能。(2003年MP)；
+MT6218为在MT6205基础上增加GPRS、WAP、MP3功能。MT6217为MT6218的cost down方案，与MT6128 PIN TO PIN，只是软件不同而已，另外MT6217支持16bit数据。（2004年MP）
+MT6219为MT6218上增加内置AIT的1.3M camera处理IC，增加MP4功能。8bit数据。（2005年MP）
+MT6226为MT6219 cost 升级产品，内置0.3M 摄相处理IC，支持GPRS、WAP、MP3、MP4等，内部配置比MT6219优化及改善，比如配蓝牙是可用很便宜的芯片CSR的BC03模块USD3即可支持数据传输（如听立体声MP3等）功能。
+MT6226M为MT6226高配置设计，内置的是1.3M摄像处理IC。（2006年MP）
+MT6227与MT6226功能基本一样，PIN TO PIN，只是内置的是2.0M 摄像处理IC。（2006年MP）
+MT6228比MT6227增加TV OUT功能，内置3.0M 摄像处理IC，支持支持GPRS、WAP、MP3、MP4。（2006年MP）
+从MT6226后软件均可支持网络摄像头功能，也就是说你的机子可以用于QQ视频。
+MT6229平台支持EDGE功能，其他功能和6228基本一致。
+MT6225是6217的代替产品，可以接cam但是没有isp，也就是没有特效，变焦，但是其主频很高和6228/6229一样达到了104mhz,可以接wifi,并且给设计公司提出了更高的要求&mdash;&mdash;如何利用104m的资源去实现mp4的编解码，如何用104m的资源跑更多的应用，这些都是设计公司做的,对设计公司的要求也非常得高。
+MT6223是6205的替代，支持语音，短信，MP3,不支持T_F卡，USB盘，没有集成ISP，PMIC内签。
+目前市面上出的双卡双待手机,一般是采取的方案分为以下几种:MT6226+6205,MT6225+6205和MT6225+6223

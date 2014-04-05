@@ -1,0 +1,10 @@
+---
+layout: post
+title: 爆笑!~~~真人版 高达vs黑色三连星!
+author: Alvin
+date: !binary |-
+  MjAwNy0wMS0xMCAyMToyMjoyMyArMDgwMA==
+date_gmt: !binary |-
+  MjAwNy0wMS0xMCAxMzoyMjoyMyArMDgwMA==
+---
+<embed id="articleblog" name="articleblog" pluginspage="http://www.macromedia.com/go/getflashplayer" align="10" src="http://v.blog.sina.com.cn/b/vblog_player.swf?vid=524399&uid=1452533741" width="474" height="461" type="application/x-shockwave-flash" wmode="transparent" quality="high" salign="lt" allowscriptaccess="always" flashvars="url=http://v.blog.sina.com.cn/b/vblog_player.swf?vid=524399&uid=1452533741"></embed>

@@ -1,0 +1,11 @@
+---
+layout: post
+title: Zend Framework 1.7 预览版放出
+author: Alvin
+date: !binary |-
+  MjAwOC0xMC0xNiAxMDoyNzowNSArMDgwMA==
+date_gmt: !binary |-
+  MjAwOC0xMC0xNiAwMjoyNzowNSArMDgwMA==
+---
+此次更新包括 Zend_Amf 组件、Dojo 工具集、对 dijit 编辑器的支持，本地化I18n的更改和一些性能上的增强。可从官方的 <a target="_blank" href="http://framework.zend.com/download/latest">download page</a> 页面下载。
+
