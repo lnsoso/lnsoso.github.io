@@ -8,25 +8,25 @@ date_gmt: !binary |-
   MjAwOS0xMS0wNiAxMDowNzozNiArMDgwMA==
 ---
 ```bash
-#!/bin/bash
-TODAY=/tmp/$(date +%Y%m%d)
-CONTENT=$TODAY/update_content_sina.tmp
-
-if [ ! -d $TODAY ]; then
-mkdir $TODAY
-fi
-
-if [ -f $CONTENT ]; then
-rm $CONTENT
-fi
-
-svn up ~/job/code/php/sinahouse/ >> $TODAY/svn_update_list.tmp
-LIST=`cat $TODAY/svn_update_list.tmp | grep '.php' | awk '{print $2}'`
-
-for L in $LIST; do
-    svn diff -r PREV $L >> $CONTENT
-done
-
-/usr/bin/vim $CONTENT
+    #!/bin/bash
+    TODAY=/tmp/$(date +%Y%m%d)
+    CONTENT=$TODAY/update_content_sina.tmp
+    
+    if [ ! -d $TODAY ]; then
+    mkdir $TODAY
+    fi
+    
+    if [ -f $CONTENT ]; then
+    rm $CONTENT
+    fi
+    
+    svn up ~/job/code/php/sinahouse/ >> $TODAY/svn_update_list.tmp
+    LIST=`cat $TODAY/svn_update_list.tmp | grep '.php' | awk '{print $2}'`
+    
+    for L in $LIST; do
+        svn diff -r PREV $L >> $CONTENT
+    done
+    
+    /usr/bin/vim $CONTENT
 
 ```
