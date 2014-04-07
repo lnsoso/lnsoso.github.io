@@ -91,10 +91,10 @@ void FetchDoubleField(db_cursor& cr, unsigned int col, double& val)
 如果能够在一个地方把FetchIntField, FetchDoubleField以及其他的Fetch函数合
 为一体就好了。
 我们把这两片代码的不同之处列举如下：
-  &middot;输入类型：double/int
-  &middot;内部类型：db_currency/db_integer
-  &middot;常数值类型：DB_CURRENCY/DB_INTEGER
-  &middot;算法：一个表达式/static_cast
+  ·输入类型：double/int
+  ·内部类型：db_currency/db_integer
+  ·常数值类型：DB_CURRENCY/DB_INTEGER
+  ·算法：一个表达式/static_cast
 输入类型(int/double)与其他几点之间的对应关系看上去没什麽规律可循，而是很随意，
 跟数据库供应商（恰好）提供的类型关系密切。Template机制本身无能为力，它没有提供
 如此先进的类型推理机制。也没法把不同的类型用继承关系组织起来，因为我们处理的是
@@ -312,7 +312,7 @@ public:
      delete pointee_;
     }
 };
-  &middot;这麽干缺乏可扩展性。如果给给SmartPtr再增加一个模板叁数，喏，全完蛋了  你不能特殊
+  ·这麽干缺乏可扩展性。如果给给SmartPtr再增加一个模板叁数，喏，全完蛋了  你不能特殊
     化这样一个SmartPtr<T. U>成员函数，其中模板叁数T是Widget，而U可以为其他任何类型。不，你做
     不到。附带说一句，smart pointer经常用作模板叁数。
 [译者附释：作者说做不到的情形如下：
@@ -327,9 +327,9 @@ public:
  void Demo<Widget, U>::dostuff() {...} // 这是不行的，编译器会去寻找一个Demo<Widget, U>的
                                        // partial specialization defination, 由于并没有这
            // 么一个defination，所以编译失败。
-  &middot;最终代码不那麽清晰。Trait有一个名字，而且把相关的东西很好的组织起来，因此使用traits的
+  ·最终代码不那麽清晰。Trait有一个名字，而且把相关的东西很好的组织起来，因此使用traits的
     代码更加容易理解。相比之下，用直接特殊化SmartPtr成员函数的代码，看上去更招黑客的喜欢。
-  &middot;你没法对一种类型使用多种traits。
+  ·你没法对一种类型使用多种traits。
 用继承机制的解决方案，就算本身完美无瑕，也至少存在上述的缺陷。解决这样一个变体问题，
 使用继承实在是太笨重了。此外，通常用以取代继承方案的另一种经典机制    containment，
 用在这里也显得画蛇添足，繁琐不堪。相反，traits方案乾净利落，简明有效，物合其用，恰到好处。

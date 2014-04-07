@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 莱昂纳多&middot;迪卡普里奥资料
+title: 莱昂纳多·迪卡普里奥资料
 author: gavinkwoe
 date: !binary |-
   MjAwNi0xMi0yOSAxMDoyODoyMyArMDgwMA==

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 【越狱】T-BAG  扮演者罗伯特&middot;内珀 [精彩写真和人物简介和FANS漫画]
+title: 【越狱】T-BAG  扮演者罗伯特·内珀 [精彩写真和人物简介和FANS漫画]
 author: gavinkwoe
 date: !binary |-
   MjAwNi0xMS0xNCAxMzowNjoyMCArMDgwMA==
@@ -11,7 +11,7 @@ date_gmt: !binary |-
 <tbody>
 <tr>
 <td>
-<font face="黑体" color="#ff0066" size="4">人物简介：罗伯特&middot;内珀 (Robert Knepper) 
+<font face="黑体" color="#ff0066" size="4">人物简介：罗伯特·内珀 (Robert Knepper) 
             </font><font color="#1a6be6" size="2">Robert Knepper的主要代表做有电影《Good night and good Lunch》，《Hostage》，《Love&Sex》 等，电视剧有《Carnivale》, 《Thieves》,《Haunted》,《Presidio 》等。在戏院工作的Knepper的母亲对他的演艺事业起着很重要的作用，正是他母亲让Knepper对演戏产生兴趣 ，并顺利进入西北部的专业戏剧学院学习。</font>
 <font size="2"><font color="#0000ff"><font face="楷体_GB2312" size="5"><font color="#0968f7"><font face="黑体" color="#ff0066" size="3"><strong>作 品 年 表</strong></font> 
             </font></font><font color="#1169ee">演 出 

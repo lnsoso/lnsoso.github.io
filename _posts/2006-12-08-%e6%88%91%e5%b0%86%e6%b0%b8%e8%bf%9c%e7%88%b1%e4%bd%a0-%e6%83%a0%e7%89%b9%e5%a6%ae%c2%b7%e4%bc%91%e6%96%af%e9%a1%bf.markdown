@@ -1,13 +1,13 @@
 ---
 layout: post
-title: 我将永远爱你 - 惠特妮&middot;休斯顿
+title: 我将永远爱你 - 惠特妮·休斯顿
 author: gavinkwoe
 date: !binary |-
   MjAwNi0xMi0wOCAwOToxODo1OCArMDgwMA==
 date_gmt: !binary |-
   MjAwNi0xMi0wOCAwMToxODo1OCArMDgwMA==
 ---
-我将永远爱你 - 惠特妮&middot;休斯顿
+我将永远爱你 - 惠特妮·休斯顿
 专辑: <a title="http://www.douban.com/subject/1418556/" href="http://www.douban.com/subject/1418556/" target="_blank">OST-The Bodyguard</a>
 来自: 美国/英语
 发行: 1992

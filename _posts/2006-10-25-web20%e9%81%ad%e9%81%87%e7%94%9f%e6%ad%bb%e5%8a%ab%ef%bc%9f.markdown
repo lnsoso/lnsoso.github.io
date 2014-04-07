@@ -57,5 +57,5 @@ Web2.0正面临着生死考验。短短两年间它走过了草根创业、融�
 　　有不少人以为“Web 2.0”是一个技术的标准，其实这是个美丽的误会，因为Web 2.0只是一个用来阐述技术转变的术语。这个术语是由O'Reilly Media的Dale Dougherty和 MediaLive的Craig Cline 在共同合作的脑力激荡(brain storming)会议上提出来的。
 　　Dougherty提出了Web目前正处于复兴时期，有着不断改变的规则和不断演化的商业模式。而Dougherty则是举例说明&mdash;&mdash;“DoubleClick是Web 1.0，Google AdSense 则是Web 2.0; Ofoto是Web 1.0，Flickr 则是Web 2.0”，而不是给出确切的定义和提出一个商业前景。同时O'Reilly Media、Battelle和MediaLive 在2004年10月启动了第一个Web 2.0大会。第二次的年会已在2005年10月举办。
 <strong>　　链接二</strong>
-　　早在1999年，著名的管理学者彼得&middot;杜拉克 (Peter F. Drucker)就曾指出当时的资讯科技发展走错了方向，因为真正推动社会进步的，是“Information Technology”里的“Information(信息)”，而不是“Technology(科技)”。若然单单着重技术层面而忽略了资讯的话，就只是一具空的躯壳，不能使社会增值。
+　　早在1999年，著名的管理学者彼得·杜拉克 (Peter F. Drucker)就曾指出当时的资讯科技发展走错了方向，因为真正推动社会进步的，是“Information Technology”里的“Information(信息)”，而不是“Technology(科技)”。若然单单着重技术层面而忽略了资讯的话，就只是一具空的躯壳，不能使社会增值。
 　　而Web 2.0很明显是通过参与者的互动: 不论是提供内容、为内容索引或评分，都能够使他们所使用的平台增值。通过参与者的互动，好的产品或资讯本着它的口碑，从一小撮使用者扩展到一大帮人，一但超过了临界质量，就会“像病毒一样广泛留传”。

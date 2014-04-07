@@ -67,7 +67,7 @@ http://www.cfcompany.be/          cfcompany
 <a target="_blank" href="http://www.aldoshoes.com/">http://www.aldoshoes.com/</a>         ALDO
 <a target="_blank" href="http://www.atoslombardini.it/">http://www.atoslombardini.it/</a>     Atoslombardin
 <a target="_blank" href="http://www.harrods.com/">http://www.harrods.com/</a>           Harrods
-<a target="_blank" href="http://www.annasui.com/">http://www.annasui.com/</a>           安娜&middot;苏Anna 
+<a target="_blank" href="http://www.annasui.com/">http://www.annasui.com/</a>           安娜·苏Anna 
 <a target="_blank" href="http://www.carmenelectra.com/">http://www.carmenelectra.com/</a>     carmenelectra
 <a target="_blank" href="http://www.radley.co.uk/">http://www.radley.co.uk/</a>         radley
 <a target="_blank" href="http://www.louisecampbell.com/">http://www.louisecampbell.com/</a>   louisecampbel

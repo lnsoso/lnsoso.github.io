@@ -29,7 +29,7 @@ date_gmt: !binary |-
 19 Univ Michigan - Ann Arbor USA 美国密歇根大学
 20 Univ Washington - Seattle USA 美国华盛顿大学(西雅图)
 21 Kyoto Univ Japan 日本京都大学
-22 Johns Hopkins Univ USA 美国约翰&middot;霍普金斯大学
+22 Johns Hopkins Univ USA 美国约翰·霍普金斯大学
 23 Imperial Coll London UK 英国伦敦帝国学院
 24 Univ Toronto Canada 4加拿大多伦多大学
 25 Univ Coll London UK 英国伦敦学院大学

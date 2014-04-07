@@ -44,17 +44,17 @@ date_gmt: !binary |-
 在继续本节的讨论之前，首先我们做一个假定，那就是：假定内核映像与根文件系统映像都被加载到 RAM 中运行。之所以提出这样一个假设前提是因为，在嵌入式系统中内核映像与根文件系统映像也可以直接在 ROM 或 Flash 这样的固态存储设备中直接运行。但这种做法无疑是以运行速度的牺牲为代价的。从操作系统的角度看，Boot Loader 的总目标就是正确地调用内核来执行。
 另外，由于 Boot Loader 的实现依赖于 CPU 的体系结构，因此大多数 Boot Loader 都分为 stage1 和 stage2 两大部分。依赖于 CPU 体系结构的代码，比如设备初始化代码等，通常都放在 stage1 中，而且通常都用汇编语言来实现，以达到短小精悍的目的。而 stage2 则通常用C语言来实现，这样可以实现给复杂的功能，而且代码会具有更好的可读性和可移植性。
 Boot Loader 的 stage1 通常包括以下步骤(以执行的先后顺序)：
-&middot;硬件设备初始化。
-&middot;为加载 Boot Loader 的 stage2 准备 RAM 空间。
-&middot;拷贝 Boot Loader 的 stage2 到 RAM 空间中。
-&middot;设置好堆栈。
-&middot;跳转到 stage2 的 C 入口点。
+·硬件设备初始化。
+·为加载 Boot Loader 的 stage2 准备 RAM 空间。
+·拷贝 Boot Loader 的 stage2 到 RAM 空间中。
+·设置好堆栈。
+·跳转到 stage2 的 C 入口点。
 Boot Loader 的 stage2 通常包括以下步骤(以执行的先后顺序)：
-&middot;初始化本阶段要使用到的硬件设备。
-&middot;检测系统内存映射(memory map)。
-&middot;将 kernel 映像和根文件系统映像从 flash 上读到 RAM 空间中。
-&middot;为内核设置启动参数。
-&middot;调用内核。
+·初始化本阶段要使用到的硬件设备。
+·检测系统内存映射(memory map)。
+·将 kernel 映像和根文件系统映像从 flash 上读到 RAM 空间中。
+·为内核设置启动参数。
+·调用内核。
 3.1 Boot Loader 的 stage1
 3.1.1 基本的硬件初始化
 这是 Boot Loader 一开始就执行的操作，其目的是为 stage2 的执行以及随后的 kernel 的执行准备好一些基本的硬件环境。它通常包括以下步骤（以执行的先后顺序）：
@@ -270,16 +270,16 @@ params->hdr.size = 0;
 3.2.5 调用内核
 Boot Loader 调用 Linux 内核的方法是直接跳转到内核的第一条指令处，也即直接跳转到 MEM_START＋0x8000 地址处。在跳转时，下列条件要满足：
 1． CPU 寄存器的设置：
-&middot;R0＝0；
+·R0＝0；
 @R1＝机器类型 ID；关于 Machine Type Number，可以参见 linux/arch/arm/tools/mach-types。
 @R2＝启动参数标记列表在 RAM 中起始基地址；
 2． CPU 模式：
-&middot;必须禁止中断（IRQs和FIQs）；
-&middot;CPU 必须 SVC 模式；
+·必须禁止中断（IRQs和FIQs）；
+·CPU 必须 SVC 模式；
 3． Cache 和 MMU 的设置：
-&middot;MMU 必须关闭；
-&middot;指令 Cache 可以打开也可以关闭；
-&middot;数据 Cache 必须关闭；
+·MMU 必须关闭；
+·指令 Cache 可以打开也可以关闭；
+·数据 Cache 必须关闭；
 如果用 C 语言，可以像下列示例代码这样来调用内核：
 void (*theKernel)(int zero, int arch, u32 params_addr)
 = (void (*)(int, int, u32))KERNEL_RAM_BASE;
