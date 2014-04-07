@@ -1,6 +1,7 @@
 ---
 layout: post
-title: 我的&#8221;极限编程&#8221;体验
+title: 我的“极限编程”体验
+permalink: my-xp-programing-experience
 author: gavinkwoe
 date: !binary |-
   MjAwNi0xMS0xMSAxMzo1MTozMyArMDgwMA==
