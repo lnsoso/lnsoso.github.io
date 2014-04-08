@@ -9,5 +9,4 @@ date_gmt: !binary |-
 ---
 俺经常换桌面背景，有时几乎一天换三到四回。经常换换图片可以让我换换心情，免得长时间 coding 导致让自己心理疲劳。
 
-表说俺幼稚～！
-<a href="http://photo4.yupoo.com/20061225/182059_1822464063_xgshlvjl.jpg"><img width="400" src="http://photo4.yupoo.com/20061225/182059_1822464063_xgshlvjl.jpg" height="300" /></a>
+[桌面](http://photo4.yupoo.com/20061225/182059_1822464063_xgshlvjl.jpg)

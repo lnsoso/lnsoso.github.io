@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 都是你&#8230;&#8230;
+title: 都是你
 author: gavinkwoe
 date: !binary |-
   MjAwNi0xMi0xOSAxNzoyMDoxMyArMDgwMA==
